@@ -1,0 +1,902 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ventas - Panel Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            /* Paleta Premium */
+            --primary: #0f172a;
+            --primary-light: #334155;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+            --bg: #f8fafc; 
+            --card: rgba(255, 255, 255, 0.75);
+            --card-solid: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(226, 232, 240, 0.6);
+            
+            /* Colores Estados Vibrantes */
+            --status-preingreso: #0ea5e9;
+            --status-pendiente: #f59e0b;
+            --status-despacho: #8b5cf6;
+            --status-rechazado: #ef4444;
+            --status-finalizado: #10b981;
+
+            /* Sombras Modernas */
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.025);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            --shadow-accent: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 1.5rem;
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== FONDOS MODERNOS (ORBES DE LUZ) ===== */
+        .bg-orb {
+            position: fixed; border-radius: 50%; filter: blur(120px);
+            z-index: -1; opacity: 0.6; pointer-events: none;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #e0e7ff; }
+        .orb-2 { bottom: -10%; right: -5%; width: 45vw; height: 45vw; background: #f3e8ff; }
+        .orb-3 { top: 40%; left: 50%; width: 35vw; height: 35vw; background: #e0f2fe; }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== VISTA PRINCIPAL (GLASSMORPHISM) ===== */
+        #main-view {
+            background-color: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 1.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-lg), inset 0 0 0 1px rgba(255,255,255,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* Header Estilizado */
+        .header { 
+            padding: 2rem 2.5rem 1.5rem; 
+            border-bottom: 1px solid var(--border); 
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .header-title { 
+            font-size: 1.75rem; 
+            font-weight: 900; 
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.85rem; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-title-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 12px;
+            background: var(--accent-gradient); color: white;
+            box-shadow: var(--shadow-accent);
+            -webkit-text-fill-color: initial; /* Override text clip for icon */
+        }
+
+        .controls { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; }
+        
+        .search-filter-group {
+            display: flex; align-items: center; border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 9999px;
+            background-color: rgba(255,255,255,0.8); flex: 1; min-width: 280px; max-width: 450px; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .search-filter-group:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); background: #fff; }
+        
+        .search-input { border: none; background: transparent; outline: none; padding: 0.85rem 1rem; font-size: 0.9rem; font-weight: 500; flex: 1; color: var(--primary); }
+        .search-input::placeholder { color: #94a3b8; font-weight: 400; }
+        .separator { width: 1px; height: 24px; background-color: var(--border); }
+
+        .actions-group { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+        .action-btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+            padding: 0.85rem 1.25rem; background-color: rgba(255,255,255,0.9); color: var(--primary-light);
+            border: 1px solid var(--border); border-radius: 9999px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;
+            box-shadow: var(--shadow-xs);
+        }
+        .action-btn:hover { transform: translateY(-2px); background-color: #fff; box-shadow: var(--shadow-md); color: var(--primary); border-color: #cbd5e1; }
+        
+        .action-btn.primary { 
+            background: var(--accent-gradient); color: white; border: none; 
+            box-shadow: var(--shadow-accent); font-weight: 700;
+        }
+        .action-btn.primary:hover { 
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.5); 
+            transform: translateY(-2px) scale(1.02);
+            color: white;
+        }
+
+        /* Dropdowns */
+        .relative-container { position: relative; }
+        .dropdown-menu {
+            position: absolute; top: calc(100% + 0.75rem); right: 0; width: 240px;
+            background-color: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-radius: 1rem; 
+            box-shadow: var(--shadow-lg); z-index: 100; border: 1px solid rgba(226, 232, 240, 0.8); 
+            display: none; flex-direction: column; overflow: hidden;
+            transform-origin: top right; animation: scaleIn 0.2s ease-out;
+        }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .dropdown-menu.is-open { display: flex; }
+        .dropdown-item { 
+            padding: 0.85rem 1.25rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); 
+            text-align: left; background: none; border: none; cursor: pointer; border-bottom: 1px solid #f8fafc; transition: all 0.2s;
+        }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background-color: #f1f5f9; color: var(--accent); padding-left: 1.5rem; }
+
+        /* Notificaciones Badge */
+        .notification-badge {
+            position: absolute; top: -4px; right: -4px; width: 12px; height: 12px;
+            background-color: #ef4444; border-radius: 50%; border: 2px solid white; display: none;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+        }
+        #notificationsDropdown { max-height: 350px; overflow-y: auto; width: 320px; }
+        .notification-item { padding: 1.25rem; border-bottom: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 0.35rem; transition: background 0.2s;}
+        .notification-item:hover { background: #f8fafc; }
+        .notification-item p { margin: 0; font-size: 0.85rem; color: var(--primary); font-weight: 600; line-height: 1.4; }
+        .notification-item span { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+
+        /* Tabs Segmentados Premium */
+        .nav-tabs {
+            display: flex; background-color: rgba(241, 245, 249, 0.8); padding: 0.35rem; border-radius: 1rem;
+            overflow-x: auto; margin: 1.5rem 2.5rem; scrollbar-width: none; border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .tab {
+            padding: 0.6rem 1.5rem; cursor: pointer; border-radius: 0.75rem;
+            font-size: 0.85rem; font-weight: 700; color: var(--text-muted); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; position: relative;
+        }
+        .tab:hover { color: var(--primary); }
+        .tab.active { background-color: white; box-shadow: var(--shadow-sm); color: var(--accent); }
+
+        /* ===== TABLA FLOTANTE PREMIUM ===== */
+        .table-wrapper { padding: 0 2.5rem 2.5rem; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0 0.85rem; }
+        .data-table th { 
+            padding: 0.5rem 1.5rem 1rem; text-align: left; font-size: 0.7rem; 
+            font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; 
+        }
+        .data-table td { 
+            padding: 1.25rem 1.5rem; background-color: var(--card-solid); vertical-align: middle; 
+            border-top: 1px solid transparent; border-bottom: 1px solid transparent;
+        }
+        .data-table tr td:first-child { border-top-left-radius: 1rem; border-bottom-left-radius: 1rem; border-left: 1px solid transparent; }
+        .data-table tr td:last-child { border-top-right-radius: 1rem; border-bottom-right-radius: 1rem; border-right: 1px solid transparent; }
+        
+        .data-table tr { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .data-table tr:hover { 
+            transform: translateY(-3px) scale(1.005); 
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08); 
+            z-index: 10; position: relative;
+        }
+        .data-table tr:hover td { border-color: rgba(226, 232, 240, 0.8); }
+
+        /* Badges Vibrantes */
+        .status-badge {
+            padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 800; 
+            text-transform: uppercase; color: white; display: inline-flex; align-items: center; justify-content: center;
+            letter-spacing: 0.05em; min-width: 100px;
+        }
+        .status-badge.pre-ingreso { background-color: var(--status-preingreso); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+        .status-badge.pendiente { background-color: var(--status-pendiente); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        .status-badge.despacho { background-color: var(--status-despacho); box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3); }
+        .status-badge.rechazado { background-color: var(--status-rechazado); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+        .status-badge.finalizado { background-color: var(--status-finalizado); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+
+        /* ===== VISTA DETALLES PREMIUM (SCREEN SWAP) ===== */
+        #details-view { display: none; padding: 0; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .view-card {
+            background-color: var(--card-solid); border-radius: 1.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: var(--shadow-lg);
+            max-width: 650px; width: 100%; margin: 0 auto; position: relative; overflow: hidden;
+        }
+
+        /* Banner superior en Detalle */
+        .profile-banner {
+            height: 120px; width: 100%; position: absolute; top: 0; left: 0;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            z-index: 0;
+        }
+
+        .view-card-close {
+            position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(255,255,255,0.9); border: none;
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; cursor: pointer; color: var(--primary); transition: all 0.2s; z-index: 10;
+            box-shadow: var(--shadow-sm);
+        }
+        .view-card-close:hover { background: #fff; transform: scale(1.1); box-shadow: var(--shadow-md); color: var(--accent); }
+
+        .profile-header { text-align: center; margin-bottom: 1.5rem; padding: 2rem 2rem 1.5rem; position: relative; z-index: 1; border-bottom: 1px solid #f1f5f9; }
+        .profile-header img { 
+            width: 6rem; height: 6rem; border-radius: 50%; border: 4px solid #fff; 
+            box-shadow: var(--shadow-md); margin: 0 auto 1rem; background: #fff; object-fit: cover;
+        }
+        .profile-role { font-size: 0.7rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.5rem; }
+        .profile-name { font-size: 1.5rem; font-weight: 900; color: var(--primary); letter-spacing: -0.02em; line-height: 1.2; }
+
+        .view-card-body { padding: 0 2rem 2.5rem; position: relative; z-index: 1; }
+
+        /* Grid info en tarjeta */
+        .info-list { display: flex; flex-direction: column; gap: 1rem; }
+        .info-item-box {
+            display: flex; align-items: center; padding: 1rem; background: #fff;
+            border-radius: 1rem; border: 1px solid #e2e8f0; gap: 1rem; box-shadow: var(--shadow-xs);
+            transition: all 0.2s;
+        }
+        .info-item-box:hover { box-shadow: var(--shadow-sm); border-color: #cbd5e1; transform: translateY(-1px); }
+        
+        .info-icon-circle {
+            width: 40px; height: 40px; border-radius: 12px; background: #eff6ff;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            color: var(--accent); font-size: 1.1rem;
+        }
+        
+        .info-content { display: flex; flex-direction: column; flex: 1; }
+        .info-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.1rem; }
+        .info-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+        .info-value.highlight { font-size: 1.15rem; color: var(--primary); letter-spacing: -0.01em; }
+
+        .info-grid-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* TIMELINE PREMIUM */
+        .modal-timeline-wrapper { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #f1f5f9; }
+        .modal-timeline-title { font-size: 0.9rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 1.5rem; text-align: center; letter-spacing: 0.05em; }
+        
+        .timeline-container { position: relative; width: 100%; padding: 10px 0 10px 20px; display: flex; flex-direction: column; align-items: flex-start; }
+        .timeline-container::before { content: ''; position: absolute; top: 0; left: 42px; bottom: 0; width: 2px; background-color: #e2e8f0; z-index: 0; }
+        .progress-line { position: absolute; top: 0; left: 42px; width: 2px; background-color: var(--accent); z-index: 1; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); height: 0%; box-shadow: 0 0 10px var(--accent); }
+        
+        .step-node {
+            position: relative; z-index: 10; width: 44px; height: 44px; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center; font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: grayscale(100%); opacity: 0.4; margin: 15px 0; background: white; border: 2px solid #e2e8f0;
+        }
+        .step-node.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); border-color: transparent; }
+        
+        .step-1.active { background-color: #e0f2fe; color: var(--status-preingreso); box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4); }
+        .step-2.active { background-color: #fffbe6; color: var(--status-pendiente); box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4); }
+        .step-3.active { background-color: #f3e8ff; color: var(--status-despacho); box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4); }
+        .step-4.active { background-color: #fee2e2; color: var(--status-rechazado); box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4); }
+        .step-5.active { background-color: #dcfce7; color: var(--status-finalizado); box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4); }
+        
+        .step-label { position: absolute; left: 65px; width: max-content; text-align: left; color: #94a3b8; top: 50%; transform: translateY(-50%); transition: all 0.3s; }
+        .step-label .title { display: block; font-size: 0.95rem; font-weight: 600; }
+        .step-label .subtitle { display: block; font-size: 0.75rem; font-weight: 500; }
+        
+        .step-node.active .step-label .title { font-weight: 800; color: var(--primary); }
+        .step-node.active .step-label .subtitle { color: var(--text-muted); }
+
+        /* IFRAME MODAL */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(10px);
+            display: none; align-items: center; justify-content: center; z-index: 2000; padding: 1.5rem;
+        }
+        .modal-overlay.is-open { display: flex; animation: fadeIn 0.2s ease-in-out; }
+        .iframe-card {
+            background: white; border-radius: 1.5rem; width: 100%; max-width: 900px; height: 85vh;
+            display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .iframe-header {
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex;
+            justify-content: space-between; align-items: center; background: var(--card-solid); color: var(--primary);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000;
+        }
+        .spinner { width: 48px; height: 48px; border: 4px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            body { padding: 0.5rem; }
+            .bg-orb { display: none; } /* Mejor rendimiento en móvil */
+            .app-container { border-radius: 1rem; }
+            #main-view { border-radius: 1rem; }
+            .header { padding: 1.5rem 1.5rem 1rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .search-filter-group { min-width: 100%; max-width: 100%; }
+            .actions-group { justify-content: space-between; }
+            .actions-group > div, .actions-group > button { flex: 1; min-width: calc(50% - 0.5rem); }
+            
+            .nav-tabs { margin: 1rem 1.5rem; }
+            .table-wrapper { padding: 0 1rem 1rem; }
+            .data-table th, .data-table td { padding: 1rem; }
+            .view-card { border-radius: 1rem; padding: 0; }
+            #details-view { padding: 0; }
+            .info-grid-compact { grid-template-columns: 1fr; }
+            .profile-header { padding: 2rem 1.5rem 1.5rem; }
+            .view-card-body { padding: 0 1.5rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ORBES DE LUZ FONDO -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <!-- OVERLAY CARGA -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem;">Conectando al Servidor...</p>
+    </div>
+
+    <div class="app-container">
+
+        <!-- ================= PANTALLA PRINCIPAL (DASHBOARD) ================= -->
+        <div id="main-view">
+            <header class="header">
+                <h1 class="header-title">
+                    <div class="header-title-icon">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    Dashboard de Ventas
+                </h1>
+
+                <div class="controls">
+                    <!-- Búsqueda y Filtro de Marca -->
+                    <div class="search-filter-group">
+                        <i class="fa-solid fa-magnifying-glass" style="color: var(--accent); margin-left: 1.25rem;"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Buscar cliente, RUT o ID...">
+                        <div class="separator"></div>
+                        <div class="relative-container">
+                            <button id="brandFilterBtn" class="action-btn" style="border:none; box-shadow:none; padding: 0.75rem 1rem;">
+                                <span id="brandFilterText">Operador</span>
+                                <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; margin-left: 0.25rem; color: #94a3b8;"></i>
+                            </button>
+                            <div id="brandDropdown" class="dropdown-menu"></div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción Múltiples -->
+                    <div class="actions-group">
+                        <div class="relative-container">
+                            <button id="conditionsBtn" class="action-btn">
+                                <i class="fa-solid fa-file-signature" style="color: var(--accent);"></i> <span class="btn-text">Condiciones</span>
+                            </button>
+                            <div id="conditionsDropdown" class="dropdown-menu"></div>
+                        </div>
+
+                        <div class="relative-container">
+                            <button id="notificationsBtn" class="action-btn">
+                                <div style="position:relative; display:flex;">
+                                    <i class="fa-regular fa-bell" style="font-size: 1.1rem; color: var(--text-muted);"></i>
+                                    <div class="notification-badge" id="notifBadge"></div>
+                                </div>
+                            </button>
+                            <div id="notificationsDropdown" class="dropdown-menu" style="right: 0; width: 320px;">
+                                <div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">No hay notificaciones nuevas.</div>
+                            </div>
+                        </div>
+
+                        <div class="relative-container">
+                            <button id="moreBtn" class="action-btn">
+                                <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-muted);"></i> <span class="btn-text">Más</span>
+                            </button>
+                            <div id="moreDropdown" class="dropdown-menu"></div>
+                        </div>
+
+                        <button class="action-btn" id="exportBtn" title="Exportar a Excel">
+                            <i class="fa-solid fa-file-excel" style="color: #10b981;"></i> <span class="btn-text">Excel</span>
+                        </button>
+                        <button class="action-btn primary" id="newSaleBtn">
+                            <i class="fa-solid fa-plus"></i> Nueva Venta
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="nav-tabs" id="stateTabs"></div>
+
+            <main class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Operador</th>
+                            <th>#ID / Fecha</th>
+                            <th>Cliente</th>
+                            <th>Ejecutivo</th>
+                            <th>Estado</th>
+                            <th style="text-align:right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </main>
+        </div>
+
+        <!-- ================= PANTALLA DETALLES (SCREEN SWAP) ================= -->
+        <div id="details-view">
+            <div class="view-card">
+                <div class="profile-banner"></div>
+                <button class="view-card-close" onclick="closeDetails()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <div class="profile-header">
+                    <img id="modal-vendedor-img" src="https://placehold.co/100x100/EFEFEF/333333?text=?" alt="Avatar">
+                    <div class="profile-role">Ejecutivo de Cuenta</div>
+                    <div class="profile-name" id="modal-vendedor-nombre"></div>
+                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 0.25rem;" id="modal-vendedor-rut"></div>
+                </div>
+
+                <div class="view-card-body">
+                    <div class="info-list">
+                        <div class="info-item-box">
+                            <div class="info-icon-circle"><i class="fa-solid fa-user"></i></div>
+                            <div class="info-content">
+                                <span class="info-label">Cliente / Titular</span>
+                                <span class="info-value highlight" id="modal-cliente-nombre"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-grid-compact">
+                            <div class="info-item-box">
+                                <div class="info-icon-circle" style="background:#fefce8; color:#d97706;"><i class="fa-solid fa-id-card"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">RUT</span>
+                                    <span class="info-value" id="modal-cliente-rut"></span>
+                                </div>
+                            </div>
+                            <div class="info-item-box">
+                                <div class="info-icon-circle" style="background:#ecfdf5; color:#10b981;"><i class="fa-solid fa-phone"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Teléfono</span>
+                                    <span class="info-value" id="modal-cliente-tel"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-item-box">
+                            <div class="info-icon-circle" style="background:#fef2f2; color:#ef4444;"><i class="fa-solid fa-location-dot"></i></div>
+                            <div class="info-content">
+                                <span class="info-label">Dirección / Comuna</span>
+                                <span class="info-value" id="modal-cliente-comuna"></span>
+                            </div>
+                        </div>
+
+                        <div class="info-item-box" style="border: 2px dashed var(--accent); background: #f8fafc;">
+                            <div class="info-icon-circle" style="background: white; box-shadow: var(--shadow-sm);"><i class="fa-solid fa-file-contract"></i></div>
+                            <div class="info-content">
+                                <span class="info-label" style="color: var(--accent);">Plan Contratado / Productos</span>
+                                <span class="info-value" id="modal-productos" style="color: var(--primary);"></span>
+                            </div>
+                        </div>
+
+                        <div id="modal-obs-container" style="display:none; margin-top: 0.5rem; padding: 1.25rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 1rem;">
+                            <div style="font-size: 0.75rem; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                                <i class="fa-solid fa-comment-dots" style="font-size: 1rem;"></i> Notas de Backoffice
+                            </div>
+                            <div id="modal-obs-text" style="font-size: 0.9rem; color: #92400e; font-weight: 600; line-height: 1.5;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline de Estados -->
+                    <div class="modal-timeline-wrapper">
+                        <h4 class="modal-timeline-title">Estatus de Gestión</h4>
+                        
+                        <div class="timeline-container">
+                            <div class="progress-line" id="modal-progressLine"></div>
+
+                            <div class="step-node step-1" id="node-step-1">
+                                <i class="fa-solid fa-file-import"></i>
+                                <div class="step-label">
+                                    <span class="title">Pre-ingreso</span>
+                                    <span class="subtitle">Registro inicial</span>
+                                </div>
+                            </div>
+
+                            <div class="step-node step-2" id="node-step-2">
+                                <i class="fa-solid fa-clock"></i>
+                                <div class="step-label">
+                                    <span class="title">Pendiente</span>
+                                    <span class="subtitle">En revisión</span>
+                                </div>
+                            </div>
+
+                            <div class="step-node step-3" id="node-step-3">
+                                <i class="fa-solid fa-truck-fast"></i>
+                                <div class="step-label">
+                                    <span class="title">Despacho</span>
+                                    <span class="subtitle">En ruta / Instalación</span>
+                                </div>
+                            </div>
+
+                            <div class="step-node step-4" id="node-step-4" style="display: none;">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                                <div class="step-label">
+                                    <span class="title">Rechazado</span>
+                                    <span class="subtitle">Venta caída</span>
+                                </div>
+                            </div>
+
+                            <div class="step-node step-5" id="node-step-5">
+                                <i class="fa-solid fa-check-double"></i>
+                                <div class="step-label">
+                                    <span class="title">Finalizado</span>
+                                    <span class="subtitle">Proceso completado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- IFRAME MODAL EXTERNO -->
+    <div class="modal-overlay" id="iframeModalOverlay">
+        <div class="iframe-card">
+            <div class="iframe-header">
+                <h3 style="font-size:1.25rem; font-weight:800; margin:0;" id="iframeModalTitle">Herramienta</h3>
+                <button onclick="closeIframe()" style="background:#f1f5f9; border:none; color:var(--text-main); width:36px; height:36px; border-radius:50%; font-size:1.25rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <iframe id="iframeContent" style="flex:1; width:100%; border:none; background:#f8fafc;" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Utilidad Tildes
+        function quitarTildes(texto) {
+            return texto ? texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
+        }
+
+        // ================= API Y CONFIG =================
+        const API_URL = "https://script.google.com/macros/s/AKfycbzUn0OHXXwbUX9QHXh2E0YUE9BYhKPU2psJ_lQ-OwDAfu7Cznxu01CIu9XgMA5GGdVI/exec";
+        const CONFIG = { COLORS: { WOM: '#E6007A', Entel: '#005CFF', Movistar: '#0b9b68', Claro: '#da291c' } };
+
+        const OPCIONES_CONDICIONES = [
+            { nombre: 'Políticas de Despacho', url: 'https://es.wikipedia.org/wiki/Log%C3%ADstica' },
+            { nombre: 'Manual de Producto', url: 'https://es.wikipedia.org/wiki/Manual_de_usuario' }
+        ];
+
+        const OPCIONES_MAS = [
+            { nombre: 'Reporte Avanzado', url: 'https://es.wikipedia.org/wiki/Business_intelligence' },
+            { nombre: 'Soporte / Ayuda', url: 'https://es.wikipedia.org/wiki/Servicio_de_atenci%C3%B3n_al_cliente' }
+        ];
+
+        let allSalesData = [];
+        let filteredSales = [];
+        let filtroEstadoActual = 'Todos';
+        let filtroMarcaActual = 'all';
+        let usuarioConectado = null; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSession();
+            setupEventListeners();
+            cargarDatosVentas();
+        });
+
+        // ================= SESIÓN =================
+        function checkSession() {
+            try {
+                const saved = localStorage.getItem('freework_user');
+                if (saved) {
+                    usuarioConectado = JSON.parse(saved);
+                } else {
+                    console.warn("Modo local/editor. Mostrando todos los datos.");
+                    usuarioConectado = { name: "Admin", role: "admin" };
+                }
+            } catch (e) {
+                usuarioConectado = { name: "Admin", role: "admin" };
+            }
+        }
+
+        // ================= CARGA DE DATOS =================
+        async function cargarDatosVentas() {
+            showLoading(true);
+            try {
+                const res = await fetch(`${API_URL}?action=ventas`);
+                const data = await res.json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    const datosLimpios = data.slice(1); // Quitar headers
+                    
+                    if (usuarioConectado && usuarioConectado.role !== 'admin') {
+                        const nombreNorm = quitarTildes(usuarioConectado.name || '');
+                        allSalesData = datosLimpios.filter(row => {
+                            const ejec = quitarTildes(row[12] || ''); 
+                            return ejec.includes(nombreNorm) || nombreNorm.includes(ejec);
+                        });
+                    } else {
+                        allSalesData = datosLimpios;
+                    }
+                } else {
+                    allSalesData = [];
+                }
+                
+                renderFilters();
+                applyFilters();
+
+            } catch (error) {
+                console.error("Error al cargar:", error);
+                document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 4rem; color: #ef4444; font-weight:700;">Error de conexión con la base de datos.</td></tr>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ================= FILTROS Y EVENTOS =================
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            
+            // Dropdowns Principales
+            setupDropdown('brandFilterBtn', 'brandDropdown');
+            setupDropdown('conditionsBtn', 'conditionsDropdown');
+            setupDropdown('notificationsBtn', 'notificationsDropdown');
+            setupDropdown('moreBtn', 'moreDropdown');
+
+            document.getElementById('exportBtn').addEventListener('click', exportToExcel);
+            
+            document.getElementById('newSaleBtn').addEventListener('click', () => {
+                openIframe('marcas.html', 'Ingresar Nueva Venta');
+            });
+
+            window.addEventListener('click', () => {
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('is-open'));
+            });
+        }
+
+        function setupDropdown(btnId, dropId) {
+            document.getElementById(btnId).addEventListener('click', e => {
+                e.stopPropagation();
+                const drop = document.getElementById(dropId);
+                const wasOpen = drop.classList.contains('is-open');
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('is-open'));
+                if(!wasOpen) drop.classList.add('is-open');
+            });
+        }
+
+        function renderFilters() {
+            // Marcas
+            const brands = ['Todas', ...new Set(allSalesData.map(r => r[1]).filter(Boolean))];
+            document.getElementById('brandDropdown').innerHTML = brands.map(b => `<button class="dropdown-item" onclick="selectBrand('${b}')">${b}</button>`).join('');
+            
+            // Menús Fijos
+            document.getElementById('conditionsDropdown').innerHTML = OPCIONES_CONDICIONES.map(c => `<button class="dropdown-item" onclick="openIframe('${c.url}', '${c.nombre}')">${c.nombre}</button>`).join('');
+            document.getElementById('moreDropdown').innerHTML = OPCIONES_MAS.map(c => `<button class="dropdown-item" onclick="openIframe('${c.url}', '${c.nombre}')">${c.nombre}</button>`).join('');
+
+            // Estados Tabs
+            const states = ['Todos', ...new Set(allSalesData.map(r => r[14]).filter(Boolean))];
+            document.getElementById('stateTabs').innerHTML = states.map(s => `<div class="tab ${s === filtroEstadoActual ? 'active' : ''}" onclick="selectState('${s}')">${s}</div>`).join('');
+        }
+
+        function selectBrand(brand) {
+            filtroMarcaActual = brand === 'Todas' ? 'all' : brand;
+            document.getElementById('brandFilterText').innerText = brand === 'Todas' ? 'Operador' : brand;
+            applyFilters();
+        }
+
+        function selectState(state) {
+            filtroEstadoActual = state;
+            renderFilters();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredSales = allSalesData.filter(row => {
+                const rowText = row.join(' ').toLowerCase();
+                const matchesSearch = rowText.includes(searchTerm);
+                const matchesBrand = filtroMarcaActual === 'all' || row[1] === filtroMarcaActual;
+                const matchesState = filtroEstadoActual === 'Todos' || row[14] === filtroEstadoActual;
+                return matchesSearch && matchesBrand && matchesState;
+            });
+            renderTable();
+        }
+
+        // ================= RENDER TABLA =================
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            if(filteredSales.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:4rem; color:var(--text-muted); font-weight:600;">No hay ventas registradas.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredSales.map((row, i) => {
+                const id = row[0] ? row[0].toString().replace(/\D/g,'').slice(-6) : 'N/A';
+                const fecha = row[0] ? row[0].toString().split(',')[0] : '';
+                const marca = row[1] || 'Sin Marca';
+                const cliente = row[2] || '';
+                const rut = row[3] || '';
+                const ejecutivo = row[12] || 'Sin Asignar';
+                const estado = row[14] || 'Pendiente';
+                
+                const statusCls = estado.toLowerCase().replace(' ', '-');
+                const brandColor = CONFIG.COLORS[marca] || '#64748b';
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:0.6rem;">
+                                <div style="width:14px; height:14px; border-radius:50%; background:${brandColor}; box-shadow:0 0 0 3px rgba(0,0,0,0.03);"></div>
+                                <span style="font-weight:800; font-size:0.85rem; color:var(--primary);">${marca}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 800; color: var(--accent); font-size:0.9rem;">#${id}</div>
+                            <div style="font-size:0.7rem; color: var(--text-muted); font-weight:600;"><i class="fa-regular fa-calendar" style="margin-right:2px;"></i> ${fecha}</div>
+                        </td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                                <span style="font-weight:800; font-size:0.9rem; color:var(--primary);">${cliente}</span>
+                                <span style="font-size:0.7rem; color:var(--text-muted); font-family:monospace; font-weight:600;"><i class="fa-regular fa-id-card" style="color:var(--accent); margin-right:2px;"></i> ${rut}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 800; font-size: 0.85rem; color:var(--primary-light);"><i class="fa-solid fa-headset" style="color:var(--text-muted); margin-right:4px;"></i> ${ejecutivo}</div>
+                        </td>
+                        <td><span class="status-badge ${statusCls}">${estado}</span></td>
+                        <td style="text-align:right">
+                            <button class="action-btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;" onclick="openDetails(${i})">
+                                <i class="fa-regular fa-eye"></i> Ver Detalle
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ================= VISTA DETALLES & TIMELINE =================
+        window.openDetails = function(index) {
+            const row = filteredSales[index];
+            const id = row[0] ? row[0].toString().replace(/\D/g,'').slice(-6) : 'N/A';
+            const marca = row[1] || '';
+            const cliente = row[2] || '';
+            const rut = row[3] || '';
+            const tel = row[5] || '';
+            const dir = row[7] || '';
+            const comuna = row[8] || '';
+            const plan = row[10] || 'Sin información de productos';
+            const obs = row[11] || '';
+            const ejecutivo = row[12] || 'Sin Asignar';
+            const supervisor = row[13] || 'Sin Asignar';
+            const estado = row[14] || 'Pendiente';
+
+            // Llenar datos
+            document.getElementById('modal-vendedor-nombre').innerText = ejecutivo;
+            document.getElementById('modal-vendedor-rut').innerHTML = `<i class="fa-solid fa-user-tie"></i> Supervisor: ${supervisor}`;
+            document.getElementById('modal-vendedor-img').src = `https://ui-avatars.com/api/?name=${ejecutivo}&background=4f46e5&color=fff&size=128&font-weight=bold`;
+            
+            document.getElementById('modal-cliente-nombre').innerText = cliente;
+            document.getElementById('modal-cliente-rut').innerText = rut;
+            document.getElementById('modal-cliente-tel').innerText = tel;
+            document.getElementById('modal-cliente-comuna').innerText = `${dir}, ${comuna}`;
+            
+            document.getElementById('modal-productos').innerText = plan;
+
+            const obsContainer = document.getElementById('modal-obs-container');
+            if(obs.trim() !== '') {
+                document.getElementById('modal-obs-text').innerText = obs;
+                obsContainer.style.display = 'block';
+            } else {
+                obsContainer.style.display = 'none';
+            }
+
+            // Timeline
+            updateModalTimeline(estado);
+
+            // Screen Swap
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('details-view').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.closeDetails = function() {
+            document.getElementById('details-view').style.display = 'none';
+            document.getElementById('main-view').style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateModalTimeline(estado) {
+            let currentStep = 1;
+            const est = estado.toLowerCase().trim();
+            
+            if (est.includes('pre') || est.includes('ingreso')) currentStep = 1;
+            else if (est.includes('pendiente') || est.includes('validación')) currentStep = 2;
+            else if (est.includes('despacho') || est.includes('instalación')) currentStep = 3;
+            else if (est.includes('rechazado') || est.includes('caida')) currentStep = 4;
+            else if (est.includes('finalizado') || est.includes('ok')) currentStep = 5;
+
+            const nodeRechazo = document.getElementById('node-step-4');
+            const nodeFinalizado = document.getElementById('node-step-5');
+            
+            if (currentStep === 4) {
+                nodeRechazo.style.display = 'flex';
+                nodeFinalizado.style.display = 'none';
+            } else {
+                nodeRechazo.style.display = 'none';
+                nodeFinalizado.style.display = 'flex';
+            }
+
+            const totalSteps = 4; 
+            const progressLine = document.getElementById('modal-progressLine');
+
+            for (let i = 1; i <= 5; i++) {
+                const node = document.getElementById(`node-step-${i}`);
+                if (!node) continue;
+                if (currentStep === 4) {
+                    if(i <= 4) node.classList.add('active'); else node.classList.remove('active');
+                } else {
+                    if (i <= currentStep && i !== 4) node.classList.add('active'); else node.classList.remove('active');
+                }
+            }
+
+            setTimeout(() => {
+                let calcStep = currentStep;
+                if (currentStep === 4 || currentStep === 5) calcStep = 4; 
+                progressLine.style.height = calcStep > 1 ? `${((calcStep - 1) / (totalSteps-1)) * 100}%` : '0%';
+            }, 50); 
+        }
+
+        // ================= UTILIDADES =================
+        function openIframe(url, title) {
+            document.getElementById('iframeModalTitle').innerText = title;
+            document.getElementById('iframeContent').src = url;
+            document.getElementById('iframeModalOverlay').classList.add('is-open');
+        }
+        
+        function closeIframe() {
+            document.getElementById('iframeModalOverlay').classList.remove('is-open');
+            document.getElementById('iframeContent').src = 'about:blank';
+        }
+
+        function showLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
+        
+        function exportToExcel() {
+            const ws = XLSX.utils.json_to_sheet(filteredSales);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+            XLSX.writeFile(wb, `Reporte_Ventas_${new Date().toLocaleDateString()}.xlsx`);
+        }
+    </script>
+</body>
+</html>
