@@ -649,3 +649,281 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Factibilidad Freework | Elite</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (Para compilar JSX en el navegador) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Suavizado de fuentes y scrollbar premium */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-transparent m-0 p-0 overflow-hidden">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    // ===================================================================
+    // 1. CONFIGURACIÓN API (URL ACTUALIZADA)
+    // ===================================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxI_zmAoT3Y6FD7Qfg9hUYp2SYuVNr6kvQgDVROngwQsm_qLtwEDJkHvQLeXE7LwJw5/exec"; 
+
+    const api = {
+      get: async (action) => {
+        try {
+          const res = await fetch(`${SCRIPT_URL}?action=${action}`);
+          return await res.json();
+        } catch (e) { return []; }
+      },
+      post: async (action, data) => {
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST', body: JSON.stringify({ action, data }), headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+          return await res.json();
+        } catch (e) { return { success: false }; }
+      }
+    };
+
+    // ===================================================================
+    // 2. COMPONENTE INTERFAZ DEL CLIENTE
+    // ===================================================================
+    function ClientWebsite({ allMessages, allChats }) {
+      const [isOpen, setIsOpen] = useState(false);
+      const [newMessage, setNewMessage] = useState('');
+      
+      // Helper: Obtiene el usuario de múltiples fuentes para garantizar el salto de login
+      const getEliteUser = () => {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const pName = params.get('nombre') || params.get('name');
+          const pId = params.get('id') || params.get('email');
+          if (pName) return { name: pName, id: pId };
+
+          const userStr = localStorage.getItem('freework_user');
+          if (userStr) {
+             const u = JSON.parse(userStr);
+             return { name: u.name || u.nombre, id: u.id || u.email || u.id_usuario };
+          }
+          
+          const fallbackName = localStorage.getItem('freework_user_name');
+          if (fallbackName) return { name: fallbackName, id: localStorage.getItem('freework_user_id') };
+        } catch (e) {}
+        return null;
+      };
+
+      const [clientName, setClientName] = useState(() => getEliteUser()?.name || '');
+      const [isRegistered, setIsRegistered] = useState(() => !!getEliteUser()?.name);
+
+      // Vigilante dinámico: si el usuario inicia sesión en la app padre, el chat se entera
+      useEffect(() => {
+        const interval = setInterval(() => {
+          if (!isRegistered) {
+            const user = getEliteUser();
+            if (user?.name) {
+              setClientName(user.name);
+              setIsRegistered(true);
+            }
+          }
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [isRegistered]);
+
+      const [hasUnread, setHasUnread] = useState(false);
+      const messagesEndRef = useRef(null);
+      const prevMsgCount = useRef(0);
+
+      const [clientId] = useState(() => {
+        const user = getEliteUser();
+        let id = user?.id || localStorage.getItem('chat_client_id');
+        if (!id) { 
+          id = 'cliente_' + Math.floor(Math.random() * 1000000); 
+          localStorage.setItem('chat_client_id', id); 
+        }
+        return id;
+      });
+
+      const myMessages = useMemo(() => allMessages.filter(msg => msg.conversationId === clientId).sort((a, b) => a.timestamp - b.timestamp), [allMessages, clientId]);
+
+      useEffect(() => {
+        if (myMessages.length > prevMsgCount.current) {
+          if (myMessages[myMessages.length - 1].sender !== 'client' && !isOpen) setHasUnread(true);
+        }
+        prevMsgCount.current = myMessages.length;
+      }, [myMessages, isOpen]);
+
+      useEffect(() => { if (isOpen) setHasUnread(false); }, [isOpen]);
+      useEffect(() => { if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' }); }, [myMessages, isOpen]);
+
+      const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!newMessage.trim() || !clientName) return;
+        const text = newMessage.trim(); setNewMessage(''); 
+        await api.post('sendMessage', { chatId: clientId, senderRole: 'client', senderName: clientName, text });
+      };
+
+      const myChatDoc = allChats.find(c => c.id === clientId);
+
+      return (
+        <div className="h-screen w-full relative overflow-hidden flex flex-col font-sans pointer-events-none">
+          
+          {/* BOTÓN FLOTANTE DESPLEGABLE */}
+          {!isOpen && (
+            <div className="absolute bottom-6 right-6 z-50 flex flex-col items-end select-none pointer-events-auto">
+              <button 
+                onClick={() => setIsOpen(true)} 
+                className="group flex items-center bg-gradient-to-r from-[#b233ff] to-[#ff4df8] text-white rounded-full shadow-[0_15px_35px_rgba(178,51,255,0.3)] transition-all duration-500 hover:pr-8 hover:scale-105 outline-none relative overflow-hidden" 
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                {hasUnread && (
+                  <span className="absolute top-2 right-2 bg-rose-500 text-white w-5 h-5 flex items-center justify-center rounded-full animate-bounce shadow-lg border-2 border-white z-50">
+                    <i className="fa-solid fa-bell text-[9px]"></i>
+                  </span>
+                )}
+                
+                <div className="w-16 h-16 flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-location-dot text-[26px] group-hover:scale-110 transition-transform duration-500"></i>
+                </div>
+
+                <div className="max-w-0 overflow-hidden opacity-0 group-hover:max-w-[220px] group-hover:opacity-100 transition-all duration-500 ease-in-out flex items-center whitespace-nowrap">
+                  <span className="font-black text-[11px] sm:text-xs uppercase tracking-[0.2em] pr-2 drop-shadow-md">
+                    Validar Factibilidad
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* VENTANA DEL CHAT */}
+          {isOpen && (
+            <div className="absolute bottom-6 right-6 w-[calc(100%-3rem)] sm:w-[380px] h-[550px] max-h-[85vh] bg-white rounded-[2rem] shadow-2xl flex flex-col overflow-hidden z-50 border border-slate-200 animate-slide-up pointer-events-auto">
+              
+              <div className="bg-slate-900 p-6 flex justify-between items-center relative shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white border border-white/10"><i className="fa-solid fa-location-dot text-lg"></i></div>
+                  <div>
+                    <h3 className="font-black text-white text-base uppercase tracking-tight italic">Terminal BOT</h3>
+                    <p className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5">Sistema de Factibilidad</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark text-xl"></i></button>
+              </div>
+
+              {!isRegistered ? (
+                <div className="flex-1 p-10 bg-slate-50 flex flex-col justify-center items-center text-center">
+                  <div className="w-24 h-24 bg-white border border-slate-200 text-slate-300 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-sm shrink-0"><i className="fa-solid fa-fingerprint text-5xl"></i></div>
+                  <h4 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">Acceso Requerido</h4>
+                  <p className="text-xs text-slate-500 mb-8 font-medium leading-relaxed px-4">Por favor, identifícate para iniciar el escaneo de factibilidad técnica.</p>
+                  <input type="text" placeholder="Tu nombre completo" value={clientName} onChange={(e) => setClientName(e.target.value)} onKeyDown={(e) => { if(e.key === 'Enter' && clientName.trim()) setIsRegistered(true); }} className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm mb-4 outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all font-semibold" />
+                  <button onClick={() => { if(clientName.trim()) setIsRegistered(true); }} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 active:scale-95 transition-all">Inicializar Escaneo</button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 flex flex-col gap-6">
+                    <div className="flex flex-col items-start">
+                      <div className="px-5 py-4 rounded-3xl rounded-tl-sm bg-white border border-slate-200 text-slate-700 shadow-sm text-sm">
+                        <p className="font-black text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2 mb-3">CONEXIÓN ESTABLECIDA</p>
+                        <p className="font-bold text-slate-900 mb-1">HOLA, {clientName.toUpperCase()}</p>
+                        <p className="text-slate-500 leading-relaxed">Envía la dirección para validar la cobertura de fibra óptica e infraestructura.</p>
+                      </div>
+                    </div>
+
+                    {myMessages.map((msg) => {
+                      const isMe = msg.sender === 'client';
+                      const isSystem = msg.senderName === 'SISTEMA';
+                      if (isSystem) return (
+                        <div key={msg.id} className="flex justify-center my-2">
+                          <div className="bg-slate-900 text-emerald-400 font-mono text-[9px] px-4 py-2.5 rounded-xl border border-slate-700 text-center uppercase tracking-[0.1em] shadow-lg">
+                            {msg.text}
+                          </div>
+                        </div>
+                      );
+                      return (
+                        <div key={msg.id} className={`flex flex-col max-w-[85%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}>
+                          <div className={`px-4 py-3 rounded-2xl text-[13px] shadow-sm font-medium leading-relaxed ${isMe ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'}`}>
+                            {msg.text}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={messagesEndRef} className="h-2" />
+                  </div>
+                  
+                  <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-3 shrink-0">
+                    <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe la dirección aquí..." className="flex-1 bg-slate-100 border-transparent rounded-2xl px-5 py-4 text-sm focus:bg-white focus:ring-4 focus:ring-slate-900/5 outline-none transition-all font-medium" />
+                    <button type="submit" disabled={!newMessage.trim()} className="bg-slate-900 text-white w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-slate-800 disabled:opacity-20 flex-shrink-0 shadow-lg active:scale-90 transition-all">
+                      <i className="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ===================================================================
+    // 3. COORDINADOR DE DATOS
+    // ===================================================================
+    function App() {
+      const [allMessages, setAllMessages] = useState([]);
+      const [allChats, setAllChats] = useState([]);
+
+      useEffect(() => {
+        let isMounted = true;
+        const loadData = async () => {
+          const [chatsRaw, msgsRaw] = await Promise.all([ api.get('getChats'), api.get('getMessages') ]);
+          if (isMounted) {
+            if(chatsRaw && Array.isArray(chatsRaw)) setAllChats(chatsRaw.map(c => ({ id: c.CHAT_ID, clientName: c.NOMBRE_CLIENTE, status: c.ESTADO, agentName: c.AGENTE_NOMBRE })));
+            if(msgsRaw && Array.isArray(msgsRaw)) setAllMessages(msgsRaw.map(m => ({ id: m.MENSAJE_ID, conversationId: m.CHAT_ID, sender: m.ROL_EMISOR, text: m.TEXTO, timestamp: m.TIMESTAMP })));
+          }
+        };
+        loadData(); const interval = setInterval(loadData, 4000); return () => { isMounted = false; clearInterval(interval); };
+      }, []);
+
+      return <ClientWebsite allMessages={allMessages} allChats={allChats} />;
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
