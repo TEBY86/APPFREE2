@@ -1,0 +1,929 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Freework · Elite Premium Hub</title>
+    
+    <!-- Tailwind CSS y Fuentes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PRECARGA LOCAL AGRESIVA -->
+    <link rel="prefetch" href="hub.html" as="document">
+    <link rel="prefetch" href="marcas.html" as="document">
+    <link rel="prefetch" href="informe.html" as="document">
+    <link rel="prefetch" href="perfil.html" as="document">
+
+    <style>
+        /* ============================================================
+           1. VARIABLES GLOBALES PREMIUM
+           ============================================================ */
+        :root {
+            /* Menú Principal */
+            --glass-bg: rgba(8, 10, 15, 0.82);
+            --glass-border-top: rgba(255, 255, 255, 0.15);
+            --glass-border-bottom: rgba(255, 255, 255, 0.03);
+            --active-glow: #a855f7; 
+            --icon-default: #64748b;
+            --icon-active: #ffffff;
+            --font-primary: 'Inter', system-ui, sans-serif;
+            --spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Colores Originales Restaurados (Píldoras del Dock) */
+            --pill-h:      54px;
+            --pill-gap:    10px;
+            --pill-bg:     rgba(10, 8, 22, 0.93);
+            --pill-border: rgba(255, 255, 255, 0.08);
+            --pill-hover:  rgba(22, 16, 44, 0.97);
+            --active-a:    #4f46e5;
+            --active-b:    #9333ea;
+            --active-c:    #ec4899;
+            --text-dim:    rgba(255, 255, 255, 0.7);
+        }
+        
+        /* PROTECCIÓN ANTI-SELECCIÓN (Nivel App Nativa) */
+        html, body {
+            background: #000000 !important;
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            overflow: hidden; 
+            font-family: var(--font-primary);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none; /* Evita menú contextual en iOS */
+            -webkit-user-select: none;   /* Safari */
+            user-select: none;           /* Standard */
+        }
+
+        /* Permite escribir en inputs del asistente */
+        input, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
+
+        /* ============================================================
+           2. SISTEMA DE CAPAS Y CARGA (HUB PRINCIPAL)
+           ============================================================ */
+        #layers-container {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100dvh;
+            z-index: 10; overflow: hidden; background: #000000;
+        }
+
+       .web-layer {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%; display: block;
+            border: none; margin: 0; padding: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s var(--smooth-curve), transform 0.4s var(--smooth-curve);
+            transform: scale(0.98); background: #000000;
+        }
+        .web-layer.active { opacity: 1; transform: scale(1); pointer-events: auto; z-index: 20; }
+
+        #premium-loader {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 9998; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #premium-loader.active { opacity: 1; pointer-events: auto; }
+
+        .spinner-ring {
+            width: 44px; height: 44px; border: 3px solid rgba(255, 255, 255, 0.05);
+            border-top-color: var(--active-glow); border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* ============================================================
+           3. MENÚ HYPER-GLASS Y DOCK INTEGRADO
+           ============================================================ */
+        .menu-wrapper {
+            position: fixed; bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            left: 0; right: 0; display: flex; justify-content: center;
+            padding: 0 16px; z-index: 9999; pointer-events: none;
+        }
+
+        .nav-menu {
+            width: 100%; max-width: 440px; height: 76px; border-radius: 38px;
+            display: flex; align-items: center; justify-content: space-around;
+            padding: 0 8px; pointer-events: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(32px) saturate(200%); -webkit-backdrop-filter: blur(32px) saturate(200%);
+            border-top: 1px solid var(--glass-border-top); border-bottom: 1px solid var(--glass-border-bottom);
+            border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.95), 0 20px 40px -20px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 72px; height: 100%; cursor: pointer; transform: translateZ(0); will-change: transform;
+        }
+
+        .nav-item:active .icon-unit { transform: scale(0.85); opacity: 0.8; transition: all 0.1s ease; }
+
+        .nav-item .bg-glow {
+            position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%) scale(0.3); opacity: 0; transition: all 0.5s var(--spring-curve); pointer-events: none;
+        }
+
+        .nav-item .icon-unit {
+            position: relative; z-index: 5; color: var(--icon-default);
+            transition: color 0.3s ease, transform 0.5s var(--spring-curve);
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+        }
+
+        .nav-item .icon-unit svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+        .nav-item .label-text {
+            position: absolute; bottom: 12px; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase;
+            font-weight: 700; color: #ffffff; opacity: 0; transform: translateY(12px);
+            transition: opacity 0.3s ease, transform 0.4s var(--spring-curve); white-space: nowrap; pointer-events: none;
+        }
+
+        .nav-item .active-indicator {
+            position: absolute; bottom: 4px; width: 0px; height: 4px; border-radius: 4px;
+            background: #ffffff; opacity: 0; transition: width 0.4s var(--spring-curve), opacity 0.3s ease; box-shadow: 0 0 12px var(--active-glow);
+        }
+
+        /* Estados Activos del Menú */
+        .nav-item.is-active .bg-glow { opacity: 1; transform: translate(-50%, -50%) scale(1.1); top: calc(50% - 12px); }
+        .nav-item.is-active .icon-unit { transform: translateY(-12px); color: var(--icon-active); filter: drop-shadow(0 6px 10px rgba(168, 85, 247, 0.5)); }
+        .nav-item.is-active .label-text { opacity: 1; transform: translateY(0); font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .nav-item.is-active .active-indicator { width: 18px; opacity: 1; }
+
+        /* Estado Especial: Botón Dock (5º botón convertido en el Orbe de color) */
+        #dockTriggerBtn .icon-unit {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--active-a), var(--active-b), var(--active-c));
+            color: #ffffff;
+            box-shadow: 
+                0 16px 32px -8px rgba(168, 85, 247, 0.7), 
+                inset 0 -4px 10px rgba(0,0,0,0.2), 
+                inset 0 4px 10px rgba(255,255,255,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s var(--spring-curve);
+        }
+        
+        #dockTriggerBtn .icon-unit svg {
+            width: 24px;
+            height: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            transition: transform 0.4s var(--spring-curve);
+        }
+        
+        #dockTriggerBtn .bg-glow {
+            display: none; /* Ocultamos el brillo gris genérico porque el orbe ya brilla */
+        }
+        
+        #dockTriggerBtn.dock-open .icon-unit {
+            transform: scale(0.9);
+            box-shadow: 0 4px 12px -2px rgba(168, 85, 247, 0.5);
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        #dockTriggerBtn.dock-open .icon-unit svg {
+            transform: rotate(45deg);
+        }
+
+        /* ============================================================
+           4. COMPONENTES DEL DOCK EXPANDIBLE (PÍLDORAS ADAPTATIVAS)
+           ============================================================ */
+        .dock-container {
+            position: absolute;
+            bottom: calc(100% + 15px);
+            right: 9px; /* Centrado perfecto sobre el orbe de 72px */
+            display: flex; flex-direction: column; gap: var(--pill-gap);
+            align-items: flex-end; pointer-events: none; z-index: 10000;
+        }
+
+        .pill {
+            display: flex; align-items: center; flex-direction: row-reverse;
+            height: var(--pill-h); width: var(--pill-h); border-radius: 999px;
+            background: var(--pill-bg); border: 1px solid var(--pill-border);
+            box-shadow: 0 10px 28px -8px rgba(0,0,0,0.55); overflow: hidden; white-space: nowrap;
+            text-decoration: none; color: var(--text-dim); padding: 0 5px; opacity: 0;
+            transform: translateY(20px) scale(0.6); pointer-events: none; position: relative;
+            will-change: transform, opacity, width; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            transition: width .5s var(--spring-curve), background .3s ease, box-shadow .3s ease, color .3s ease, border-color .3s ease, transform .3s ease;
+        }
+
+        @keyframes pill-born {
+            0%  { opacity: 0; transform: translateY(20px) scale(0.6); filter: blur(4px); }
+            100%{ opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes pill-die {
+            0%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+            100%{ opacity: 0; transform: translateY(20px) scale(0.6); filter: blur(4px); }
+        }
+        
+        .pill.born  { animation: pill-born .5s var(--spring-curve) forwards; pointer-events: auto; }
+        .pill.dying { animation: pill-die .3s cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
+
+        .pill.active {
+            background: linear-gradient(135deg, var(--active-a), var(--active-b), var(--active-c));
+            color: #fff; border-color: transparent; 
+            box-shadow: 0 16px 32px -8px rgba(147, 51, 234, 0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        
+        /* Puntito indicador con centrado matemático perfecto */
+        .pill.active::after {
+            content: ''; position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.8); 
+            animation: dot-blink 2.5s ease-in-out infinite;
+        }
+        
+        @keyframes dot-blink { 
+            0%, 100% { opacity: 1; box-shadow: 0 0 12px rgba(255,255,255,0.8); } 
+            50% { opacity: 0.5; box-shadow: 0 0 4px rgba(255,255,255,0.4); } 
+        }
+
+        @media (hover: hover) {
+            .pill:hover:not(.active) {
+                background: var(--pill-hover); color: #fff;
+                transform: translateX(-4px) !important;
+                box-shadow: 0 12px 24px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.15);
+            }
+        }
+
+        .pill-icon {
+            width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; position: relative; z-index: 1;
+        }
+        .pill-icon svg { width: 20px; height: 20px; transition: transform .3s var(--spring-curve), filter .3s ease; stroke: currentColor; stroke-width: 2.2; fill: none;}
+        .pill.active .pill-icon svg { filter: drop-shadow(0 0 6px rgba(255,255,255,0.5)); color: white;}
+
+        /* Etiqueta adaptativa perfecta */
+        .pill-label {
+            font-weight: 500; font-size: 14px; letter-spacing: 0.01em; 
+            margin-right: 8px; padding-left: 22px; line-height: 1;
+            opacity: 0; transform: translateX(8px);
+            transition: opacity .4s var(--spring-curve) .05s, transform .4s var(--spring-curve) .05s;
+            pointer-events: none; color: inherit; flex-shrink: 0;
+        }
+        .pill.active .pill-label { opacity: 1; transform: translateX(0); }
+
+        /* ============================================================
+           5. MODALES (BOTTOM SHEET & IA)
+           ============================================================ */
+        .modal-backdrop {
+            position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            opacity: 0; pointer-events: none; transition: opacity .4s ease;
+        }
+        .modal-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+        .modal-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 99999; height: 88dvh;
+            background: rgba(15, 15, 22, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-radius: 32px 32px 0 0; border-top: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 -30px 60px -15px rgba(0,0,0,0.5), 0 -10px 30px -10px rgba(168, 85, 247, 0.2);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: translateY(100%); transition: transform .5s var(--spring-curve);
+        }
+        .modal-sheet.visible { transform: translateY(0); }
+
+        .modal-handle { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; }
+        .modal-handle-pill { width: 48px; height: 5px; border-radius: 99px; background: rgba(255,255,255,0.2); position: absolute; left: 50%; transform: translateX(-50%); top: 12px; }
+        .modal-title { font-weight: 600; font-size: 16px; color: #fff; letter-spacing: -0.02em; }
+        .modal-close-btn {
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.8); transition: all .2s ease;
+        }
+        .modal-close-btn svg { width: 16px; height: 16px; stroke-width: 2.5; stroke: currentColor; fill: none; }
+        .modal-iframe { flex: 1; width: 100%; border: none; background: #fff; }
+
+        .assistant-modal {
+            position: fixed; bottom: 120px; right: 16px; width: calc(100vw - 32px); max-width: 380px;
+            background: rgba(18, 18, 24, 0.95); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 32px; padding: 24px; color: white; z-index: 99995; 
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px -10px rgba(168, 85, 247, 0.2);
+            opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.95); transition: all 0.4s var(--spring-curve); pointer-events: none;
+        }
+        .assistant-modal.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
+        .assistant-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+        .assistant-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--active-a), var(--active-c)); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 10px 24px -6px rgba(168, 85, 247, 0.5), inset 0 2px 4px rgba(255,255,255,0.3); }
+        .assistant-title { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .assistant-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 400; }
+        .assistant-messages { background: rgba(0,0,0,0.2); border-radius: 20px; padding: 16px; margin-bottom: 20px; max-height: 220px; overflow-y: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.03); }
+        .assistant-messages::-webkit-scrollbar { display: none; }
+        .message { margin-bottom: 12px; font-size: 14px; line-height: 1.5; font-weight: 400; letter-spacing: -0.01em; }
+        .message.ia { color: #e2e8f0; }
+        .message.user { color: #fff; text-align: right; }
+        .assistant-input { display: flex; gap: 10px; }
+        .assistant-input input { flex: 1; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 99px; padding: 14px 18px; color: white; font-size: 16px; font-family: var(--font-primary); transition: border-color 0.3s ease; }
+        .assistant-input input:focus { outline: none; border-color: rgba(168, 85, 247, 0.6); background: rgba(0,0,0,0.35); }
+        .assistant-input button { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--active-a), var(--active-b)); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: none; color: white; opacity: 0.7; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+    </style>
+</head>
+<body>
+
+    <!-- COLECCIÓN COMPLETA DE ÍCONOS ORIGINALES DEL DOCK -->
+    <svg style="display:none">
+        <defs>
+            <symbol id="ico-home"      viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+            <symbol id="ico-star"      viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+            <symbol id="ico-zap"       viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+            <symbol id="ico-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></symbol>
+            <symbol id="ico-chat"      viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
+            <symbol id="ico-layers"    viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+        </defs>
+    </svg>
+
+    <!-- Pantalla de carga inteligente -->
+    <div id="premium-loader"><div class="spinner-ring"></div></div>
+
+    <!-- Contenedor de Vistas Principales -->
+    <div id="layers-container"></div>
+
+    <!-- Modales Externos (Sheet y Chatbot) -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-sheet" id="modalSheet">
+        <div class="modal-handle">
+            <div class="modal-handle-pill"></div>
+            <span class="modal-title" id="modalTitle"></span>
+            <button class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <iframe class="modal-iframe" id="modalFrame" src="about:blank"></iframe>
+    </div>
+
+    <div id="assistantModal" class="assistant-modal">
+        <button class="close-btn" id="closeAssistant">✕</button>
+        <div class="assistant-header">
+            <div class="assistant-avatar">🤖</div>
+            <div>
+                <div class="assistant-title">Asistente IA</div>
+                <div class="assistant-subtitle">Preparado para OpenAI</div>
+            </div>
+        </div>
+        <div class="assistant-messages" id="assistantMessages">
+            <div class="message ia">👋 Hola, soy tu asistente. ¿En qué puedo ayudarte?</div>
+        </div>
+        <div class="assistant-input">
+            <input type="text" id="assistantInput" placeholder="Pregúntame algo...">
+            <button id="sendMessageBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+    </div>
+
+    <!-- Menú Nativo -->
+    <div class="menu-wrapper">
+        <nav class="nav-menu">
+            <!-- Pestaña 1: Hub -->
+            <div class="nav-item is-active" data-tab="hub" onclick="switchTab('hub', 'hub.html', this)">
+                <div class="bg-glow"></div>
+                <div class="icon-unit"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                <span class="label-text">Hub</span>
+                <div class="active-indicator"></div>
+            </div>
+            
+            <!-- Pestaña 2: Ventas -->
+            <div class="nav-item" data-tab="ventas" onclick="switchTab('ventas', 'marcas.html', this)">
+                <div class="bg-glow"></div>
+                <div class="icon-unit"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+                <span class="label-text">Ventas</span>
+                <div class="active-indicator"></div>
+            </div>
+            
+            <!-- Pestaña 3: Panel -->
+            <div class="nav-item" data-tab="panel" onclick="switchTab('panel', 'informe.html', this)">
+                <div class="bg-glow"></div>
+                <div class="icon-unit"><svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>
+                <span class="label-text">Panel</span>
+                <div class="active-indicator"></div>
+            </div>
+            
+            <!-- Pestaña 4: Perfil -->
+            <div class="nav-item" data-tab="perfil" onclick="switchTab('perfil', 'perfil.html', this)">
+                <div class="bg-glow"></div>
+                <div class="icon-unit"><svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <span class="label-text">Perfil</span>
+                <div class="active-indicator"></div>
+            </div>
+
+            <!-- 5TO BOTÓN: ORBE DE COLORES (DOCK INTEGRADO) -->
+            <div class="nav-item" id="dockTriggerBtn" onclick="toggleDock(event, this)">
+                <div class="bg-glow"></div>
+                <div class="icon-unit"><svg><use href="#ico-layers"/></svg></div>
+                
+                <!-- Píldoras que suben mágicamente -->
+                <div id="pills-col" class="dock-container"></div>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        /* ============================================================
+           CONFIGURACIÓN FÁCIL DE EDITAR (TODAS LAS 5 PÍLDORAS)
+           ============================================================ */
+        const DOCK_CONFIG = [
+            { name: "Home",         icon: "home",      type: "iframe",    url: "https://www.freeworkweb.cl/hub" },
+            { name: "Asistente IA", icon: "chat",      type: "assistant", url: "" },
+            { name: "Empresa",      icon: "briefcase", type: "iframe",    url: "https://www.freeworkweb.cl/menu-marcas" },
+            { name: "Marcas",       icon: "star",      type: "iframe",    url: "https://www.freeworkweb.cl/menu-marcas" },
+            { name: "Servicios",    icon: "zap",       type: "iframe",    url: "https://www.freeworkweb.cl/dashboard-de-ventas" }
+        ];
+
+        /* ============================================================
+           MOTOR PRINCIPAL
+           ============================================================ */
+        const layers = {}; 
+        const container = document.getElementById('layers-container');
+        const loaderOverlay = document.getElementById('premium-loader');
+        let loadingTimeout;
+
+        // 1. Navegación Principal (Iframes de fondo)
+        function switchTab(id, url, element) {
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(10);
+            if (isDockOpen) closeDock(); // Cerrar dock si cambias de pestaña
+
+            const items = document.querySelectorAll('.nav-item:not(#dockTriggerBtn)');
+            items.forEach(item => item.classList.remove('is-active'));
+            if(element) element.classList.add('is-active');
+
+            Object.values(layers).forEach(layer => layer.classList.remove('active'));
+
+            if (!layers[id]) {
+                loadingTimeout = setTimeout(() => loaderOverlay.classList.add('active'), 150);
+                createLayer(id, url, true);
+            } else if (layers[id].dataset.loaded !== "true") {
+                loaderOverlay.classList.add('active');
+                layers[id].classList.add('active');
+            } else {
+                layers[id].classList.add('active');
+            }
+        }
+
+        function createLayer(id, url, isImmediate = false) {
+            const iframe = document.createElement('iframe');
+            iframe.src = url; iframe.className = 'web-layer'; iframe.id = `layer-${id}`; iframe.dataset.loaded = "false";
+            
+            iframe.onload = () => {
+                iframe.dataset.loaded = "true";
+                try {
+                    const style = iframe.contentWindow.document.createElement('style');
+                    style.textContent = `* { -webkit-tap-highlight-color: transparent !important; user-select: none !important; -webkit-user-select: none !important; -webkit-touch-callout: none !important; } a, button, input { outline: none !important; } input, textarea { user-select: auto !important; -webkit-user-select: auto !important; }`;
+                    iframe.contentWindow.document.head.appendChild(style);
+                } catch (e) {}
+
+                if (iframe.classList.contains('active') || isImmediate) {
+                    clearTimeout(loadingTimeout); loaderOverlay.classList.remove('active'); iframe.classList.add('active');
+                }
+            };
+            container.appendChild(iframe); layers[id] = iframe;
+        }
+
+        /* ============================================================
+           LÓGICA DEL DOCK INTEGRADO (5º BOTÓN) - MATEMÁTICA PERFECTA
+           ============================================================ */
+        const pillsCol = document.getElementById('pills-col');
+        const dockTriggerBtn = document.getElementById('dockTriggerBtn');
+        let pillsList = [];
+        let dockTimers = [];
+        let isDockOpen = false;
+
+        // Medidor invisible sincronizado 100% con la fuente CSS de .pill-label
+        const ruler = document.createElement('span');
+        Object.assign(ruler.style, { 
+            position:'absolute', visibility:'hidden', whiteSpace:'nowrap', pointerEvents:'none', 
+            fontFamily:"var(--font-primary)", fontWeight:'500', fontSize:'14px', letterSpacing:'0.01em' 
+        });
+        document.body.appendChild(ruler);
+
+        // Cálculo adaptativo real que no corta ningún texto
+        function getPillWidth(text) {
+            ruler.textContent = text;
+            // 84px es la suma exacta de todos los paddings, márgenes y el ícono fijo (42+8+22+10+2)
+            return 84 + ruler.offsetWidth;
+        }
+
+        // Construir píldoras en el HTML
+        DOCK_CONFIG.forEach((item, i) => {
+            const w = getPillWidth(item.name);
+            const a = document.createElement('a');
+            a.href = '#'; a.className = 'pill'; a.style.width = '54px';
+
+            a.innerHTML = `
+                <div class="pill-icon"><svg><use href="#ico-${item.icon}"/></svg></div>
+                <span class="pill-label">${item.name}</span>
+            `;
+
+            a.addEventListener('click', e => {
+                e.preventDefault(); e.stopPropagation();
+                if (!isDockOpen) return;
+
+                if (a.classList.contains('active')) {
+                    if (item.type === 'assistant') document.getElementById('assistantModal').classList.add('visible');
+                    else openModal(item.name, item.url);
+                    closeDock();
+                } else {
+                    pillsList.forEach(({ el }, pi) => {
+                        el.classList.toggle('active', pi === i);
+                        el.style.width = (pi === i ? pillsList[pi].w : 54) + 'px';
+                    });
+                }
+            });
+
+            pillsCol.appendChild(a);
+            pillsList.push({ el: a, w });
+        });
+
+        // Funciones de Abrir/Cerrar Dock
+        function toggleDock(e, btn) {
+            e.preventDefault(); e.stopPropagation();
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(10);
+            isDockOpen ? closeDock() : openDock();
+        }
+
+        function openDock() {
+            isDockOpen = true; dockTriggerBtn.classList.add('dock-open');
+            dockTimers.forEach(clearTimeout); dockTimers = [];
+            
+            pillsList.forEach(({ el }) => { el.classList.remove('born','dying','active'); el.style.opacity = '0'; el.style.animation = 'none'; el.style.width = '54px'; });
+            
+            [...pillsList].reverse().forEach(({ el }, s) => {
+                dockTimers.push(setTimeout(() => {
+                    el.style.animation = ''; el.classList.add('born'); el.style.opacity = '';
+                }, s * 80));
+            });
+        }
+
+        function closeDock() {
+            if(!isDockOpen) return;
+            isDockOpen = false; dockTriggerBtn.classList.remove('dock-open');
+            dockTimers.forEach(clearTimeout); dockTimers = [];
+
+            pillsList.forEach(({ el }, i) => {
+                dockTimers.push(setTimeout(() => {
+                    el.classList.remove('born'); el.classList.add('dying');
+                    dockTimers.push(setTimeout(() => { el.classList.remove('dying'); el.style.opacity = '0'; el.style.animation = 'none'; }, 300));
+                }, i * 50));
+            });
+        }
+
+        // Clic fuera del dock para cerrarlo
+        document.addEventListener('click', (e) => {
+            if (isDockOpen && !dockTriggerBtn.contains(e.target)) closeDock();
+        });
+
+        /* ============================================================
+           MODALES SECUNDARIOS (Sobre-capas rápidas)
+           ============================================================ */
+        const backdrop = document.getElementById('modalBackdrop');
+        const sheet = document.getElementById('modalSheet');
+        const modalFrame = document.getElementById('modalFrame');
+
+        function openModal(title, url) {
+            document.getElementById('modalTitle').textContent = title;
+            modalFrame.src = 'about:blank';
+            backdrop.classList.add('visible'); sheet.classList.add('visible');
+            setTimeout(() => { modalFrame.src = url; }, 80);
+        }
+
+        function closeModal() {
+            backdrop.classList.remove('visible'); sheet.classList.remove('visible');
+            setTimeout(() => { modalFrame.src = 'about:blank'; }, 400);
+        }
+
+        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+
+        // Swipe down para cerrar modal
+        let swipeY0 = 0;
+        sheet.addEventListener('touchstart', e => { swipeY0 = e.touches[0].clientY; }, { passive:true });
+        sheet.addEventListener('touchend', e => { if (e.changedTouches[0].clientY - swipeY0 > 80) closeModal(); }, { passive:true });
+
+        /* ============================================================
+           CHATBOT IA FUNCIONALIDAD
+           ============================================================ */
+        const assistantModal = document.getElementById('assistantModal');
+        const assistantInput = document.getElementById('assistantInput');
+        const assistantMessages = document.getElementById('assistantMessages');
+
+        document.getElementById('closeAssistant').addEventListener('click', () => assistantModal.classList.remove('visible'));
+
+        function addMessage(text, isUser = false) {
+            const div = document.createElement('div'); div.className = `message ${isUser ? 'user' : 'ia'}`; div.textContent = text;
+            assistantMessages.appendChild(div); assistantMessages.scrollTop = assistantMessages.scrollHeight;
+        }
+
+        function handleSendMessage() {
+            const msg = assistantInput.value.trim(); if (!msg) return;
+            addMessage(msg, true); assistantInput.value = ''; addMessage('🤔 Pensando...', false);
+            setTimeout(() => {
+                if (assistantMessages.lastChild.textContent === '🤔 Pensando...') assistantMessages.removeChild(assistantMessages.lastChild);
+                addMessage("Esta interfaz ya está fusionada. ¡Conecta tu API cuando quieras!", false);
+            }, 1000);
+        }
+
+        document.getElementById('sendMessageBtn').addEventListener('click', handleSendMessage);
+        assistantInput.addEventListener('keypress', e => { if (e.key === 'Enter') handleSendMessage(); });
+
+        /* ============================================================
+           INICIALIZACIÓN INMEDIATA
+           ============================================================ */
+        window.navigateToTab = function(tabId) {
+            const tabButton = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+            if (tabButton) tabButton.click();
+        };
+
+        window.onload = () => {
+            const firstTab = document.querySelector('.nav-item.is-active');
+            switchTab('hub', 'hub.html', firstTab);
+            
+            const localPages = [
+                { id: 'ventas', url: 'marcas.html' },
+                { id: 'panel', url: 'informe.html' },
+                { id: 'perfil', url: 'perfil.html' }
+            ];
+
+            setTimeout(() => {
+                localPages.forEach(item => { if(!layers[item.id]) createLayer(item.id, item.url, false); });
+            }, 300);
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Factibilidad Freework | Elite</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (Para compilar JSX en el navegador) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Suavizado de fuentes y scrollbar premium */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-transparent m-0 p-0 overflow-hidden">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    // ===================================================================
+    // 1. CONFIGURACIÓN API (URL ACTUALIZADA)
+    // ===================================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxI_zmAoT3Y6FD7Qfg9hUYp2SYuVNr6kvQgDVROngwQsm_qLtwEDJkHvQLeXE7LwJw5/exec"; 
+
+    const api = {
+      get: async (action) => {
+        try {
+          const res = await fetch(`${SCRIPT_URL}?action=${action}`);
+          return await res.json();
+        } catch (e) { return []; }
+      },
+      post: async (action, data) => {
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST', body: JSON.stringify({ action, data }), headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+          return await res.json();
+        } catch (e) { return { success: false }; }
+      }
+    };
+
+    // ===================================================================
+    // 2. COMPONENTE INTERFAZ DEL CLIENTE
+    // ===================================================================
+    function ClientWebsite({ allMessages, allChats }) {
+      const [isOpen, setIsOpen] = useState(false);
+      const [newMessage, setNewMessage] = useState('');
+      
+      // Helper: Obtiene el usuario de múltiples fuentes para garantizar el salto de login
+      const getEliteUser = () => {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const pName = params.get('nombre') || params.get('name');
+          const pId = params.get('id') || params.get('email');
+          if (pName) return { name: pName, id: pId };
+
+          const userStr = localStorage.getItem('freework_user');
+          if (userStr) {
+             const u = JSON.parse(userStr);
+             return { name: u.name || u.nombre, id: u.id || u.email || u.id_usuario };
+          }
+          
+          const fallbackName = localStorage.getItem('freework_user_name');
+          if (fallbackName) return { name: fallbackName, id: localStorage.getItem('freework_user_id') };
+        } catch (e) {}
+        return null;
+      };
+
+      const [clientName, setClientName] = useState(() => getEliteUser()?.name || '');
+      const [isRegistered, setIsRegistered] = useState(() => !!getEliteUser()?.name);
+
+      // Vigilante dinámico: si el usuario inicia sesión en la app padre, el chat se entera
+      useEffect(() => {
+        const interval = setInterval(() => {
+          if (!isRegistered) {
+            const user = getEliteUser();
+            if (user?.name) {
+              setClientName(user.name);
+              setIsRegistered(true);
+            }
+          }
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [isRegistered]);
+
+      const [hasUnread, setHasUnread] = useState(false);
+      const messagesEndRef = useRef(null);
+      const prevMsgCount = useRef(0);
+
+      const [clientId] = useState(() => {
+        const user = getEliteUser();
+        let id = user?.id || localStorage.getItem('chat_client_id');
+        if (!id) { 
+          id = 'cliente_' + Math.floor(Math.random() * 1000000); 
+          localStorage.setItem('chat_client_id', id); 
+        }
+        return id;
+      });
+
+      const myMessages = useMemo(() => allMessages.filter(msg => msg.conversationId === clientId).sort((a, b) => a.timestamp - b.timestamp), [allMessages, clientId]);
+
+      useEffect(() => {
+        if (myMessages.length > prevMsgCount.current) {
+          if (myMessages[myMessages.length - 1].sender !== 'client' && !isOpen) setHasUnread(true);
+        }
+        prevMsgCount.current = myMessages.length;
+      }, [myMessages, isOpen]);
+
+      useEffect(() => { if (isOpen) setHasUnread(false); }, [isOpen]);
+      useEffect(() => { if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' }); }, [myMessages, isOpen]);
+
+      const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!newMessage.trim() || !clientName) return;
+        const text = newMessage.trim(); setNewMessage(''); 
+        await api.post('sendMessage', { chatId: clientId, senderRole: 'client', senderName: clientName, text });
+      };
+
+      const myChatDoc = allChats.find(c => c.id === clientId);
+
+      return (
+        <div className="h-screen w-full relative overflow-hidden flex flex-col font-sans pointer-events-none">
+          
+          {/* BOTÓN FLOTANTE DESPLEGABLE */}
+          {!isOpen && (
+            <div className="absolute bottom-6 right-6 z-50 flex flex-col items-end select-none pointer-events-auto">
+              <button 
+                onClick={() => setIsOpen(true)} 
+                className="group flex items-center bg-gradient-to-r from-[#b233ff] to-[#ff4df8] text-white rounded-full shadow-[0_15px_35px_rgba(178,51,255,0.3)] transition-all duration-500 hover:pr-8 hover:scale-105 outline-none relative overflow-hidden" 
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                {hasUnread && (
+                  <span className="absolute top-2 right-2 bg-rose-500 text-white w-5 h-5 flex items-center justify-center rounded-full animate-bounce shadow-lg border-2 border-white z-50">
+                    <i className="fa-solid fa-bell text-[9px]"></i>
+                  </span>
+                )}
+                
+                <div className="w-16 h-16 flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-location-dot text-[26px] group-hover:scale-110 transition-transform duration-500"></i>
+                </div>
+
+                <div className="max-w-0 overflow-hidden opacity-0 group-hover:max-w-[220px] group-hover:opacity-100 transition-all duration-500 ease-in-out flex items-center whitespace-nowrap">
+                  <span className="font-black text-[11px] sm:text-xs uppercase tracking-[0.2em] pr-2 drop-shadow-md">
+                    Validar Factibilidad
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* VENTANA DEL CHAT */}
+          {isOpen && (
+            <div className="absolute bottom-6 right-6 w-[calc(100%-3rem)] sm:w-[380px] h-[550px] max-h-[85vh] bg-white rounded-[2rem] shadow-2xl flex flex-col overflow-hidden z-50 border border-slate-200 animate-slide-up pointer-events-auto">
+              
+              <div className="bg-slate-900 p-6 flex justify-between items-center relative shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white border border-white/10"><i className="fa-solid fa-location-dot text-lg"></i></div>
+                  <div>
+                    <h3 className="font-black text-white text-base uppercase tracking-tight italic">Terminal BOT</h3>
+                    <p className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5">Sistema de Factibilidad</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark text-xl"></i></button>
+              </div>
+
+              {!isRegistered ? (
+                <div className="flex-1 p-10 bg-slate-50 flex flex-col justify-center items-center text-center">
+                  <div className="w-24 h-24 bg-white border border-slate-200 text-slate-300 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-sm shrink-0"><i className="fa-solid fa-fingerprint text-5xl"></i></div>
+                  <h4 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">Acceso Requerido</h4>
+                  <p className="text-xs text-slate-500 mb-8 font-medium leading-relaxed px-4">Por favor, identifícate para iniciar el escaneo de factibilidad técnica.</p>
+                  <input type="text" placeholder="Tu nombre completo" value={clientName} onChange={(e) => setClientName(e.target.value)} onKeyDown={(e) => { if(e.key === 'Enter' && clientName.trim()) setIsRegistered(true); }} className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm mb-4 outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all font-semibold" />
+                  <button onClick={() => { if(clientName.trim()) setIsRegistered(true); }} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 active:scale-95 transition-all">Inicializar Escaneo</button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 flex flex-col gap-6">
+                    <div className="flex flex-col items-start">
+                      <div className="px-5 py-4 rounded-3xl rounded-tl-sm bg-white border border-slate-200 text-slate-700 shadow-sm text-sm">
+                        <p className="font-black text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2 mb-3">CONEXIÓN ESTABLECIDA</p>
+                        <p className="font-bold text-slate-900 mb-1">HOLA, {clientName.toUpperCase()}</p>
+                        <p className="text-slate-500 leading-relaxed">Envía la dirección para validar la cobertura de fibra óptica e infraestructura.</p>
+                      </div>
+                    </div>
+
+                    {myMessages.map((msg) => {
+                      const isMe = msg.sender === 'client';
+                      const isSystem = msg.senderName === 'SISTEMA';
+                      if (isSystem) return (
+                        <div key={msg.id} className="flex justify-center my-2">
+                          <div className="bg-slate-900 text-emerald-400 font-mono text-[9px] px-4 py-2.5 rounded-xl border border-slate-700 text-center uppercase tracking-[0.1em] shadow-lg">
+                            {msg.text}
+                          </div>
+                        </div>
+                      );
+                      return (
+                        <div key={msg.id} className={`flex flex-col max-w-[85%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}>
+                          <div className={`px-4 py-3 rounded-2xl text-[13px] shadow-sm font-medium leading-relaxed ${isMe ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'}`}>
+                            {msg.text}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={messagesEndRef} className="h-2" />
+                  </div>
+                  
+                  <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-3 shrink-0">
+                    <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe la dirección aquí..." className="flex-1 bg-slate-100 border-transparent rounded-2xl px-5 py-4 text-sm focus:bg-white focus:ring-4 focus:ring-slate-900/5 outline-none transition-all font-medium" />
+                    <button type="submit" disabled={!newMessage.trim()} className="bg-slate-900 text-white w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-slate-800 disabled:opacity-20 flex-shrink-0 shadow-lg active:scale-90 transition-all">
+                      <i className="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ===================================================================
+    // 3. COORDINADOR DE DATOS
+    // ===================================================================
+    function App() {
+      const [allMessages, setAllMessages] = useState([]);
+      const [allChats, setAllChats] = useState([]);
+
+      useEffect(() => {
+        let isMounted = true;
+        const loadData = async () => {
+          const [chatsRaw, msgsRaw] = await Promise.all([ api.get('getChats'), api.get('getMessages') ]);
+          if (isMounted) {
+            if(chatsRaw && Array.isArray(chatsRaw)) setAllChats(chatsRaw.map(c => ({ id: c.CHAT_ID, clientName: c.NOMBRE_CLIENTE, status: c.ESTADO, agentName: c.AGENTE_NOMBRE })));
+            if(msgsRaw && Array.isArray(msgsRaw)) setAllMessages(msgsRaw.map(m => ({ id: m.MENSAJE_ID, conversationId: m.CHAT_ID, sender: m.ROL_EMISOR, text: m.TEXTO, timestamp: m.TIMESTAMP })));
+          }
+        };
+        loadData(); const interval = setInterval(loadData, 4000); return () => { isMounted = false; clearInterval(interval); };
+      }, []);
+
+      return <ClientWebsite allMessages={allMessages} allChats={allChats} />;
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

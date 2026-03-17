@@ -1,0 +1,752 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>Freework - Hub Inmersivo</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #ffffff;
+            margin: 0; padding: 0; 
+            width: 100%; /* ESTO ES CLAVE */
+            height: 100dvh; min-height: 100dvh; 
+            display: flex; flex-direction: column; 
+            overflow: hidden; 
+            -webkit-font-smoothing: antialiased; 
+            -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-user-select: none;
+        }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none !important; }
+        .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+        
+        .bg-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); }
+        .brand-gradient { background-image: linear-gradient(135deg, #7c3aed, #c026d3); }
+
+        :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        .modal-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        
+        .agenda-modal-content {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(100%);
+        }
+        .agenda-modal-active .agenda-modal-content {
+            transform: translateY(0);
+        }
+
+        .tab-view { display: none; height: 100%; width: 100%; flex-direction: column; }
+        .tab-view.active { display: flex; }
+
+        /* Calculadora UI */
+        .calc-btn {
+            border-radius: 1.25rem; font-weight: 800; font-size: 1.25rem;
+            display: flex; align-items:center; justify-content:center;
+            cursor: pointer; transition: all 0.1s ease; min-height: 64px;
+        }
+        .calc-btn:active { transform: scale(0.92); opacity: 0.8; }
+
+        /* Calendario UI */
+        .cal-day {
+            aspect-ratio: 1; border-radius: 0.75rem;
+            display: flex; align-items:center; justify-content:center;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            position: relative; transition: background .15s;
+        }
+        .cal-day.today { background: linear-gradient(135deg,#7c3aed,#c026d3); color:#fff; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.4); }
+        .cal-day.has-event::after {
+            content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%);
+            width:4px; height:4px; border-radius:50%; background:#f43f5e;
+        }
+
+        /* Latido Rojo de Alertas */
+        .reminder-pulse {
+            box-shadow: 0 0 0 2px #f43f5e;
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0px rgba(244, 63, 94, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+            100% { box-shadow: 0 0 0 0px rgba(244, 63, 94, 0); }
+        }
+
+        #drawing-canvas { touch-action: none; background-color: #fff; cursor: crosshair; }
+    </style>
+</head>
+<body>
+
+    <div class="w-full h-full flex flex-col relative overflow-hidden">
+        
+        <!-- CABECERA PREMIUM (Limpia, sin pestañas) -->
+        <div class="bg-[#0B0F19] pt-[calc(var(--safe-top)+1.5rem)] pb-8 px-6 relative shrink-0 shadow-lg rounded-b-[2.5rem] z-20">
+            <div class="absolute inset-0 bg-noise pointer-events-none opacity-50"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-fuchsia-600/20 rounded-full blur-[80px] pointer-events-none"></div>
+
+            <div class="flex justify-between items-center relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl brand-gradient flex items-center justify-center text-white font-black text-xl shadow-lg" id="user-initial">S</div>
+                    <div>
+                        <p id="user-role" class="text-fuchsia-400 text-[10px] font-black tracking-widest uppercase mb-1">EJECUTIVO ELITE</p>
+                        <h2 class="text-2xl font-black text-white tracking-tight leading-none" id="user-greeting">Hola...</h2>
+                    </div>
+                </div>
+                <!-- Notificaciones en campana -->
+                <div id="hub-notif-bell" class="relative hidden">
+                    <button onclick="viewLatestActiveNote()" class="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-500 animate-bounce">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </button>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 rounded-full border-2 border-[#0B0F19] text-[8px] flex items-center justify-center text-white font-bold" id="notif-badge-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR PRINCIPAL DEL HUB -->
+        <div class="flex-1 overflow-y-auto no-scrollbar bg-slate-50 pt-6 px-5 pb-12 space-y-4 relative z-0">
+            
+            <!-- ALERTA ACTIVA -->
+            <div id="today-alert" class="hidden animate-fade-in-up">
+                <div class="bg-rose-50 border border-rose-100 rounded-3xl p-4 flex items-center gap-4 shadow-sm mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0">
+                        <i data-lucide="calendar-clock" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-[10px] font-black text-rose-900 uppercase tracking-tighter">Compromiso Pendiente</h4>
+                        <p class="text-[11px] text-rose-700 font-bold" id="today-alert-text">Revisa tus notificaciones.</p>
+                    </div>
+                    <button onclick="viewLatestActiveNote()" class="bg-white text-rose-600 px-4 py-2 rounded-xl text-[10px] font-black shadow-sm uppercase border border-rose-100 active:scale-95 transition-transform">Ver</button>
+                </div>
+            </div>
+
+            <!-- ======================================================================== -->
+            <!-- 🟢 BOTÓN PRINCIPAL "VENDER" (INGRESAR VENTA)                           -->
+            <!-- ======================================================================== -->
+            <div onclick="redirectUrl('marcas.html')" class="w-full bg-white rounded-[2.5rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center gap-5 relative overflow-hidden active:scale-[0.98] transition-transform cursor-pointer animate-fade-in-up">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-fuchsia-50 rounded-full blur-[30px] pointer-events-none"></div>
+                <div class="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-md shrink-0 relative z-10">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                </div>
+                
+                <div class="relative z-10">
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight leading-tight">Ingresar Venta</h3>
+                    <p class="text-[11px] text-slate-500 font-bold mt-1 uppercase tracking-wide">El botón que hace sonar la caja.</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-6 h-6 text-slate-300 ml-auto"></i>
+            </div>
+
+            <!-- ======================================================================== -->
+            <!-- 🟢 NUEVO COMENTARIO / DIRECTRIZ CORPORATIVA (ESTILO WOM)               -->
+            <!-- ======================================================================== -->
+            <div class="animate-fade-in-up" style="animation-delay: 0.05s;">
+                <div class="bg-gradient-to-r from-violet-900 to-[#0B0F19] rounded-[2rem] p-5 border border-violet-800/50 shadow-lg relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-32 h-32 bg-fuchsia-600/20 rounded-full blur-[40px] pointer-events-none"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-fuchsia-400 shrink-0 border border-fuchsia-500/30">
+                            <i data-lucide="message-square-text" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest mb-1.5">Directriz Central</h4>
+                            <p class="text-xs font-medium text-slate-300 leading-relaxed">
+                                "El mercado no espera a los lentos. Cada seguimiento anotado es una comisión asegurada. <strong class="text-white">Usa tu agenda y cobra tus lucas.</strong>"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- CARRUSEL DE NOTAS HORIZONTALES (AGENDA RÁPIDA) -->
+            <!-- ========================================== -->
+            <div class="mt-8 mb-2 flex items-center justify-between px-2 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Mi Gestión Activa</h3>
+                <button onclick="toggleAgenda(true)" class="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest flex items-center gap-1 active:scale-95">Ver Todas <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+            </div>
+            
+            <div id="hub-notes-horizontal" class="flex overflow-x-auto gap-4 no-scrollbar pb-6 -mx-5 px-5 snap-x animate-fade-in-up" style="animation-delay: 0.15s;">
+                <!-- Generado por JS -->
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ACCESOS RÁPIDOS (COPIES ATREVIDOS)         -->
+            <!-- ========================================== -->
+            <div class="grid grid-cols-2 gap-3 animate-fade-in-up" style="animation-delay: 0.2s;">
+                
+                <!-- Agenda Destacada en Negro -->
+                <div onclick="toggleAgenda(true)" class="bg-[#0B0F19] border border-slate-800 rounded-[1.5rem] p-5 flex flex-col gap-2 active:scale-95 transition-all shadow-lg cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-white/10 text-fuchsia-400 flex items-center justify-center"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+                    <h4 class="text-[11px] font-black text-white uppercase tracking-tighter leading-tight">Mi Agenda</h4>
+                    <p class="text-[9px] text-fuchsia-400/60 font-bold uppercase">Cero excusas. Anota todo.</p>
+                </div>
+                
+                <div onclick="toggleCalendar(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                    <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Calendario</h4>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">Mapea tus victorias.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 animate-fade-in-up" style="animation-delay: 0.25s;">
+                <div onclick="toggleCalc(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="calculator" class="w-5 h-5"></i></div>
+                    <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Calculadora</h4>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">Calcula tus comisiones.</p>
+                </div>
+                
+                <div onclick="redirectUrl('URL_ACADEMIA')" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-5 h-5"></i></div>
+                    <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Academia</h4>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">Entrénate o muere.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- MODALES INFERIORES TIPO "NODAL" (TOOLS) -->
+    <!-- ======================================================= -->
+
+    <!-- 1. MODAL: AGENDA MULTIMEDIA COMPLETA -->
+    <div id="agenda-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
+        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[92vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+            
+            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleAgenda(false)">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-4"></div>
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Agenda Operativa</h3>
+            </div>
+
+            <div id="agenda-scroll-container" class="flex-1 overflow-y-auto no-scrollbar px-6 pb-40 pt-4">
+                
+                <div id="creation-area" class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200 mb-8 transition-all duration-500">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-1.5 block">¿A quién hay que cerrar?</label>
+                            <textarea id="agenda-input" rows="2" placeholder="Escribe aquí el RUT o nombre..." class="w-full text-base font-bold text-slate-800 outline-none bg-slate-50 p-4 rounded-2xl border border-slate-100 focus:border-fuchsia-300 transition-all resize-none"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-1.5 block">¿Cuándo te alertamos?</label>
+                            <input type="datetime-local" id="agenda-datetime" class="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-5 text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-fuchsia-400/10 transition-all">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="document.getElementById('image-upload').click()" class="h-14 rounded-2xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                                <i data-lucide="camera" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Evidencia</span>
+                            </button>
+                            <button onclick="openDrawingPanel()" class="h-14 rounded-2xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                                <i data-lucide="brush" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Croquis</span>
+                            </button>
+                        </div>
+
+                        <div id="media-preview" class="hidden grid grid-cols-2 gap-3 mt-2"></div>
+                        <input type="file" id="image-upload" accept="image/*" capture="environment" class="hidden" onchange="handleImagePreview(this)">
+
+                        <div class="flex gap-2 pt-2">
+                            <button id="btn-cancel-edit" onclick="cancelEdit()" class="hidden h-14 px-5 rounded-2xl bg-slate-100 text-slate-400 font-black active:scale-95 transition-all flex items-center justify-center">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                            <button id="btn-save-note" onclick="processNote()" class="flex-1 h-14 rounded-2xl brand-gradient text-white font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <i id="save-icon" data-lucide="plus" class="w-4 h-4"></i> 
+                                <span id="save-text">Fijar Objetivo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="agenda-list" class="grid grid-cols-1 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL: CALENDARIO -->
+    <div id="calendar-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
+        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[80vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+            
+            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleCalendar(false)">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-4"></div>
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Calendario de Gestión</h3>
+            </div>
+
+            <div class="flex-1 overflow-y-auto no-scrollbar px-6 pt-6 pb-10">
+                <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="calPrev()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                        <h3 id="cal-title" class="text-base font-black text-slate-900 tracking-tight capitalize"></h3>
+                        <button onclick="calNext()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="grid grid-cols-7 mb-2">
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Lu</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ma</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Mi</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ju</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Vi</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Sa</div>
+                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Do</div>
+                    </div>
+                    <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
+                </div>
+                
+                <div class="mt-6 flex items-center justify-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-fuchsia-500"></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seguimiento</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full brand-gradient"></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hoy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL: CALCULADORA -->
+    <div id="calc-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
+        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[80vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+            
+            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-[#0B0F19] text-white cursor-pointer relative z-20" onclick="toggleCalc(false)">
+                <div class="w-12 h-1.5 bg-white/20 rounded-full mb-4"></div>
+                <h3 class="text-xl font-black tracking-tight">Calculadora de Comisiones</h3>
+            </div>
+
+            <div class="flex-1 bg-white flex flex-col">
+                <div class="bg-[#0B0F19] p-8 text-right relative flex-1 flex flex-col justify-end">
+                    <div class="absolute inset-0 bg-noise opacity-20"></div>
+                    <p id="calc-expr" class="text-slate-500 text-sm font-bold min-h-[24px] tracking-tight truncate relative z-10">&nbsp;</p>
+                    <p id="calc-display" class="text-white font-black tracking-tight mt-2 relative z-10" style="font-size:clamp(2.5rem,12vw,4rem)">0</p>
+                </div>
+                <div class="grid grid-cols-4 gap-3 p-6 bg-white shrink-0" id="calc-buttons">
+                    <!-- Generado por JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL DE DIBUJO (SOBRE MODALES) -->
+    <div id="drawing-panel" class="fixed inset-0 z-[500] bg-white hidden flex flex-col items-center justify-center">
+        <div class="w-full p-6 flex justify-between items-center border-b border-slate-100 shrink-0">
+            <button onclick="closeDrawingPanel(false)" class="text-slate-400 font-bold text-sm">Cancelar</button>
+            <h4 class="font-black text-slate-900 uppercase text-xs tracking-widest">Esquema Rápido</h4>
+            <button onclick="closeDrawingPanel(true)" class="text-fuchsia-600 font-black text-sm uppercase">Listo</button>
+        </div>
+        <div class="flex-1 w-full relative bg-slate-50 flex items-center justify-center p-4">
+            <canvas id="drawing-canvas" class="w-full h-full rounded-[2rem] shadow-inner border border-slate-200"></canvas>
+        </div>
+        <div class="w-full p-6 border-t border-slate-100 flex items-center justify-center gap-8 shrink-0">
+            <button onclick="clearCanvas()" class="flex flex-col items-center gap-1 text-slate-400">
+                <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                <span class="text-[8px] font-black uppercase">Limpiar</span>
+            </button>
+            <div class="flex items-center gap-4">
+                <div onclick="setDrawColor('#000000')" class="w-8 h-8 rounded-full bg-black border-2 border-slate-200 shadow-sm cursor-pointer"></div>
+                <div onclick="setDrawColor('#f43f5e')" class="w-8 h-8 rounded-full bg-rose-500 border-2 border-slate-200 shadow-sm cursor-pointer"></div>
+                <div onclick="setDrawColor('#3b82f6')" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-slate-200 shadow-sm cursor-pointer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ALERTA MULTIMEDIA (INTERRUPCIÓN REAL-TIME) -->
+    <div id="realtime-alert-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-[#0B0F19]/95 modal-blur hidden animate-fade-in">
+        <div class="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl overflow-hidden relative text-center p-6 border border-white/10 flex flex-col max-h-[90vh]">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shrink-0 animate-bounce"><i data-lucide="alarm-clock" class="w-8 h-8"></i></div>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tighter mb-1 uppercase">¡Atención!</h2>
+            <p class="text-fuchsia-600 font-black tracking-widest text-[9px] mb-4">ES HORA DE COBRAR</p>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-4 mb-6 text-left">
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p id="rt-alert-text" class="text-slate-800 font-bold text-sm leading-relaxed text-center"></p></div>
+                <div id="rt-alert-media" class="space-y-3"></div>
+            </div>
+            <button onclick="closeRealtimeAlert()" class="w-full h-16 shrink-0 rounded-2xl brand-gradient text-white font-black text-sm uppercase shadow-xl active:scale-95">¡Voy por ello!</button>
+        </div>
+    </div>
+
+    <!-- TOAST FEEDBACK -->
+    <div id="toast-notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[700] px-6 py-3 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-2xl opacity-0 transition-opacity pointer-events-none">
+        Acción completada
+    </div>
+
+    <script>
+        const DB_KEY = 'freework_agenda_pro_v_final';
+
+        function redirectUrl(url) {
+            if(!url || url.includes('URL_')) { alert('Próximamente'); return; }
+            try { if (window.top !== window.self) { window.top.location.href = url; } else { window.location.href = url; } } 
+            catch (error) { window.location.href = url; }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast-notif');
+            t.innerText = msg; t.classList.add('opacity-100');
+            setTimeout(() => t.classList.remove('opacity-100'), 2500);
+        }
+
+        // --- CONTROLADORES DE MODALES ---
+        function toggleAgenda(show) {
+            const modal = document.getElementById('agenda-modal');
+            if (show) { renderAgendaNotes(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
+            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => { modal.classList.add('hidden'); cancelEdit(); }, 400); }
+        }
+
+        function toggleCalendar(show) {
+            const modal = document.getElementById('calendar-modal');
+            if (show) { renderCalendar(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
+            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => modal.classList.add('hidden'), 400); }
+        }
+
+        function toggleCalc(show) {
+            const modal = document.getElementById('calc-modal');
+            if (show) { renderCalc(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
+            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => modal.classList.add('hidden'), 400); }
+        }
+
+        // --- AGENDA & MULTIMEDIA ---
+        let notes = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let notifiedIds = new Set(); 
+        let currentDraftMedia = { image: null, drawing: null };
+        let editingId = null;
+        let activeNoteForModal = null;
+
+        function handleImagePreview(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => { currentDraftMedia.image = e.target.result; updateMediaPreview(); };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateMediaPreview() {
+            const preview = document.getElementById('media-preview');
+            preview.innerHTML = ''; 
+            if (currentDraftMedia.image || currentDraftMedia.drawing) {
+                preview.classList.remove('hidden');
+                if (currentDraftMedia.image) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.image}" class="w-full h-24 object-cover rounded-2xl border border-slate-200"><button onclick="currentDraftMedia.image=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+                if (currentDraftMedia.drawing) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.drawing}" class="w-full h-24 object-contain bg-slate-50 rounded-2xl border border-slate-200"><button onclick="currentDraftMedia.drawing=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+            } else { preview.classList.add('hidden'); }
+            lucide.createIcons({root: preview});
+        }
+
+        function editNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            editingId = id;
+            document.getElementById('agenda-input').value = note.text;
+            document.getElementById('agenda-datetime').value = note.reminderDateTime || '';
+            currentDraftMedia.image = note.image || null;
+            currentDraftMedia.drawing = note.drawing || null;
+            document.getElementById('save-text').innerText = "Guardar Cambios";
+            document.getElementById('save-icon').setAttribute('data-lucide', 'save');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+            document.getElementById('creation-area').classList.add('ring-4', 'ring-violet-400/20');
+            updateMediaPreview();
+            lucide.createIcons({root: document.getElementById('creation-area')});
+            document.getElementById('agenda-scroll-container').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('agenda-input').value = '';
+            document.getElementById('agenda-datetime').value = '';
+            currentDraftMedia = { image: null, drawing: null };
+            document.getElementById('save-text').innerText = "Fijar Objetivo";
+            document.getElementById('save-icon').setAttribute('data-lucide', 'plus');
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('creation-area').classList.remove('ring-4', 'ring-violet-400/20');
+            updateMediaPreview();
+            lucide.createIcons({root: document.getElementById('creation-area')});
+        }
+
+        function processNote() {
+            const input = document.getElementById('agenda-input');
+            const datetimeInput = document.getElementById('agenda-datetime');
+            const text = input.value.trim();
+            
+            if (!text && !datetimeInput.value && !currentDraftMedia.image && !currentDraftMedia.drawing) return;
+            
+            if (editingId) {
+                notes = notes.map(n => n.id === editingId ? { ...n, text: text || "Seguimiento", image: currentDraftMedia.image, drawing: currentDraftMedia.drawing, reminderDateTime: datetimeInput.value } : n);
+                showToast("Cambios guardados");
+            } else {
+                const newNote = {
+                    id: Date.now(),
+                    text: text || "Evidencia adjunta",
+                    image: currentDraftMedia.image,
+                    drawing: currentDraftMedia.drawing,
+                    reminderDateTime: datetimeInput.value, 
+                    created: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
+                    isDone: false
+                };
+                notes.unshift(newNote);
+                showToast("Objetivo fijado");
+            }
+            
+            localStorage.setItem(DB_KEY, JSON.stringify(notes));
+            cancelEdit();
+            document.activeElement.blur();
+            renderAgendaNotes();
+            checkReminders();
+        }
+
+        function formatReminder(dtString) {
+            if (!dtString) return null;
+            const dt = new Date(dtString);
+            return `📅 ${dt.getDate()} ${dt.toLocaleString('es-ES', { month: 'short' })} - ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        function renderAgendaNotes() {
+            const list = document.getElementById('agenda-list');
+            const hubList = document.getElementById('hub-notes-horizontal');
+
+            if (notes.length === 0) {
+                list.innerHTML = `<div class="py-20 text-center opacity-30"><i data-lucide="sticky-note" class="w-12 h-12 mx-auto mb-4"></i><p class="font-black uppercase tracking-widest text-xs">Agenda limpia. A buscar cierres.</p></div>`;
+                if(hubList) {
+                    hubList.innerHTML = `<div class="snap-center shrink-0 w-full max-w-[280px] bg-slate-200/50 rounded-[2rem] border border-slate-200 border-dashed p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-200 transition-colors" onclick="toggleAgenda(true)"><i data-lucide="plus-circle" class="w-8 h-8 text-slate-400 mb-2"></i><p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Crear nueva nota</p></div>`;
+                }
+            } else {
+                const now = new Date();
+                
+                // RENDERIZAR EN MODAL (VERTICAL)
+                list.innerHTML = notes.map((note) => {
+                    const isPassed = note.reminderDateTime && new Date(note.reminderDateTime) <= now;
+                    const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-200 bg-rose-50' : 'bg-white border-slate-200';
+                    return `
+                        <div class="${cardClass} p-6 rounded-[2.5rem] border shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1 pr-2">
+                                    <p class="text-sm font-bold text-slate-800 ${note.isDone ? 'line-through opacity-40' : ''}">${note.text}</p>
+                                    <div class="flex flex-wrap items-center gap-2 mt-3">
+                                        <span class="text-[9px] font-black uppercase opacity-40 bg-slate-100 px-2 py-0.5 rounded-full">${note.created}</span>
+                                        ${note.reminderDateTime ? `<span class="flex items-center gap-1.5 text-[9px] font-black uppercase ${isPassed && !note.isDone ? 'text-rose-600' : 'text-fuchsia-600'} bg-white px-2 py-0.5 rounded-full border border-current shadow-sm"><i data-lucide="alarm-clock" class="w-2.5 h-2.5"></i> ${formatReminder(note.reminderDateTime)}</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button onclick="toggleDone(${note.id})" class="w-9 h-9 rounded-full ${note.isDone ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-400'} flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></button>
+                                    <button onclick="editNote(${note.id})" class="w-9 h-9 rounded-full bg-slate-50 text-slate-400 hover:text-blue-500 flex items-center justify-center"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteNote(${note.id})" class="w-9 h-9 rounded-full bg-slate-50 text-slate-400 hover:text-rose-500 flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            ${note.image ? `<img src="${note.image}" class="w-full h-auto rounded-3xl border border-slate-100">` : ''}
+                            ${note.drawing ? `<div class="bg-white rounded-3xl border border-slate-100 p-2"><img src="${note.drawing}" class="w-full h-auto max-h-48 object-contain"></div>` : ''}
+                        </div>`;
+                }).join('');
+
+                // RENDERIZAR EN HUB (HORIZONTAL COMO BOTONES)
+                if(hubList) {
+                    hubList.innerHTML = notes.map((note) => {
+                        const isPassed = note.reminderDateTime && new Date(note.reminderDateTime) <= now;
+                        const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-200 bg-rose-50' : 'bg-white border-slate-200';
+                        const reminderLabel = formatReminder(note.reminderDateTime);
+
+                        return `
+                        <div onclick="editNote(${note.id}); toggleAgenda(true);" class="snap-center shrink-0 w-64 ${cardClass} p-5 rounded-[2rem] border shadow-sm flex flex-col relative overflow-hidden cursor-pointer transition-transform active:scale-95">
+                            ${note.isDone ? '<div class="absolute top-4 right-4 text-emerald-500"><i data-lucide="check-circle" class="w-5 h-5"></i></div>' : ''}
+                            <h4 class="text-sm font-black text-slate-800 truncate pr-6 ${note.isDone ? 'line-through opacity-40' : ''}">${note.text || 'Evidencia adjunta'}</h4>
+                            <div class="flex items-center justify-between mt-6">
+                                <span class="text-[9px] font-black uppercase text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">${note.created}</span>
+                                ${reminderLabel ? `<span class="flex items-center gap-1 text-[9px] font-black uppercase ${isPassed && !note.isDone ? 'text-rose-600' : 'text-fuchsia-600'} bg-white px-2 py-0.5 rounded-full shadow-sm"><i data-lucide="alarm-clock" class="w-3 h-3"></i> ${reminderLabel.replace('📅 ', '')}</span>` : ''}
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+            lucide.createIcons({root: list});
+            if(hubList) lucide.createIcons({root: hubList});
+        }
+
+        // --- LÓGICA DE ALERTAS REAL-TIME ---
+        function checkReminders() {
+            const now = new Date();
+            const todayAlert = document.getElementById('today-alert');
+            const bell = document.getElementById('hub-notif-bell');
+            const activeReminders = notes.filter(n => n.reminderDateTime && new Date(n.reminderDateTime) <= now && !n.isDone);
+            
+            if (activeReminders.length > 0) {
+                todayAlert.classList.remove('hidden');
+                bell.classList.remove('hidden');
+                document.getElementById('notif-badge-count').innerText = activeReminders.length;
+                activeNoteForModal = activeReminders[0]; 
+                
+                activeReminders.forEach(reminder => {
+                    if (!notifiedIds.has(reminder.id)) triggerRealtimeAlert(reminder);
+                });
+            } else {
+                todayAlert.classList.add('hidden');
+                bell.classList.add('hidden');
+            }
+        }
+
+        function triggerRealtimeAlert(note) {
+            const modal = document.getElementById('realtime-alert-modal');
+            const alertText = document.getElementById('rt-alert-text');
+            const mediaCont = document.getElementById('rt-alert-media');
+            
+            alertText.innerText = note.text || "Objetivo listo para cierre.";
+            mediaCont.innerHTML = '';
+            
+            if (note.image) mediaCont.innerHTML += `<img src="${note.image}" class="w-full h-auto rounded-2xl shadow-lg border border-slate-100">`;
+            if (note.drawing) mediaCont.innerHTML += `<div class="bg-slate-50 p-3 rounded-2xl border"><img src="${note.drawing}" class="w-full h-auto max-h-48 object-contain"></div>`;
+            
+            modal.classList.remove('hidden');
+            notifiedIds.add(note.id);
+            if ("vibrate" in navigator) navigator.vibrate([400, 100, 400]);
+            lucide.createIcons({root: mediaCont});
+        }
+
+        function viewLatestActiveNote() {
+            const now = new Date();
+            const activeReminders = notes.filter(n => n.reminderDateTime && new Date(n.reminderDateTime) <= now && !n.isDone);
+            if (activeReminders.length > 0) triggerRealtimeAlert(activeReminders[0]);
+            else toggleAgenda(true);
+        }
+
+        function closeRealtimeAlert() { document.getElementById('realtime-alert-modal').classList.add('hidden'); }
+
+        function toggleDone(id) {
+            notes = notes.map(n => n.id === id ? {...n, isDone: !n.isDone} : n);
+            localStorage.setItem(DB_KEY, JSON.stringify(notes));
+            renderAgendaNotes();
+            if(document.getElementById('calendar-modal').classList.contains('opacity-100')) renderCalendar();
+            checkReminders();
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(n => n.id !== id);
+            localStorage.setItem(DB_KEY, JSON.stringify(notes));
+            renderAgendaNotes();
+            if(document.getElementById('calendar-modal').classList.contains('opacity-100')) renderCalendar();
+            checkReminders();
+        }
+
+        // --- CALENDARIO (MODAL) ---
+        let calYear = new Date().getFullYear(); let calMonth = new Date().getMonth();
+        function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+        function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+        
+        function renderCalendar() {
+            const grid = document.getElementById('cal-grid'); grid.innerHTML = '';
+            const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            document.getElementById('cal-title').innerText = `${months[calMonth]} ${calYear}`;
+            
+            const firstDay = new Date(calYear, calMonth, 1).getDay();
+            const offset = firstDay === 0 ? 6 : firstDay - 1; 
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+            const today = new Date();
+            
+            for (let i = 0; i < offset; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const hasEvent = notes.some(n => !n.isDone && n.reminderDateTime && new Date(n.reminderDateTime).getDate() === d && new Date(n.reminderDateTime).getMonth() === calMonth && new Date(n.reminderDateTime).getFullYear() === calYear);
+                const isToday = today.getDate() === d && today.getMonth() === calMonth && today.getFullYear() === calYear;
+                
+                const cell = document.createElement('div');
+                cell.className = `cal-day ${isToday ? 'today shadow-md shadow-fuchsia-500/30' : (hasEvent ? 'has-event bg-rose-50 text-rose-600' : 'text-slate-700 bg-white hover:bg-slate-100 border border-slate-100')}`;
+                cell.innerText = d; 
+                
+                cell.onclick = () => { 
+                    if(hasEvent) {
+                        toggleCalendar(false);
+                        setTimeout(() => toggleAgenda(true), 300);
+                    }
+                };
+                grid.appendChild(cell);
+            }
+        }
+
+        // --- CALCULADORA (MODAL) ---
+        let calcExpr = '';
+        const calcKeys = ['AC','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','='];
+        function renderCalc() {
+            const grid = document.getElementById('calc-buttons');
+            grid.innerHTML = calcKeys.map(k => {
+                const cls = k === '=' ? 'brand-gradient text-white shadow-lg shadow-fuchsia-500/30' : (isNaN(k) && k !== '.' ? 'bg-slate-50 text-fuchsia-600 border border-slate-100' : 'bg-white text-slate-800 border border-slate-200 shadow-sm');
+                return `<button class="calc-btn ${cls}" onclick="calcAction('${k}')">${k}</button>`;
+            }).join('');
+        }
+        function calcAction(k) {
+            const d = document.getElementById('calc-display'); const e = document.getElementById('calc-expr');
+            if (k === 'AC') { calcExpr = ''; d.innerText = '0'; e.innerHTML = '&nbsp;'; return; }
+            if (k === '⌫') { calcExpr = calcExpr.slice(0, -1); d.innerText = calcExpr || '0'; return; }
+            if (k === '=') { 
+                try { 
+                    const clean = calcExpr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/%/g,'/100');
+                    const r = eval(clean); 
+                    e.innerText = calcExpr + ' ='; d.innerText = r; calcExpr = String(r); 
+                } catch { d.innerText = 'Error'; calcExpr = ''; } 
+                return; 
+            }
+            calcExpr += k; d.innerText = calcExpr;
+        }
+
+        // --- DIBUJO ---
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        function openDrawingPanel() { document.getElementById('drawing-panel').classList.remove('hidden'); canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = 6; ctx.strokeStyle = '#000'; initDrawingEvents(); }
+        function setDrawColor(hex) { ctx.strokeStyle = hex; }
+        function initDrawingEvents() {
+            const start = (e) => { isDrawing = true; draw(e); };
+            const stop = () => { isDrawing = false; ctx.beginPath(); };
+            const draw = (e) => { if (!isDrawing) return; const rect = canvas.getBoundingClientRect(); const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left; const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); };
+            canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stop); canvas.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); }); canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }); canvas.addEventListener('touchend', stop);
+        }
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function closeDrawingPanel(save) { if (save) { currentDraftMedia.drawing = canvas.toDataURL('image/png'); updateMediaPreview(); } document.getElementById('drawing-panel').classList.add('hidden'); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const saved = localStorage.getItem('freework_user');
+            
+            // 🔒 BLOQUEO DE SEGURIDAD
+            if (!saved) {
+                window.location.replace('index.html'); // Expulsa a login
+                return;
+            }
+
+            try {
+                const user = JSON.parse(saved);
+                
+                // Lee exactamente los parámetros del JSON que entrega el backend: name y role
+                const fullName = user.name || user.email || 'Socio';
+                const firstName = fullName.split(' ')[0];
+                const role = user.role || 'ejecutivo';
+                
+                // Modifica los textos en pantalla
+                document.getElementById('user-greeting').innerText = `Hola, ${firstName}`;
+                document.getElementById('user-initial').innerText = firstName.charAt(0).toUpperCase();
+                
+                // Cambia el título si es Admin
+                const roleEl = document.getElementById('user-role');
+                if (roleEl) {
+                    if (role.toLowerCase().includes('admin')) {
+                        roleEl.innerText = 'ADMIN 👑';
+                    } else {
+                        roleEl.innerText = 'EJECUTIVO ELITE';
+                    }
+                }
+
+            } catch(e) {
+                console.error("Error validando al usuario:", e);
+                document.getElementById('user-greeting').innerText = `Hola, Socio`;
+                document.getElementById('user-initial').innerText = `S`;
+            }
+
+            renderAgendaNotes();
+            checkReminders();
+            setInterval(checkReminders, 15000);
+        });
+    </script>
+</body>
+</html>

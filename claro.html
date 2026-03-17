@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'>
+    <title>Freework Elite - claro.html</title>
+    <style>
+        /* CSS Integrado */
+        body { 
+            background: #000; 
+            color: #fff; 
+            font-family: -apple-system, system-ui, sans-serif; 
+            margin: 0; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100dvh; 
+            overflow: hidden; 
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .card { 
+            background: linear-gradient(145deg, #0f0f0f, #050505); 
+            border: 1px solid #1a1a1a; 
+            padding: 3rem; 
+            border-radius: 3rem; 
+            text-align: center; 
+            width: 90%; 
+            max-width: 400px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .icon-box {
+            width: 60px; height: 60px;
+            background: #111;
+            border-radius: 20px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00ff8833;
+        }
+        h1 { color: #00ff88; margin: 0; font-size: 1.5rem; letter-spacing: -0.03em; }
+        p { color: #555; font-size: 0.9rem; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class='card'>
+        <div class='icon-box'>
+            <span style='color:#00ff88; font-weight:bold;'>FW</span>
+        </div>
+        <h1>claro.html</h1>
+        <p>Este módulo está listo para recibir tu código lógico de Antigravity.</p>
+    </div>
+
+    <script>
+        // JS Integrado
+        console.log('--- Módulo [claro.html] Cargado ---');
+        
+        // Función para interactuar con la Shell principal si fuera necesario
+        window.addEventListener('message', (event) => {
+            console.log('Mensaje recibido en claro.html:', event.data);
+        });
+    </script>
+</body>
+</html>

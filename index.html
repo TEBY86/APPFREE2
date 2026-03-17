@@ -1,0 +1,567 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>Freework - Terminal de Ventas Elite</title>
+    
+    <!-- Tailwind & Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Fuente Unificada -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================================
+           VARIABLES ELITE OBSIDIAN
+           ============================================================ */
+        :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --app-version: "1.0.0";
+            
+            --glass-bg: rgba(5, 7, 12, 0.75); 
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --active-glow: rgba(168, 85, 247, 0.8);
+            --spring-curve: cubic-bezier(0.4, 1.2, 0.5, 1);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            margin: 0; padding: 0;
+            width: 100vw; height: 100dvh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            user-select: none; -webkit-user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(30px) scale(0.98); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.8s var(--spring-curve) forwards; opacity: 0; }
+        
+        .bg-noise { 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E"); 
+        }
+        
+        .bg-chart {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M -100 800 C 200 800, 300 500, 500 550 S 700 200, 1100 100' fill='none' stroke='rgba(168, 85, 247, 0.05)' stroke-width='4'/%3E%3C/svg%3E");
+            background-size: cover;
+            z-index: 0;
+        }
+
+        .grid-lines {
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 0%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 0%, transparent 80%);
+        }
+        
+        .brand-gradient { background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); }
+        
+        @keyframes fiber-light {
+            0% { transform: translateX(-150%); }
+            100% { transform: translateX(300%); }
+        }
+        .animate-fiber { animation: fiber-light 3s cubic-bezier(0.4, 0.0, 0.2, 1) infinite; }
+        .animate-fiber-slow { animation: fiber-light 5s cubic-bezier(0.4, 0.0, 0.2, 1) infinite 1.5s; }
+
+        .obsidian-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(48px) saturate(180%);
+            -webkit-backdrop-filter: blur(48px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 40px 80px -16px rgba(0, 0, 0, 1), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.08),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .glass-input-wrapper {
+            background: rgba(10, 14, 23, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .glass-input-wrapper:focus-within {
+            background: rgba(15, 20, 35, 0.8);
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+        .glass-input-wrapper input {
+            background: transparent; border: none; outline: none; width: 100%;
+            color: #ffffff; font-weight: 500; font-size: 0.875rem;
+        }
+        .glass-input-wrapper input::placeholder { color: #475569; }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY DE ACTUALIZACIÓN -->
+    <div id="updateBadge" class="fixed top-8 left-1/2 -translate-x-1/2 z-[200] hidden animate-bounce">
+        <div class="bg-fuchsia-600 text-white text-[10px] font-black px-6 py-2.5 rounded-full shadow-[0_10px_30px_rgba(217,70,239,0.5)] border border-white/20 uppercase tracking-[0.2em] backdrop-blur-md">
+            Arsenal Actualizado
+        </div>
+    </div>
+
+    <!-- FONDO DE CAPAS -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="bg-chart"></div>
+        <div class="absolute top-[-10%] -left-[20%] w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[140px]"></div>
+        <div class="absolute bottom-[-10%] -right-[20%] w-[600px] h-[600px] bg-fuchsia-600/5 rounded-full blur-[140px]"></div>
+        <div class="absolute inset-0 bg-noise opacity-40"></div>
+        <div class="absolute inset-0 grid-lines"></div>
+
+        <!-- Fibras Ópticas -->
+        <div class="absolute top-[35%] -left-[10%] w-[120%] h-[1px] bg-violet-500/10 rotate-[-12deg] overflow-hidden opacity-80">
+            <div class="w-1/2 h-full bg-gradient-to-r from-transparent via-fuchsia-400 to-transparent shadow-[0_0_20px_rgba(217,70,239,0.8)] animate-fiber"></div>
+        </div>
+        <div class="absolute top-[65%] -left-[10%] w-[120%] h-[1px] bg-fuchsia-500/10 rotate-[8deg] overflow-hidden opacity-60">
+            <div class="w-1/2 h-full bg-gradient-to-r from-transparent via-violet-400 to-transparent shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-fiber-slow"></div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="relative z-10 w-full h-full max-w-sm mx-auto px-7 flex flex-col justify-center gap-7 py-[calc(var(--safe-top)+2rem)]">
+
+        <div class="text-center animate-fade-in-up">
+            <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full obsidian-glass mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+                </span>
+                <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em]" id="statusText">Terminal Asegurada</span>
+            </div>
+
+            <div class="flex flex-col items-center justify-center gap-2 mb-2">
+                <picture class="block">
+                    <source srcset="imagenes/logo.svg" type="image/svg+xml">
+                    <source srcset="imagenes/logo.webp" type="image/webp">
+                    <img src="imagenes/logo.png" alt="Logo Freework" class="h-24
+                     w-auto mx-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 hover:scale-105">
+                </picture>
+                
+                <h1 class="text-[2.5rem] font-black text-white tracking-tighter leading-none">FREEWORK</h1>
+            </div>
+
+            <p class="text-[10px] text-fuchsia-400 font-black uppercase tracking-[0.2em] drop-shadow-[0_0_10px_rgba(217,70,239,0.5)] mt-3">AQUÍ NO SE LLORA, SE FACTURA</p>
+        </div>
+
+        <!-- FORMULARIO ELITE -->
+        <div class="space-y-4 animate-fade-in-up mt-4" style="animation-delay: 0.1s">
+            <div class="glass-input-wrapper flex items-center pl-5 pr-1.5 h-[3.5rem] group">
+                <i data-lucide="user" class="text-slate-500 w-5 h-5 mr-4 group-focus-within:text-violet-400 transition-colors shrink-0"></i>
+                <input type="email" id="loginEmail" placeholder="Correo del Socio Comercial" autocomplete="off" style="flex: 1; min-width: 0;"/>
+                
+                <div class="flex items-center shrink-0 ml-2">
+                    <button type="button" id="bioBtnSmall" onclick="triggerBiometric()" class="w-[2.75rem] h-[2.75rem] rounded-[0.75rem] flex items-center justify-center text-slate-500 bg-transparent border border-transparent hover:text-violet-400 hover:bg-violet-500/10 hover:border-violet-500/30 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] transition-all duration-300 active:scale-[0.85] group/bio" title="Usar Biometría">
+                        <i data-lucide="fingerprint" class="w-6 h-6 group-hover/bio:drop-shadow-[0_0_10px_rgba(168,85,247,0.8)] transition-all duration-300"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="glass-input-wrapper flex items-center px-5 h-[3.5rem] group">
+                <i data-lucide="key" class="text-slate-500 w-5 h-5 mr-4 group-focus-within:text-violet-400 transition-colors"></i>
+                <input type="password" id="loginPass" placeholder="Contraseña"/>
+            </div>
+            
+            <button id="btnLogin" onclick="handleLogin()" class="w-full h-14 mt-4 brand-gradient rounded-2xl text-white font-black text-[11px] uppercase tracking-[0.2em] shadow-[0_15px_35px_-10px_rgba(168,85,247,0.6)] active:scale-[0.97] transition-all flex items-center justify-center gap-3 border border-white/20">
+                <i data-lucide="power" class="w-4 h-4"></i>
+                Inicializar Sistema
+            </button>
+            
+            <!-- Link de registro -->
+            <p class="text-center mt-4">
+                <button onclick="showRegisterModal()" class="text-[10px] text-slate-500 hover:text-violet-400 uppercase tracking-wider transition-colors">
+                    ¿Primer acceso? Regístrate
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- MODAL DE BIENVENIDA -->
+    <div id="welcomeModal" class="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl hidden opacity-0 transition-opacity duration-500">
+        <div class="obsidian-glass w-full max-w-sm rounded-[3rem] p-10 flex flex-col items-center text-center transform scale-95 transition-transform duration-500" id="welcomeModalContent">
+            <div class="w-24 h-24 rounded-3xl brand-gradient flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(168,85,247,0.4)] border border-white/20">
+                <i data-lucide="flame" class="w-12 h-12 text-white"></i>
+            </div>
+            <h3 class="text-4xl font-black text-white mb-2 uppercase tracking-tight italic">¡ADENTRO!</h3>
+            <p class="text-violet-400 font-black tracking-[0.15em] text-[11px] mb-8 uppercase" id="welcomeMsgName">SOCIO COMERCIAL</p>
+            <button onclick="proceedToDashboard()" class="w-full h-14 rounded-2xl brand-gradient font-black text-white text-[11px] uppercase tracking-widest shadow-xl border border-white/20 active:scale-95 transition-transform">
+                Ir a Facturar
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL DE REGISTRO -->
+    <div id="registerModal" class="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl hidden opacity-0 transition-opacity duration-500">
+        <div class="obsidian-glass w-full max-w-sm rounded-[2.5rem] p-8 flex flex-col transform scale-95 transition-transform duration-500" id="registerModalContent">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-black text-white uppercase tracking-tight italic">REGISTRO</h3>
+                <button onclick="hideRegisterModal()" class="text-slate-500 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="glass-input-wrapper flex items-center px-4 h-[3.2rem]">
+                    <i data-lucide="user" class="text-slate-500 w-5 h-5 mr-3"></i>
+                    <input type="text" id="regNombre" placeholder="Nombre completo" class="bg-transparent outline-none text-white w-full"/>
+                </div>
+                
+                <div class="glass-input-wrapper flex items-center px-4 h-[3.2rem]">
+                    <i data-lucide="mail" class="text-slate-500 w-5 h-5 mr-3"></i>
+                    <input type="email" id="regEmail" placeholder="Correo electrónico" class="bg-transparent outline-none text-white w-full"/>
+                </div>
+                
+                <div class="glass-input-wrapper flex items-center px-4 h-[3.2rem]">
+                    <i data-lucide="phone" class="text-slate-500 w-5 h-5 mr-3"></i>
+                    <input type="tel" id="regTelefono" placeholder="Teléfono" class="bg-transparent outline-none text-white w-full"/>
+                </div>
+                
+                <div class="glass-input-wrapper flex items-center px-4 h-[3.2rem]">
+                    <i data-lucide="key" class="text-slate-500 w-5 h-5 mr-3"></i>
+                    <input type="password" id="regPassword" placeholder="Contraseña" class="bg-transparent outline-none text-white w-full"/>
+                </div>
+            </div>
+            
+            <button onclick="handleRegister()" class="w-full h-14 mt-6 brand-gradient rounded-2xl text-white font-black text-[11px] uppercase tracking-[0.2em] shadow-xl border border-white/20 active:scale-95 transition-all">
+                Crear Cuenta
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL DE FEEDBACK -->
+    <div id="feedbackModal" class="fixed inset-0 z-[600] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl hidden opacity-0 transition-opacity duration-300">
+        <div class="obsidian-glass w-full max-w-sm rounded-[2.5rem] p-8 flex flex-col items-center text-center transform scale-95 transition-transform duration-300" id="feedbackModalContent">
+            <div id="fbIconContainer" class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-white/10 bg-white/5 shadow-inner">
+                <i id="fbIcon" data-lucide="shield-alert" class="w-8 h-8 text-fuchsia-400 drop-shadow-[0_0_10px_rgba(217,70,239,0.5)]"></i>
+            </div>
+            <h3 id="fbTitle" class="text-2xl font-black text-white mb-2 uppercase tracking-tight italic">Atención</h3>
+            <p id="fbMsg" class="text-slate-400 text-[13px] mb-8 leading-relaxed font-semibold">Mensaje del sistema</p>
+            <button id="fbBtn" class="w-full h-14 rounded-2xl bg-white/10 border border-white/10 font-black text-white text-[11px] uppercase tracking-widest active:scale-95 transition-all hover:bg-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]">Entendido</button>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// CONFIGURACIÓN - ¡LA URL QUE SÍ FUNCIONA!
+// ============================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUn0OHXXwbUX9QHXh2E0YUE9BYhKPU2psJ_lQ-OwDAfu7Cznxu01CIu9XgMA5GGdVI/exec";
+const DASHBOARD_URL = "shell.html";
+
+const STORAGE_KEYS = {
+    USER: 'freework_user',
+    SESSION: 'fw_session',
+    BIO_ENABLED: 'fw_bio_enabled'
+};
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+document.addEventListener('DOMContentLoaded', async () => {
+    lucide.createIcons();
+    
+    const user = getStoredUser();
+    const session = localStorage.getItem(STORAGE_KEYS.SESSION);
+    const bioEnabled = localStorage.getItem(STORAGE_KEYS.BIO_ENABLED) === 'true';
+    
+    if (user && session) {
+        if (bioEnabled) {
+            updateBioButtonState(true);
+        }
+        // Si hay sesión activa, redirigir al dashboard
+        window.location.replace(DASHBOARD_URL);
+    }
+});
+
+// ============================================
+// LOGIN - CON LA LÓGICA QUE SÍ FUNCIONA
+// ============================================
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPass').value.trim();
+    
+    if (!email || !password) {
+        showFeedback('alert-triangle', '¡Ey, Socio!', 'Ingresa tus credenciales para facturar.', 'Corregir');
+        return;
+    }
+    
+    setLoadingState(true);
+    
+    try {
+        // PRIMER INTENTO - Como string
+        let response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ 
+                action: 'login',
+                email: email,
+                password: password
+            })
+        });
+        
+        let data = await response.json();
+        
+        // SEGUNDO INTENTO - Si falla y es número, probar como número
+        if (!data.success && !isNaN(password) && password !== '') {
+            response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ 
+                    action: 'login',
+                    email: email,
+                    password: Number(password)
+                })
+            });
+            data = await response.json();
+        }
+        
+        console.log('Login response:', data);
+        
+        if (data.success) {
+            saveUserSession(data.user);
+            localStorage.setItem(STORAGE_KEYS.BIO_ENABLED, 'true');
+            showWelcomeModal(data.user.name);
+        } else {
+            showFeedback('shield-x', 'Acceso Denegado', data.message || 'Credenciales incorrectas', 'Reintentar');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        showFeedback('wifi-off', 'Error de Conexión', 'No pudimos contactar al servidor. Verifica tu conexión.', 'Entendido');
+    } finally {
+        setLoadingState(false);
+    }
+}
+
+// ============================================
+// REGISTRO
+// ============================================
+async function handleRegister() {
+    const nombre = document.getElementById('regNombre').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const telefono = document.getElementById('regTelefono').value.trim();
+    const password = document.getElementById('regPassword').value;
+    
+    if (!nombre || !email || !password) {
+        showFeedback('alert-triangle', 'Campos Incompletos', 'Nombre, email y contraseña son obligatorios', 'Corregir');
+        return;
+    }
+    
+    setLoadingState(true, 'register');
+    
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'register',
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            hideRegisterModal();
+            showFeedback('check-circle', '¡Registro Exitoso!', 'Tu cuenta ha sido creada. Ahora inicia sesión.', 'Iniciar Sesión');
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPass').value = '';
+        } else {
+            showFeedback('x-circle', 'Error', data.message || 'No se pudo crear la cuenta', 'Reintentar');
+        }
+    } catch (error) {
+        showFeedback('wifi-off', 'Error de Conexión', 'No pudimos contactar al servidor', 'Entendido');
+    } finally {
+        setLoadingState(false, 'register');
+    }
+}
+
+// ============================================
+// BIOMETRÍA
+// ============================================
+async function triggerBiometric() {
+    const plugin = window.Capacitor?.Plugins?.NativeBiometric;
+    
+    if (!plugin) {
+        showFeedback('fingerprint', 'Biometría No Disponible', 'Esta función solo está disponible en la app nativa', 'Entendido');
+        return;
+    }
+    
+    const btn = document.getElementById('bioBtnSmall');
+    const originalContent = btn.innerHTML;
+    
+    btn.innerHTML = '<i data-lucide="loader-2" class="w-6 h-6 animate-spin text-violet-400"></i>';
+    lucide.createIcons();
+    
+    try {
+        await plugin.verifyIdentity({
+            reason: 'Desbloquear terminal de ventas',
+            title: 'Freework Security'
+        });
+        
+        const credentials = await plugin.getCredentials({
+            server: 'freework_app'
+        });
+        
+        if (!credentials || !credentials.username || !credentials.password) {
+            throw new Error('No hay credenciales guardadas');
+        }
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'login',
+                email: credentials.username,
+                password: credentials.password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            saveUserSession(data.user);
+            showWelcomeModal(data.user.name);
+        } else {
+            await plugin.deleteCredentials({
+                server: 'freework_app'
+            });
+            throw new Error('Credenciales obsoletas');
+        }
+        
+    } catch (error) {
+        btn.innerHTML = originalContent;
+        lucide.createIcons();
+        
+        showFeedback('fingerprint', 'Acceso Biométrico Fallido', 
+            'No pudimos autenticarte. Usa tu contraseña manualmente.', 'Entendido');
+    }
+}
+
+// ============================================
+// UTILIDADES DE SESIÓN
+// ============================================
+function saveUserSession(user) {
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.SESSION, Date.now().toString());
+}
+
+function getStoredUser() {
+    try {
+        const userStr = localStorage.getItem(STORAGE_KEYS.USER);
+        return userStr ? JSON.parse(userStr) : null;
+    } catch {
+        return null;
+    }
+}
+
+// ============================================
+// FUNCIONES UI
+// ============================================
+function setLoadingState(isLoading, context = 'login') {
+    const btn = document.getElementById('btnLogin');
+    
+    if (context === 'login') {
+        btn.disabled = isLoading;
+        btn.innerHTML = isLoading 
+            ? '<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>'
+            : '<i data-lucide="power" class="w-4 h-4"></i> Inicializar Sistema';
+        lucide.createIcons();
+    }
+}
+
+function updateBioButtonState(isActive) {
+    const bioBtn = document.getElementById('bioBtnSmall');
+    if (isActive) {
+        bioBtn.classList.remove('text-slate-500', 'bg-transparent', 'border-transparent');
+        bioBtn.classList.add('text-violet-400', 'bg-violet-500/10', 'border-violet-500/40', 'shadow-[0_0_15px_rgba(168,85,247,0.5)]');
+    }
+}
+
+function showWelcomeModal(name) {
+    const modal = document.getElementById('welcomeModal');
+    const content = document.getElementById('welcomeModalContent');
+    document.getElementById('welcomeMsgName').innerText = `SOCIO: ${name.toUpperCase()}`;
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+    }, 10);
+    
+    if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+}
+
+function proceedToDashboard() {
+    window.location.href = DASHBOARD_URL;
+}
+
+function showRegisterModal() {
+    const modal = document.getElementById('registerModal');
+    const content = document.getElementById('registerModalContent');
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+    }, 10);
+}
+
+function hideRegisterModal() {
+    const modal = document.getElementById('registerModal');
+    const content = document.getElementById('registerModalContent');
+    
+    modal.classList.add('opacity-0');
+    content.classList.add('scale-95');
+    setTimeout(() => modal.classList.add('hidden'), 500);
+}
+
+function showFeedback(icon, title, message, buttonText) {
+    const modal = document.getElementById('feedbackModal');
+    const content = document.getElementById('feedbackModalContent');
+    const iconElem = document.getElementById('fbIcon');
+    
+    iconElem.setAttribute('data-lucide', icon);
+    document.getElementById('fbTitle').innerText = title;
+    document.getElementById('fbMsg').innerText = message;
+    document.getElementById('fbBtn').innerText = buttonText;
+    
+    document.getElementById('fbBtn').onclick = () => {
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    };
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+    }, 10);
+    
+    lucide.createIcons();
+}
+
+// Exponer funciones globales
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.triggerBiometric = triggerBiometric;
+window.proceedToDashboard = proceedToDashboard;
+window.showRegisterModal = showRegisterModal;
+window.hideRegisterModal = hideRegisterModal;
+</script>
+</body>
+</html>
