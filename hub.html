@@ -271,68 +271,112 @@
     </div>
 
     <!-- 2. MODAL: CALENDARIO -->
-    <div id="calendar-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
-        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[80vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
-            
-            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleCalendar(false)">
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-4"></div>
-                <h3 class="text-xl font-black text-slate-900 tracking-tight">Calendario de Gestión</h3>
-            </div>
+   <!-- 2. MODAL: CALENDARIO (VERSIÓN CON ESPACIO INFERIOR) -->
+<div id="calendar-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
+    <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[75vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+        
+        <!-- HEADER - Barra superior para cerrar -->
+        <div class="w-full flex flex-col items-center pt-4 pb-3 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleCalendar(false)">
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-3"></div>
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">CALENDARIO</h3>
+            <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">GESTIÓN DE SEGUIMIENTOS</p>
+        </div>
 
-            <div class="flex-1 overflow-y-auto no-scrollbar px-6 pt-6 pb-10">
-                <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
-                    <div class="flex items-center justify-between mb-6">
-                        <button onclick="calPrev()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-                        <h3 id="cal-title" class="text-base font-black text-slate-900 tracking-tight capitalize"></h3>
-                        <button onclick="calNext()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
-                    </div>
-                    <div class="grid grid-cols-7 mb-2">
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Lu</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ma</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Mi</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ju</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Vi</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Sa</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Do</div>
-                    </div>
-                    <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
+        <!-- CUERPO DEL CALENDARIO -->
+        <div class="flex-1 overflow-y-auto no-scrollbar px-5 pt-5 pb-12">
+            
+            <!-- CONTENEDOR PRINCIPAL -->
+            <div class="bg-white rounded-[2rem] p-5 shadow-sm border border-slate-100">
+                
+                <!-- CONTROLES DE MES -->
+                <div class="flex items-center justify-between mb-5">
+                    <button onclick="calPrev()" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-200">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <h3 id="cal-title" class="text-base font-black text-slate-900 tracking-tight capitalize"></h3>
+                    <button onclick="calNext()" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-200">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
                 </div>
                 
-                <div class="mt-6 flex items-center justify-center gap-6">
+                <!-- DÍAS DE LA SEMANA -->
+                <div class="grid grid-cols-7 mb-2">
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">LUN</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">MAR</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">MIÉ</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">JUE</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">VIE</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">SÁB</div>
+                    <div class="text-center text-[8px] font-black text-slate-400 uppercase py-1">DOM</div>
+                </div>
+                
+                <!-- CUADRÍCULA DE DÍAS -->
+                <div id="cal-grid" class="grid grid-cols-7 gap-1.5"></div>
+                
+                <!-- LEYENDA -->
+                <div class="mt-6 flex items-center justify-center gap-6 pt-2 border-t border-slate-100">
                     <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-fuchsia-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seguimiento</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
+                        <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">C/Seguimiento</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full brand-gradient"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hoy</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600"></div>
+                        <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Hoy</span>
                     </div>
                 </div>
             </div>
+            
+            <!-- ESPACIO ADICIONAL INFERIOR (30px) -->
+            <div class="h-8"></div>
+            
+            <!-- MENSAJE INFORMATIVO (opcional, puedes eliminarlo) -->
+            <div class="text-center">
+                <p class="text-[9px] text-slate-400 font-medium">
+                    <i data-lucide="info" class="w-3 h-3 inline-block mr-1"></i>
+                    Toca un día con seguimiento para ver detalles
+                </p>
+            </div>
+            
+            <!-- MÁS ESPACIO AL FINAL -->
+            <div class="h-10"></div>
         </div>
     </div>
+</div>
 
     <!-- 3. MODAL: CALCULADORA -->
-    <div id="calc-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
-        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[80vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
-            
-            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-[#0B0F19] text-white cursor-pointer relative z-20" onclick="toggleCalc(false)">
-                <div class="w-12 h-1.5 bg-white/20 rounded-full mb-4"></div>
-                <h3 class="text-xl font-black tracking-tight">Calculadora de Comisiones</h3>
-            </div>
+   <!-- 3. MODAL: CALCULADORA (VERSIÓN COMPACTA Y OPTIMIZADA) -->
+<div id="calc-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
+    <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[65vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+        
+        <!-- HEADER - Barra superior para cerrar -->
+        <div class="w-full flex flex-col items-center pt-4 pb-3 shrink-0 bg-[#0B0F19] text-white cursor-pointer relative z-20" onclick="toggleCalc(false)">
+            <div class="w-12 h-1.5 bg-white/20 rounded-full mb-3"></div>
+            <h3 class="text-lg font-black tracking-tight">CALCULADORA</h3>
+            <p class="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Comisiones - Gestión</p>
+        </div>
 
-            <div class="flex-1 bg-white flex flex-col">
-                <div class="bg-[#0B0F19] p-8 text-right relative flex-1 flex flex-col justify-end">
-                    <div class="absolute inset-0 bg-noise opacity-20"></div>
-                    <p id="calc-expr" class="text-slate-500 text-sm font-bold min-h-[24px] tracking-tight truncate relative z-10">&nbsp;</p>
-                    <p id="calc-display" class="text-white font-black tracking-tight mt-2 relative z-10" style="font-size:clamp(2.5rem,12vw,4rem)">0</p>
-                </div>
-                <div class="grid grid-cols-4 gap-3 p-6 bg-white shrink-0" id="calc-buttons">
-                    <!-- Generado por JS -->
-                </div>
+        <!-- CUERPO - Calculadora compacta -->
+        <div class="flex-1 bg-white flex flex-col">
+            
+            <!-- PANTALLA - Más compacta -->
+            <div class="bg-[#0B0F19] p-5 text-right relative">
+                <div class="absolute inset-0 bg-noise opacity-20 pointer-events-none"></div>
+                <p id="calc-expr" class="text-slate-500 text-xs font-bold min-h-[20px] tracking-tight truncate relative z-10">&nbsp;</p>
+                <p id="calc-display" class="text-white font-black tracking-tight relative z-10 break-all" style="font-size:clamp(2rem, 8vw, 3rem); line-height:1.2">0</p>
+            </div>
+            
+            <!-- BOTONES - Grid optimizado con padding inferior extra -->
+            <div class="grid grid-cols-4 gap-2 p-5 pb-8 bg-white" id="calc-buttons">
+                <!-- Los botones se generan por JS -->
+            </div>
+            
+            <!-- INDICADOR VISUAL DE ESPACIO (opcional, puedes eliminarlo) -->
+            <div class="w-full flex justify-center pb-2">
+                <div class="w-16 h-1 bg-slate-200 rounded-full"></div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- PANEL DE DIBUJO (SOBRE MODALES) -->
     <div id="drawing-panel" class="fixed inset-0 z-[500] bg-white hidden flex flex-col items-center justify-center">
