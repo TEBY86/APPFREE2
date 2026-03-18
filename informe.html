@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Freework · Ventas</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <style>
@@ -43,8 +43,8 @@
   --r-xl: 28px;
   --r-full: 999px;
 
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
 
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -60,6 +60,8 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* ── LOADING ── */
@@ -181,39 +183,39 @@ body {
 }
 .tab-pill.active .count { background: var(--violet); color: white; }
 
-/* ── KPI STRIP ── */
+/* ── KPI STRIP COMPACTO ── */
 .kpi-strip {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;
-  padding: 0.8rem 1rem 0.2rem;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem;
+  padding: 0.6rem 1rem 0.2rem;
 }
 .kpi-card {
   background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--r-md); padding: 0.6rem 0.8rem;
+  border-radius: var(--r-sm); padding: 0.45rem 0.6rem;
   transition: transform 0.2s;
-  display: flex; align-items: center; gap: 0.6rem;
+  display: flex; align-items: center; gap: 0.5rem;
 }
 .kpi-card:active { transform: scale(0.97); }
 .kpi-icon {
-  width: 32px; height: 32px; border-radius: var(--r-sm);
+  width: 28px; height: 28px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; flex-shrink: 0;
+  font-size: 0.75rem; flex-shrink: 0;
 }
 .kpi-info {
   display: flex; flex-direction: column; justify-content: center;
 }
 .kpi-num {
-  font-family: var(--font-display); font-size: 1.15rem; font-weight: 800;
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 800;
   letter-spacing: -0.02em; color: var(--ink); line-height: 1;
 }
 .kpi-lbl {
-  font-size: 0.58rem; font-weight: 600; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem;
+  font-size: 0.55rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.1rem;
 }
 
 /* ── FILTER BAR ── */
 .filter-bar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0.8rem 1.25rem; gap: 0.75rem;
+  padding: 0.7rem 1.25rem; gap: 0.75rem;
 }
 .filter-count {
   font-size: 0.78rem; font-weight: 500; color: var(--muted);
@@ -222,8 +224,8 @@ body {
 .filter-btn {
   display: flex; align-items: center; gap: 0.4rem;
   background: var(--surface); border: 0.5px solid var(--border2);
-  border-radius: var(--r-full); padding: 0.45rem 0.9rem;
-  font-family: var(--font-body); font-size: 0.78rem; font-weight: 500;
+  border-radius: var(--r-full); padding: 0.4rem 0.8rem;
+  font-family: var(--font-body); font-size: 0.75rem; font-weight: 500;
   color: var(--ink); cursor: pointer; transition: all 0.2s;
 }
 .filter-btn:active { background: var(--faint); }
@@ -268,7 +270,7 @@ body {
 
 .data-table tr { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; animation: cardIn 0.3s cubic-bezier(0.4,0,0.2,1) both; }
 .data-table tr:hover { 
-  transform: translateY(-2px) scale(1.005); 
+  transform: translateY(-2px); 
   box-shadow: 0 10px 25px -5px rgba(10, 8, 18, 0.08); 
   z-index: 10; position: relative;
 }
@@ -317,9 +319,9 @@ body {
 .empty-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--ink); }
 .empty-sub { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
 
-/* ── DETAIL MODAL ── */
+/* ── DETAIL MODAL COMPACTO ── */
 .modal-overlay {
-  position: fixed; inset: 0; z-index: 500;
+  position: fixed; inset: 0; z-index: 2000; /* Prioridad máxima por sobre todo */
   background: rgba(10,8,18,0.55); backdrop-filter: blur(4px);
   display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; visibility: hidden; transition: all 0.3s;
@@ -331,7 +333,7 @@ body {
   width: 100%; max-width: 480px; max-height: 93vh;
   overflow-y: auto; overflow-x: hidden;
   transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  padding-bottom: calc(2rem + var(--safe-bottom));
+  padding-bottom: calc(3.5rem + var(--safe-bottom)); /* Espacio extra abajo igual que el informe */
   -webkit-overflow-scrolling: touch;
 }
 .modal-overlay.open .modal-sheet { transform: translateY(0); }
@@ -339,130 +341,130 @@ body {
 
 .modal-handle {
   width: 36px; height: 4px; border-radius: var(--r-full);
-  background: var(--border2); margin: 0.75rem auto 0;
+  background: var(--border2); margin: 0.6rem auto 0;
 }
 
 /* Modal header */
 .modal-hero {
-  background: var(--ink); margin: 0.5rem 1.25rem 0;
-  border-radius: var(--r-lg); padding: 1.25rem;
+  background: var(--ink); margin: 0.5rem 1rem 0; /* Menos margen lateral */
+  border-radius: var(--r-md); padding: 1rem; /* Menos padding */
   position: relative; overflow: hidden;
   box-shadow: 0 4px 15px rgba(10,8,18,0.08);
 }
 .modal-hero-top { display: flex; align-items: center; gap: 0.85rem; position: relative; justify-content: space-between; }
 .modal-op-badge {
-  padding: 0.3rem 0.7rem; border-radius: var(--r-sm);
-  font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.25rem 0.6rem; border-radius: var(--r-sm);
+  font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
   color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .modal-id-top {
-  font-family: var(--font-body); font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.7);
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.7);
 }
 .modal-avatar {
-  width: 52px; height: 52px; border-radius: var(--r-md);
+  width: 40px; height: 40px; border-radius: 10px; /* Más compacto */
   background: var(--grad); display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: white;
+  font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: white;
   flex-shrink: 0; overflow: hidden; position: relative;
 }
 .modal-avatar img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; z-index: 2; }
 .modal-hero-info { flex: 1; min-width: 0; }
 .modal-exec-name {
-  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
   color: white; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.modal-supervisor { font-size: 0.72rem; color: rgba(255,255,255,0.45); margin-top: 0.15rem; }
+.modal-supervisor { font-size: 0.68rem; color: rgba(255,255,255,0.45); margin-top: 0.15rem; }
 .modal-close {
-  width: 34px; height: 34px; border-radius: var(--r-sm);
+  width: 30px; height: 30px; border-radius: var(--r-sm);
   background: rgba(255,255,255,0.1); border: 0.5px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7); font-size: 0.9rem;
+  color: rgba(255,255,255,0.7); font-size: 0.85rem;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
 .modal-close:active { transform: scale(0.92); background: rgba(255,255,255,0.18); }
 
-.modal-hero-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 1rem 0; position: relative; }
+.modal-hero-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 0.85rem 0; position: relative; }
 .modal-hero-bottom { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
 .modal-client-name {
-  font-family: var(--font-body); font-size: 1.4rem; font-weight: 700;
+  font-family: var(--font-body); font-size: 1.2rem; font-weight: 700;
   color: white; letter-spacing: -0.01em; line-height: 1.2; flex: 1; word-break: break-word;
 }
 .modal-status-pill {
   display: inline-flex; align-items: center; gap: 0.3rem;
-  padding: 0.4rem 0.85rem; border-radius: var(--r-full); font-family: var(--font-body);
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.35rem 0.75rem; border-radius: var(--r-full); font-family: var(--font-body);
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
   margin-top: 0.15rem; flex-shrink: 0;
 }
 
 /* Modal body */
-.modal-body { padding: 1.25rem 1.25rem 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.modal-body { padding: 1rem 1rem 0; display: flex; flex-direction: column; gap: 0.45rem; }
 
 .info-row {
-  display: flex; align-items: center; gap: 0.85rem;
-  background: var(--faint); border-radius: var(--r-md);
-  padding: 0.85rem 1rem; transition: all 0.2s;
+  display: flex; align-items: center; gap: 0.65rem;
+  background: var(--faint); border-radius: var(--r-sm);
+  padding: 0.65rem 0.85rem; transition: all 0.2s;
 }
 .info-row:active { background: #e8e4f4; }
 .info-icon {
-  width: 36px; height: 36px; border-radius: var(--r-sm); flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  width: 30px; height: 30px; border-radius: var(--r-sm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
 }
 .info-text { flex: 1; min-width: 0; }
-.info-label { font-size: 0.62rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.12rem; }
-.info-value { font-size: 0.88rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.info-value.large { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+.info-label { font-size: 0.58rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.1rem; }
+.info-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.info-value.large { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; letter-spacing: -0.01em; }
 
-.info-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.info-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
 
 .obs-box {
   background: #fffbeb; border: 0.5px dashed #f59e0b;
-  border-radius: var(--r-md); padding: 1rem;
+  border-radius: var(--r-sm); padding: 0.85rem;
 }
-.obs-label { font-size: 0.65rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
-.obs-text { font-size: 0.83rem; color: #92400e; line-height: 1.6; }
+.obs-label { font-size: 0.6rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; }
+.obs-text { font-size: 0.78rem; color: #92400e; line-height: 1.5; }
 
 /* ── TIMELINE HORIZONTAL ── */
-.timeline-section { padding: 1.25rem 1.25rem 0; }
+.timeline-section { padding: 1rem 1rem 0; }
 .timeline-title {
-  font-size: 0.65rem; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem;
+  font-size: 0.6rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem;
 }
 
 .days-chip {
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--faint); border-radius: 12px;
-  padding: 0.75rem 1rem; margin-bottom: 1.25rem;
+  background: var(--faint); border-radius: 10px;
+  padding: 0.6rem 0.85rem; margin-bottom: 1rem;
 }
 .days-left { display: flex; align-items: center; gap: 0.5rem; }
-.days-num { font-family: var(--font-body); font-size: 1.4rem; font-weight: 800; color: var(--ink); line-height: 1; }
-.days-lbl { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+.days-num { font-family: var(--font-body); font-size: 1.2rem; font-weight: 800; color: var(--ink); line-height: 1; }
+.days-lbl { font-size: 0.68rem; color: var(--muted); font-weight: 500; }
 .days-alert {
-  font-size: 0.7rem; font-weight: 600; padding: 0.35rem 0.8rem;
+  font-size: 0.65rem; font-weight: 600; padding: 0.3rem 0.7rem;
   border-radius: var(--r-full); letter-spacing: 0.02em;
 }
 
 .tl-track { display: flex; align-items: flex-start; position: relative; }
 .tl-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-.tl-connector { flex: 1; height: 2px; margin-top: 13px; transition: background 0.4s; }
+.tl-connector { flex: 1; height: 2px; margin-top: 10px; transition: background 0.4s; }
 .tl-connector.done { background: var(--green); }
 .tl-connector.active { background: linear-gradient(90deg, var(--violet) 0%, var(--border2) 100%); }
 .tl-connector.idle { background: var(--border2); }
 .tl-dot {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 24px; height: 24px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.7rem; border: 2px solid transparent; transition: all 0.3s;
+  font-size: 0.6rem; border: 2px solid transparent; transition: all 0.3s;
   position: relative; flex-shrink: 0;
 }
 .tl-dot.done { background: var(--green-light); border-color: var(--green); color: var(--green); }
 .tl-dot.active { background: var(--violet-light); border-color: var(--violet); color: var(--violet); }
 .tl-dot.idle { background: var(--faint); border-color: var(--border2); color: var(--muted); }
 .tl-dot.rejected { background: var(--red-light); border-color: var(--red); color: var(--red); }
-.tl-dot-label { font-size: 0.62rem; font-weight: 500; margin-top: 5px; text-align: center; color: var(--muted); line-height: 1.3; }
+.tl-dot-label { font-size: 0.58rem; font-weight: 500; margin-top: 4px; text-align: center; color: var(--muted); line-height: 1.3; }
 .tl-dot-label.active { color: var(--ink); font-weight: 600; }
-.tl-dot-date { font-size: 0.58rem; color: var(--muted); text-align: center; margin-top: 1px; }
+.tl-dot-date { font-size: 0.55rem; color: var(--muted); text-align: center; margin-top: 1px; }
 
 /* ── OPERATOR FILTER SHEET ── */
 .op-overlay {
-  position: fixed; inset: 0; z-index: 600;
+  position: fixed; inset: 0; z-index: 2500;
   background: rgba(10,8,18,0.55); backdrop-filter: blur(4px);
   display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; visibility: hidden; transition: all 0.3s;
@@ -495,7 +497,7 @@ body {
   position: fixed; bottom: calc(2rem + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(20px);
   background: var(--ink2); color: white; border-radius: var(--r-full);
   padding: 0.7rem 1.25rem; font-size: 0.82rem; font-weight: 500;
-  display: flex; align-items: center; gap: 0.5rem; z-index: 800;
+  display: flex; align-items: center; gap: 0.5rem; z-index: 3000;
   opacity: 0; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); pointer-events: none;
   white-space: nowrap;
 }
@@ -643,7 +645,7 @@ body {
       <div class="modal-hero-bottom">
         <div style="flex:1; min-width:0; padding-right: 1rem;">
           <div class="modal-client-name" id="m-client"></div>
-          <div id="m-rut" style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:0.35rem; font-family: monospace; font-weight: 500;"></div>
+          <div id="m-rut" style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:0.35rem; font-weight: 500; letter-spacing: 0.02em;"></div>
         </div>
         <div class="modal-status-pill" id="m-badge"></div>
       </div>
@@ -653,12 +655,12 @@ body {
     <div class="modal-body">
 
       <!-- Ejecutivo -->
-      <div class="info-row" style="background:var(--surface); border:0.5px solid var(--border2); padding: 1rem;">
-        <div class="modal-avatar" id="m-avatar" style="width:40px; height:40px; font-size:1rem;"><img id="m-avatar-img" src="" alt="" onerror="this.style.display='none'"><span id="m-avatar-initials"></span></div>
+      <div class="info-row" style="background:var(--surface); border:0.5px solid var(--border2);">
+        <div class="modal-avatar" id="m-avatar"><img id="m-avatar-img" src="" alt="" onerror="this.style.display='none'"><span id="m-avatar-initials"></span></div>
         <div class="info-text">
           <div class="info-label">Ejecutivo a cargo</div>
-          <div class="info-value large" id="m-exec" style="font-size:0.95rem;"></div>
-          <div style="font-size:0.68rem; color:var(--muted); margin-top:0.15rem; font-weight:500;" id="m-super"></div>
+          <div class="info-value large" id="m-exec"></div>
+          <div style="font-size:0.65rem; color:var(--muted); margin-top:0.1rem; font-weight:500;" id="m-super"></div>
         </div>
       </div>
 
@@ -682,21 +684,21 @@ body {
 
       <!-- Teléfono + Fecha -->
       <div class="info-grid2">
-        <div class="info-row" style="flex-direction:column; align-items:flex-start; gap:0.35rem;">
-          <div style="display:flex;align-items:center;gap:0.6rem;width:100%;">
-            <div class="info-icon" style="background:#d1fae5; color:#059669; width:30px; height:30px; flex-shrink:0;"><i class="fa-solid fa-phone" style="font-size:0.75rem;"></i></div>
+        <div class="info-row" style="flex-direction:column; align-items:flex-start;">
+          <div style="display:flex;align-items:center;gap:0.5rem;width:100%;">
+            <div class="info-icon" style="background:#d1fae5; color:#059669;"><i class="fa-solid fa-phone"></i></div>
             <div class="info-text">
               <div class="info-label">Teléfono</div>
-              <div class="info-value" id="m-tel" style="font-size:0.82rem;"></div>
+              <div class="info-value" id="m-tel"></div>
             </div>
           </div>
         </div>
-        <div class="info-row" style="flex-direction:column;align-items:flex-start;gap:0.25rem;">
-          <div style="display:flex;align-items:center;gap:0.6rem;width:100%;">
-            <div class="info-icon" style="background:#dbeafe;color:#2563eb;width:30px;height:30px;flex-shrink:0;"><i class="fa-regular fa-calendar" style="font-size:0.75rem;"></i></div>
+        <div class="info-row" style="flex-direction:column;align-items:flex-start;">
+          <div style="display:flex;align-items:center;gap:0.5rem;width:100%;">
+            <div class="info-icon" style="background:#dbeafe; color:#2563eb;"><i class="fa-regular fa-calendar"></i></div>
             <div class="info-text">
               <div class="info-label">Ingreso</div>
-              <div class="info-value" id="m-fecha" style="font-size:0.82rem;"></div>
+              <div class="info-value" id="m-fecha"></div>
             </div>
           </div>
         </div>
@@ -943,7 +945,7 @@ function renderCards() {
             </div>
         </td>
         <td>
-            <div style="font-weight: 700; color: var(--violet); font-size:0.8rem; font-family: monospace;">#${id}</div>
+            <div style="font-weight: 700; color: var(--violet); font-size:0.85rem; letter-spacing: 0.02em;">#${id}</div>
             <div style="font-size:0.65rem; color: var(--muted); font-weight:500;"><i class="fa-regular fa-calendar" style="margin-right:2px;"></i> ${fecha}</div>
         </td>
         <td>
