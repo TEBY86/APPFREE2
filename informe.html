@@ -233,7 +233,7 @@ body {
 
 /* ── DATA TABLE ── */
 .table-wrapper { 
-  padding: 0 1rem 6rem; 
+  padding: 0 1rem 10rem; /* Espacio extra abajo aumentado a 10rem */
   overflow-x: auto; 
   -webkit-overflow-scrolling: touch;
 }
@@ -333,7 +333,7 @@ body {
   width: 100%; max-width: 480px; max-height: 93vh;
   overflow-y: auto; overflow-x: hidden;
   transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  padding-bottom: calc(3.5rem + var(--safe-bottom)); /* Espacio extra abajo igual que el informe */
+  padding-bottom: calc(8rem + var(--safe-bottom)); /* Espacio extra abajo aumentado a 8rem */
   -webkit-overflow-scrolling: touch;
 }
 .modal-overlay.open .modal-sheet { transform: translateY(0); }
@@ -531,7 +531,7 @@ body {
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-logo"><img src="imagenes/logo.svg" alt="Freework"></div>
+  <div class="loader-logo"><img src="./imagenes/logo.svg" alt="Freework" onerror="this.onerror=null; this.outerHTML='<span style=\'color:white; font-size:1.5rem; font-weight:800;\'>Freework</span>';"></div>
   <div class="loader-bar"><div class="loader-bar-inner"></div></div>
   <div class="loader-sub">Cargando ventas...</div>
 </div>
@@ -542,7 +542,7 @@ body {
   <!-- HEADER -->
   <header class="header">
     <div class="header-top">
-      <div class="header-brand"><img src="imagenes/logo.svg" alt="Freework"></div>
+      <div class="header-brand"><img src="./imagenes/logo.svg" alt="Freework" onerror="this.onerror=null; this.outerHTML='<span style=\'color:white; font-size:1.1rem; font-weight:800;\'>Freework</span>';"></div>
       <div class="header-actions">
         <button class="icon-btn" id="exportBtn" title="Exportar Excel">
           <i class="fa-solid fa-file-arrow-down"></i>
