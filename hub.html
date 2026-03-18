@@ -14,7 +14,7 @@
             font-family: 'Inter', sans-serif; 
             background-color: #ffffff;
             margin: 0; padding: 0; 
-            width: 100%; /* ESTO ES CLAVE */
+            width: 100%; 
             height: 100dvh; min-height: 100dvh; 
             display: flex; flex-direction: column; 
             overflow: hidden; 
@@ -37,10 +37,11 @@
             --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
-        .modal-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        /* Desenfoque premium para los fondos de los modales */
+        .modal-blur { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
         
         .agenda-modal-content {
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
             transform: translateY(100%);
         }
         .agenda-modal-active .agenda-modal-content {
@@ -49,27 +50,6 @@
 
         .tab-view { display: none; height: 100%; width: 100%; flex-direction: column; }
         .tab-view.active { display: flex; }
-
-        /* Calculadora UI */
-        .calc-btn {
-            border-radius: 1.25rem; font-weight: 800; font-size: 1.25rem;
-            display: flex; align-items:center; justify-content:center;
-            cursor: pointer; transition: all 0.1s ease; min-height: 64px;
-        }
-        .calc-btn:active { transform: scale(0.92); opacity: 0.8; }
-
-        /* Calendario UI */
-        .cal-day {
-            aspect-ratio: 1; border-radius: 0.75rem;
-            display: flex; align-items:center; justify-content:center;
-            font-size: 12px; font-weight: 700; cursor: pointer;
-            position: relative; transition: background .15s;
-        }
-        .cal-day.today { background: linear-gradient(135deg,#7c3aed,#c026d3); color:#fff; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.4); }
-        .cal-day.has-event::after {
-            content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%);
-            width:4px; height:4px; border-radius:50%; background:#f43f5e;
-        }
 
         /* Latido Rojo de Alertas */
         .reminder-pulse {
@@ -89,14 +69,14 @@
 
     <div class="w-full h-full flex flex-col relative overflow-hidden">
         
-        <!-- CABECERA PREMIUM (Limpia, sin pestañas) -->
-        <div class="bg-[#0B0F19] pt-[calc(var(--safe-top)+1.5rem)] pb-8 px-6 relative shrink-0 shadow-lg rounded-b-[2.5rem] z-20">
+        <!-- CABECERA PREMIUM -->
+        <div class="bg-[#0B0F19] pt-[calc(var(--safe-top)+1.5rem)] pb-8 px-6 relative shrink-0 shadow-[0_15px_35px_-10px_rgba(0,0,0,0.2)] rounded-b-[2.5rem] z-20 border-b border-white/5">
             <div class="absolute inset-0 bg-noise pointer-events-none opacity-50"></div>
             <div class="absolute top-0 right-0 w-64 h-64 bg-fuchsia-600/20 rounded-full blur-[80px] pointer-events-none"></div>
 
             <div class="flex justify-between items-center relative z-10">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl brand-gradient flex items-center justify-center text-white font-black text-xl shadow-lg" id="user-initial">S</div>
+                    <div class="w-12 h-12 rounded-2xl brand-gradient flex items-center justify-center text-white font-black text-xl shadow-[0_8px_20px_-5px_rgba(192,38,211,0.4)] ring-1 ring-white/20" id="user-initial">S</div>
                     <div>
                         <p id="user-role" class="text-fuchsia-400 text-[10px] font-black tracking-widest uppercase mb-1">EJECUTIVO ELITE</p>
                         <h2 class="text-2xl font-black text-white tracking-tight leading-none" id="user-greeting">Hola...</h2>
@@ -117,7 +97,7 @@
             
             <!-- ALERTA ACTIVA -->
             <div id="today-alert" class="hidden animate-fade-in-up">
-                <div class="bg-rose-50 border border-rose-100 rounded-3xl p-4 flex items-center gap-4 shadow-sm mb-2">
+                <div class="bg-rose-50 border border-rose-100 rounded-3xl p-4 flex items-center gap-4 shadow-[0_10px_20px_-10px_rgba(244,63,94,0.2)] mb-2">
                     <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0">
                         <i data-lucide="calendar-clock" class="w-6 h-6"></i>
                     </div>
@@ -130,26 +110,25 @@
             </div>
 
             <!-- ======================================================================== -->
-            <!-- 🟢 BOTÓN PRINCIPAL "VENDER" (INGRESAR VENTA)                           -->
+            <!-- 🟢 TARJETA ESTATICA "INGRESAR VENTA" (Ya no es botón)                  -->
             <!-- ======================================================================== -->
-            <div onclick="redirectUrl('marcas.html')" class="w-full bg-white rounded-[2.5rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center gap-5 relative overflow-hidden active:scale-[0.98] transition-transform cursor-pointer animate-fade-in-up">
+            <div class="w-full bg-white rounded-[2.5rem] p-6 shadow-[0_15px_35px_-10px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-5 relative overflow-hidden animate-fade-in-up ring-1 ring-slate-900/5">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-fuchsia-50 rounded-full blur-[30px] pointer-events-none"></div>
-                <div class="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-md shrink-0 relative z-10">
+                <div class="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-[0_8px_20px_-5px_rgba(192,38,211,0.4)] shrink-0 relative z-10">
                     <i data-lucide="rocket" class="w-8 h-8"></i>
                 </div>
                 
-                <div class="relative z-10">
+                <div class="relative z-10 pr-2">
                     <h3 class="text-xl font-black text-slate-900 tracking-tight leading-tight">Ingresar Venta</h3>
-                    <p class="text-[11px] text-slate-500 font-bold mt-1 uppercase tracking-wide">El botón que hace sonar la caja.</p>
+                    <p class="text-[10px] text-slate-500 font-bold mt-1.5 uppercase tracking-wide leading-relaxed">El éxito es la suma de pequeños esfuerzos diarios. ¡Ve por más ventas!</p>
                 </div>
-                <i data-lucide="chevron-right" class="w-6 h-6 text-slate-300 ml-auto"></i>
             </div>
 
             <!-- ======================================================================== -->
-            <!-- 🟢 NUEVO COMENTARIO / DIRECTRIZ CORPORATIVA (ESTILO WOM)               -->
+            <!-- 🟢 DIRECTRIZ CORPORATIVA                                               -->
             <!-- ======================================================================== -->
             <div class="animate-fade-in-up" style="animation-delay: 0.05s;">
-                <div class="bg-gradient-to-r from-violet-900 to-[#0B0F19] rounded-[2rem] p-5 border border-violet-800/50 shadow-lg relative overflow-hidden">
+                <div class="bg-gradient-to-r from-violet-900 to-[#0B0F19] rounded-[2rem] p-5 border border-violet-800/50 shadow-[0_15px_35px_-10px_rgba(0,0,0,0.2)] relative overflow-hidden">
                     <div class="absolute right-0 top-0 w-32 h-32 bg-fuchsia-600/20 rounded-full blur-[40px] pointer-events-none"></div>
                     <div class="flex items-start gap-4 relative z-10">
                         <div class="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-fuchsia-400 shrink-0 border border-fuchsia-500/30">
@@ -178,18 +157,18 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- ACCESOS RÁPIDOS (COPIES ATREVIDOS)         -->
+            <!-- ACCESOS RÁPIDOS                            -->
             <!-- ========================================== -->
             <div class="grid grid-cols-2 gap-3 animate-fade-in-up" style="animation-delay: 0.2s;">
                 
                 <!-- Agenda Destacada en Negro -->
-                <div onclick="toggleAgenda(true)" class="bg-[#0B0F19] border border-slate-800 rounded-[1.5rem] p-5 flex flex-col gap-2 active:scale-95 transition-all shadow-lg cursor-pointer">
+                <div onclick="toggleAgenda(true)" class="bg-[#0B0F19] border border-slate-800 rounded-[1.5rem] p-5 flex flex-col gap-2 active:scale-95 transition-all shadow-[0_15px_35px_-10px_rgba(0,0,0,0.2)] cursor-pointer ring-1 ring-white/5">
                     <div class="w-10 h-10 rounded-xl bg-white/10 text-fuchsia-400 flex items-center justify-center"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
                     <h4 class="text-[11px] font-black text-white uppercase tracking-tighter leading-tight">Mi Agenda</h4>
                     <p class="text-[9px] text-fuchsia-400/60 font-bold uppercase">Cero excusas. Anota todo.</p>
                 </div>
                 
-                <div onclick="toggleCalendar(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                <div onclick="toggleCalendar(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-[0_15px_35px_-10px_rgba(0,0,0,0.08)] cursor-pointer ring-1 ring-slate-900/5">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="calendar" class="w-5 h-5"></i></div>
                     <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Calendario</h4>
                     <p class="text-[9px] text-slate-400 font-bold uppercase">Mapea tus victorias.</p>
@@ -197,13 +176,14 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3 animate-fade-in-up" style="animation-delay: 0.25s;">
-                <div onclick="toggleCalc(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                <div onclick="toggleCalc(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-[0_15px_35px_-10px_rgba(0,0,0,0.08)] cursor-pointer ring-1 ring-slate-900/5">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="calculator" class="w-5 h-5"></i></div>
                     <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Calculadora</h4>
                     <p class="text-[9px] text-slate-400 font-bold uppercase">Calcula tus comisiones.</p>
                 </div>
                 
-                <div onclick="redirectUrl('URL_ACADEMIA')" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-sm cursor-pointer">
+                <!-- Botón Academia abre su Nodal -->
+                <div onclick="toggleAcademia(true)" class="bg-white rounded-[1.5rem] p-5 border border-slate-100 flex flex-col gap-2 active:scale-95 transition-all shadow-[0_15px_35px_-10px_rgba(0,0,0,0.08)] cursor-pointer ring-1 ring-slate-900/5">
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-5 h-5"></i></div>
                     <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">Academia</h4>
                     <p class="text-[9px] text-slate-400 font-bold uppercase">Entrénate o muere.</p>
@@ -213,39 +193,41 @@
     </div>
 
     <!-- ======================================================= -->
-    <!-- MODALES INFERIORES TIPO "NODAL" (TOOLS) -->
+    <!-- NODALES PREMIUM GLASSMORPHISM                           -->
     <!-- ======================================================= -->
 
-    <!-- 1. MODAL: AGENDA MULTIMEDIA COMPLETA -->
-    <div id="agenda-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
-        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[92vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+    <!-- 1. NODAL: AGENDA MULTIMEDIA COMPLETA -->
+    <div id="agenda-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 modal-blur hidden opacity-0 transition-opacity duration-500 pb-32 px-4 sm:px-0 sm:pb-12">
+        <div class="agenda-modal-content bg-[#0e0e11]/80 backdrop-blur-3xl w-full max-w-sm h-auto max-h-[85vh] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/5 relative">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-30"></div>
             
-            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleAgenda(false)">
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-4"></div>
-                <h3 class="text-xl font-black text-slate-900 tracking-tight">Agenda Operativa</h3>
+            <div class="w-full flex flex-col items-center pt-5 pb-2 shrink-0 bg-transparent text-white cursor-pointer relative z-20" onclick="toggleAgenda(false)">
+                <div class="w-10 h-1 bg-white/20 rounded-full mb-3"></div>
+                <h3 class="text-[11px] font-semibold tracking-[0.2em] text-white/50 uppercase">Agenda Operativa</h3>
             </div>
 
-            <div id="agenda-scroll-container" class="flex-1 overflow-y-auto no-scrollbar px-6 pb-40 pt-4">
+            <div id="agenda-scroll-container" class="flex-1 overflow-y-auto no-scrollbar px-6 pb-8 pt-4">
                 
-                <div id="creation-area" class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200 mb-8 transition-all duration-500">
-                    <div class="space-y-4">
+                <div id="creation-area" class="bg-black/20 rounded-[2rem] p-6 shadow-inner border border-white/5 mb-6 transition-all duration-500 relative">
+                    <div class="absolute inset-0 bg-noise pointer-events-none opacity-10 mix-blend-overlay rounded-[2rem]"></div>
+                    <div class="space-y-4 relative z-10">
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-1.5 block">¿A quién hay que cerrar?</label>
-                            <textarea id="agenda-input" rows="2" placeholder="Escribe aquí el RUT o nombre..." class="w-full text-base font-bold text-slate-800 outline-none bg-slate-50 p-4 rounded-2xl border border-slate-100 focus:border-fuchsia-300 transition-all resize-none"></textarea>
+                            <label class="text-[9px] font-black text-white/50 uppercase tracking-widest ml-2 mb-1.5 block">¿A quién hay que cerrar?</label>
+                            <textarea id="agenda-input" rows="2" placeholder="Escribe aquí el RUT o nombre..." class="w-full text-sm font-bold text-white outline-none bg-black/40 p-4 rounded-2xl border border-white/10 focus:border-fuchsia-500/50 focus:ring-1 focus:ring-fuchsia-500/50 transition-all resize-none placeholder-white/20"></textarea>
                         </div>
                         
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-1.5 block">¿Cuándo te alertamos?</label>
-                            <input type="datetime-local" id="agenda-datetime" class="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-5 text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-fuchsia-400/10 transition-all">
+                            <label class="text-[9px] font-black text-white/50 uppercase tracking-widest ml-2 mb-1.5 block">¿Cuándo te alertamos?</label>
+                            <input type="datetime-local" id="agenda-datetime" style="color-scheme: dark;" class="w-full h-14 rounded-2xl bg-black/40 border border-white/10 px-5 text-sm font-bold text-white outline-none focus:border-fuchsia-500/50 focus:ring-1 focus:ring-fuchsia-500/50 transition-all">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
-                            <button onclick="document.getElementById('image-upload').click()" class="h-14 rounded-2xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center gap-2 active:scale-95 transition-all">
-                                <i data-lucide="camera" class="w-5 h-5"></i>
+                            <button onclick="document.getElementById('image-upload').click()" class="h-12 rounded-2xl bg-white/5 text-white/70 border border-white/10 flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-white/10">
+                                <i data-lucide="camera" class="w-4 h-4"></i>
                                 <span class="text-[10px] font-black uppercase tracking-widest">Evidencia</span>
                             </button>
-                            <button onclick="openDrawingPanel()" class="h-14 rounded-2xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center gap-2 active:scale-95 transition-all">
-                                <i data-lucide="brush" class="w-5 h-5"></i>
+                            <button onclick="openDrawingPanel()" class="h-12 rounded-2xl bg-white/5 text-white/70 border border-white/10 flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-white/10">
+                                <i data-lucide="brush" class="w-4 h-4"></i>
                                 <span class="text-[10px] font-black uppercase tracking-widest">Croquis</span>
                             </button>
                         </div>
@@ -254,10 +236,10 @@
                         <input type="file" id="image-upload" accept="image/*" capture="environment" class="hidden" onchange="handleImagePreview(this)">
 
                         <div class="flex gap-2 pt-2">
-                            <button id="btn-cancel-edit" onclick="cancelEdit()" class="hidden h-14 px-5 rounded-2xl bg-slate-100 text-slate-400 font-black active:scale-95 transition-all flex items-center justify-center">
-                                <i data-lucide="x" class="w-6 h-6"></i>
+                            <button id="btn-cancel-edit" onclick="cancelEdit()" class="hidden h-14 px-5 rounded-2xl bg-white/5 border border-white/10 text-white/50 font-black active:scale-95 transition-all flex items-center justify-center hover:bg-white/10">
+                                <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
-                            <button id="btn-save-note" onclick="processNote()" class="flex-1 h-14 rounded-2xl brand-gradient text-white font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <button id="btn-save-note" onclick="processNote()" class="flex-1 h-14 rounded-2xl brand-gradient text-white font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(192,38,211,0.3)] active:scale-95 transition-all flex items-center justify-center gap-2">
                                 <i id="save-icon" data-lucide="plus" class="w-4 h-4"></i> 
                                 <span id="save-text">Fijar Objetivo</span>
                             </button>
@@ -270,94 +252,104 @@
         </div>
     </div>
 
-    <!-- 2. MODAL: CALENDARIO -->
-    <div id="calendar-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 modal-blur hidden opacity-0 transition-opacity duration-300">
-        <div class="agenda-modal-content bg-slate-50 w-full max-w-lg h-[80vh] rounded-t-[3rem] shadow-2xl flex flex-col overflow-hidden border-t border-white/20">
+    <!-- 2. NODAL: CALENDARIO -->
+    <div id="calendar-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 modal-blur hidden opacity-0 transition-opacity duration-500 pb-32 px-4 sm:px-0 sm:pb-12">
+        <div class="agenda-modal-content bg-[#0e0e11]/80 backdrop-blur-3xl w-full max-w-sm h-auto max-h-[85vh] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/5 relative">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-30"></div>
             
-            <div class="w-full flex flex-col items-center pt-3 pb-4 shrink-0 bg-white border-b border-slate-100 cursor-pointer" onclick="toggleCalendar(false)">
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-4"></div>
-                <h3 class="text-xl font-black text-slate-900 tracking-tight">Calendario de Gestión</h3>
+            <div class="w-full flex flex-col items-center pt-5 pb-2 shrink-0 bg-transparent text-white cursor-pointer relative z-20" onclick="toggleCalendar(false)">
+                <div class="w-10 h-1 bg-white/20 rounded-full mb-3"></div>
+                <h3 class="text-[11px] font-semibold tracking-[0.2em] text-white/50 uppercase">Calendario de Gestión</h3>
             </div>
 
-            <div class="flex-1 overflow-y-auto no-scrollbar px-6 pt-6 pb-10">
-                <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+            <div class="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-8 relative z-10">
+                <div class="bg-black/20 rounded-[2.5rem] p-6 shadow-inner border border-white/5">
                     <div class="flex items-center justify-between mb-6">
-                        <button onclick="calPrev()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-                        <h3 id="cal-title" class="text-base font-black text-slate-900 tracking-tight capitalize"></h3>
-                        <button onclick="calNext()" class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition-all"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                        <button onclick="calPrev()" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 active:scale-90 transition-all"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                        <h3 id="cal-title" class="text-base font-black text-white tracking-tight capitalize"></h3>
+                        <button onclick="calNext()" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 active:scale-90 transition-all"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
                     </div>
                     <div class="grid grid-cols-7 mb-2">
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Lu</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ma</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Mi</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Ju</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Vi</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Sa</div>
-                        <div class="text-center text-[9px] font-black text-slate-400 uppercase py-1">Do</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Lu</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Ma</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Mi</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Ju</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Vi</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Sa</div>
+                        <div class="text-center text-[9px] font-black text-white/40 uppercase py-1">Do</div>
                     </div>
                     <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
                 </div>
                 
                 <div class="mt-6 flex items-center justify-center gap-6">
                     <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-fuchsia-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seguimiento</span>
+                        <div class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.6)]"></div>
+                        <span class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Seguimiento</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full brand-gradient"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hoy</span>
+                        <div class="w-2 h-2 rounded-full brand-gradient shadow-[0_0_10px_rgba(192,38,211,0.6)]"></div>
+                        <span class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Hoy</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. MODAL: CALCULADORA -->
-<!-- Contenedor principal de la Calculadora Premium -->
-<div id="calc-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 modal-blur hidden opacity-0 transition-opacity duration-500 pb-32 px-4 sm:px-0 sm:pb-12">
-    
-    <!-- DISEÑO PREMIUM: Fondo glass oscuro, bordes translúcidos, max-h ajustado para no cortar el 0 -->
-    <div class="agenda-modal-content bg-[#0e0e11]/80 backdrop-blur-3xl w-full max-w-sm h-auto max-h-[85vh] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/5 relative">
-        
-        <!-- Brillo superior del cristal -->
-        <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-30"></div>
-        
-        <!-- Cabecera elegante -->
-        <div class="w-full flex flex-col items-center pt-5 pb-2 shrink-0 bg-transparent text-white cursor-pointer relative z-20" onclick="toggleCalc(false)">
-            <div class="w-10 h-1 bg-white/20 rounded-full mb-3"></div>
-            <h3 class="text-[11px] font-semibold tracking-[0.2em] text-white/50 uppercase">Comisiones</h3>
-        </div>
-
-        <!-- Contenedor flex con min-h-0 para evitar desbordes en móviles -->
-        <div class="flex-1 flex flex-col relative z-10 min-h-0">
-            <div class="absolute inset-0 bg-noise pointer-events-none mix-blend-overlay"></div>
+    <!-- 3. NODAL: CALCULADORA PREMIUM -->
+    <div id="calc-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 modal-blur hidden opacity-0 transition-opacity duration-500 pb-32 px-4 sm:px-0 sm:pb-12">
+        <div class="agenda-modal-content bg-[#0e0e11]/80 backdrop-blur-3xl w-full max-w-sm h-auto max-h-[85vh] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/5 relative">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-30"></div>
             
-            <!-- Pantalla -->
-            <div class="px-6 sm:px-8 pt-2 pb-4 text-right relative flex-1 flex flex-col justify-end">
-                <p id="calc-expr" class="text-white/40 text-sm font-medium min-h-[24px] tracking-widest truncate">&nbsp;</p>
-                <p id="calc-display" class="text-white font-light tracking-tight mt-1" style="font-size:clamp(2.5rem,10vw,4.5rem)">0</p>
+            <div class="w-full flex flex-col items-center pt-5 pb-2 shrink-0 bg-transparent text-white cursor-pointer relative z-20" onclick="toggleCalc(false)">
+                <div class="w-10 h-1 bg-white/20 rounded-full mb-3"></div>
+                <h3 class="text-[11px] font-semibold tracking-[0.2em] text-white/50 uppercase">Comisiones</h3>
             </div>
-            
-            <!-- Teclado Numérico -->
-            <div class="grid grid-cols-4 gap-2 sm:gap-3 p-4 sm:p-6 bg-black/40 rounded-t-[2rem] shrink-0 border-t border-white/5 relative z-20" id="calc-buttons">
-                <!-- Generado por JS -->
+
+            <div class="flex-1 flex flex-col relative z-10 min-h-0">
+                <div class="absolute inset-0 bg-noise pointer-events-none mix-blend-overlay"></div>
+                
+                <div class="px-6 sm:px-8 pt-2 pb-4 text-right relative flex-1 flex flex-col justify-end">
+                    <p id="calc-expr" class="text-white/40 text-sm font-medium min-h-[24px] tracking-widest truncate">&nbsp;</p>
+                    <p id="calc-display" class="text-white font-light tracking-tight mt-1" style="font-size:clamp(2.5rem,10vw,4.5rem)">0</p>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-2 sm:gap-3 p-4 sm:p-6 bg-black/40 rounded-t-[2rem] shrink-0 border-t border-white/5 relative z-20" id="calc-buttons">
+                    <!-- Generado por JS -->
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- 4. NODAL: ACADEMIA (PRONTO) -->
+    <div id="academia-modal" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 modal-blur hidden opacity-0 transition-opacity duration-500 pb-32 px-4 sm:px-0 sm:pb-12">
+        <div class="agenda-modal-content bg-[#0e0e11]/80 backdrop-blur-3xl w-full max-w-sm h-auto rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/5 relative p-8 items-center text-center">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-30"></div>
+            
+            <div class="w-16 h-16 rounded-[1.25rem] brand-gradient flex items-center justify-center text-white shadow-[0_0_30px_rgba(192,38,211,0.4)] mb-6 mt-2 relative z-10 ring-1 ring-white/20">
+                <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+            </div>
+            
+            <h3 class="text-xl font-black text-white tracking-tight mb-2 relative z-10">Academia Freework</h3>
+            <p class="text-sm text-white/60 mb-8 leading-relaxed relative z-10">Pronto estará operativo con sorpresas increíbles para potenciar tus ventas y llevarte al siguiente nivel.</p>
+            
+            <button onclick="toggleAcademia(false)" class="w-full h-14 rounded-2xl bg-white/10 text-white font-bold tracking-widest uppercase text-xs border border-white/10 hover:bg-white/20 active:scale-95 transition-all relative z-10">
+                Entendido
+            </button>
+        </div>
+    </div>
 
     <!-- PANEL DE DIBUJO (SOBRE MODALES) -->
-    <div id="drawing-panel" class="fixed inset-0 z-[500] bg-white hidden flex flex-col items-center justify-center">
-        <div class="w-full p-6 flex justify-between items-center border-b border-slate-100 shrink-0">
-            <button onclick="closeDrawingPanel(false)" class="text-slate-400 font-bold text-sm">Cancelar</button>
-            <h4 class="font-black text-slate-900 uppercase text-xs tracking-widest">Esquema Rápido</h4>
-            <button onclick="closeDrawingPanel(true)" class="text-fuchsia-600 font-black text-sm uppercase">Listo</button>
+    <div id="drawing-panel" class="fixed inset-0 z-[500] bg-[#0e0e11] hidden flex flex-col items-center justify-center">
+        <div class="w-full p-6 flex justify-between items-center border-b border-white/10 shrink-0">
+            <button onclick="closeDrawingPanel(false)" class="text-white/50 font-bold text-sm">Cancelar</button>
+            <h4 class="font-black text-white uppercase text-xs tracking-widest">Esquema Rápido</h4>
+            <button onclick="closeDrawingPanel(true)" class="text-fuchsia-400 font-black text-sm uppercase">Listo</button>
         </div>
-        <div class="flex-1 w-full relative bg-slate-50 flex items-center justify-center p-4">
-            <canvas id="drawing-canvas" class="w-full h-full rounded-[2rem] shadow-inner border border-slate-200"></canvas>
+        <div class="flex-1 w-full relative bg-black/40 flex items-center justify-center p-4">
+            <canvas id="drawing-canvas" class="w-full h-full rounded-[2rem] shadow-inner border border-white/5 bg-white"></canvas>
         </div>
-        <div class="w-full p-6 border-t border-slate-100 flex items-center justify-center gap-8 shrink-0">
-            <button onclick="clearCanvas()" class="flex flex-col items-center gap-1 text-slate-400">
+        <div class="w-full p-6 border-t border-white/10 flex items-center justify-center gap-8 shrink-0">
+            <button onclick="clearCanvas()" class="flex flex-col items-center gap-1 text-white/40">
                 <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
                 <span class="text-[8px] font-black uppercase">Limpiar</span>
             </button>
@@ -384,7 +376,7 @@
     </div>
 
     <!-- TOAST FEEDBACK -->
-    <div id="toast-notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[700] px-6 py-3 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-2xl opacity-0 transition-opacity pointer-events-none">
+    <div id="toast-notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[700] px-6 py-3 bg-[#0B0F19] border border-white/10 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,0,0,0.5)] opacity-0 transition-opacity pointer-events-none">
         Acción completada
     </div>
 
@@ -404,23 +396,22 @@
         }
 
         // --- CONTROLADORES DE MODALES ---
-        function toggleAgenda(show) {
-            const modal = document.getElementById('agenda-modal');
-            if (show) { renderAgendaNotes(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
-            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => { modal.classList.add('hidden'); cancelEdit(); }, 400); }
+        function toggleModal(id, show) {
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            if (show) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10);
+            } else {
+                modal.classList.remove('agenda-modal-active', 'opacity-100');
+                setTimeout(() => modal.classList.add('hidden'), 400);
+            }
         }
 
-        function toggleCalendar(show) {
-            const modal = document.getElementById('calendar-modal');
-            if (show) { renderCalendar(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
-            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => modal.classList.add('hidden'), 400); }
-        }
-
-        function toggleCalc(show) {
-            const modal = document.getElementById('calc-modal');
-            if (show) { renderCalc(); modal.classList.remove('hidden'); setTimeout(() => modal.classList.add('opacity-100', 'agenda-modal-active'), 10); } 
-            else { modal.classList.remove('agenda-modal-active', 'opacity-100'); setTimeout(() => modal.classList.add('hidden'), 400); }
-        }
+        function toggleAgenda(show) { if(show) renderAgendaNotes(); toggleModal('agenda-modal', show); if(!show) setTimeout(cancelEdit, 400); }
+        function toggleCalendar(show) { if(show) renderCalendar(); toggleModal('calendar-modal', show); }
+        function toggleCalc(show) { if(show) renderCalc(); toggleModal('calc-modal', show); }
+        function toggleAcademia(show) { toggleModal('academia-modal', show); }
 
         // --- AGENDA & MULTIMEDIA ---
         let notes = JSON.parse(localStorage.getItem(DB_KEY)) || [];
@@ -443,8 +434,8 @@
             preview.innerHTML = ''; 
             if (currentDraftMedia.image || currentDraftMedia.drawing) {
                 preview.classList.remove('hidden');
-                if (currentDraftMedia.image) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.image}" class="w-full h-24 object-cover rounded-2xl border border-slate-200"><button onclick="currentDraftMedia.image=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
-                if (currentDraftMedia.drawing) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.drawing}" class="w-full h-24 object-contain bg-slate-50 rounded-2xl border border-slate-200"><button onclick="currentDraftMedia.drawing=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+                if (currentDraftMedia.image) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.image}" class="w-full h-24 object-cover rounded-2xl border border-white/10"><button onclick="currentDraftMedia.image=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-[#0e0e11]"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+                if (currentDraftMedia.drawing) preview.innerHTML += `<div class="relative"><img src="${currentDraftMedia.drawing}" class="w-full h-24 object-contain bg-white rounded-2xl border border-white/10"><button onclick="currentDraftMedia.drawing=null;updateMediaPreview();" class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-[#0e0e11]"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
             } else { preview.classList.add('hidden'); }
             lucide.createIcons({root: preview});
         }
@@ -460,7 +451,7 @@
             document.getElementById('save-text').innerText = "Guardar Cambios";
             document.getElementById('save-icon').setAttribute('data-lucide', 'save');
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
-            document.getElementById('creation-area').classList.add('ring-4', 'ring-violet-400/20');
+            document.getElementById('creation-area').classList.add('ring-2', 'ring-fuchsia-400/30');
             updateMediaPreview();
             lucide.createIcons({root: document.getElementById('creation-area')});
             document.getElementById('agenda-scroll-container').scrollTo({ top: 0, behavior: 'smooth' });
@@ -474,7 +465,7 @@
             document.getElementById('save-text').innerText = "Fijar Objetivo";
             document.getElementById('save-icon').setAttribute('data-lucide', 'plus');
             document.getElementById('btn-cancel-edit').classList.add('hidden');
-            document.getElementById('creation-area').classList.remove('ring-4', 'ring-violet-400/20');
+            document.getElementById('creation-area').classList.remove('ring-2', 'ring-fuchsia-400/30');
             updateMediaPreview();
             lucide.createIcons({root: document.getElementById('creation-area')});
         }
@@ -519,49 +510,50 @@
         function renderAgendaNotes() {
             const list = document.getElementById('agenda-list');
             const hubList = document.getElementById('hub-notes-horizontal');
+            const now = new Date();
 
+            // RENDERIZAR EN MODAL (Premium Oscuro)
             if (notes.length === 0) {
-                list.innerHTML = `<div class="py-20 text-center opacity-30"><i data-lucide="sticky-note" class="w-12 h-12 mx-auto mb-4"></i><p class="font-black uppercase tracking-widest text-xs">Agenda limpia. A buscar cierres.</p></div>`;
-                if(hubList) {
-                    hubList.innerHTML = `<div class="snap-center shrink-0 w-full max-w-[280px] bg-slate-200/50 rounded-[2rem] border border-slate-200 border-dashed p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-200 transition-colors" onclick="toggleAgenda(true)"><i data-lucide="plus-circle" class="w-8 h-8 text-slate-400 mb-2"></i><p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Crear nueva nota</p></div>`;
-                }
+                list.innerHTML = `<div class="py-16 text-center opacity-30 text-white"><i data-lucide="sticky-note" class="w-12 h-12 mx-auto mb-4"></i><p class="font-black uppercase tracking-widest text-xs">Agenda limpia. A buscar cierres.</p></div>`;
             } else {
-                const now = new Date();
-                
-                // RENDERIZAR EN MODAL (VERTICAL)
                 list.innerHTML = notes.map((note) => {
                     const isPassed = note.reminderDateTime && new Date(note.reminderDateTime) <= now;
-                    const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-200 bg-rose-50' : 'bg-white border-slate-200';
+                    const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-500/30 bg-rose-500/10' : 'bg-white/5 border-white/10';
                     return `
-                        <div class="${cardClass} p-6 rounded-[2.5rem] border shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all">
+                        <div class="${cardClass} p-6 rounded-[2rem] border shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1 pr-2">
-                                    <p class="text-sm font-bold text-slate-800 ${note.isDone ? 'line-through opacity-40' : ''}">${note.text}</p>
+                                    <p class="text-sm font-bold text-white ${note.isDone ? 'line-through opacity-40' : ''}">${note.text}</p>
                                     <div class="flex flex-wrap items-center gap-2 mt-3">
-                                        <span class="text-[9px] font-black uppercase opacity-40 bg-slate-100 px-2 py-0.5 rounded-full">${note.created}</span>
-                                        ${note.reminderDateTime ? `<span class="flex items-center gap-1.5 text-[9px] font-black uppercase ${isPassed && !note.isDone ? 'text-rose-600' : 'text-fuchsia-600'} bg-white px-2 py-0.5 rounded-full border border-current shadow-sm"><i data-lucide="alarm-clock" class="w-2.5 h-2.5"></i> ${formatReminder(note.reminderDateTime)}</span>` : ''}
+                                        <span class="text-[9px] font-black uppercase text-white/50 bg-white/10 px-2 py-0.5 rounded-full">${note.created}</span>
+                                        ${note.reminderDateTime ? `<span class="flex items-center gap-1.5 text-[9px] font-black uppercase ${isPassed && !note.isDone ? 'text-rose-400 bg-rose-500/20 border-rose-500/30' : 'text-fuchsia-400 bg-fuchsia-500/20 border-fuchsia-500/30'} px-2 py-0.5 rounded-full border shadow-sm"><i data-lucide="alarm-clock" class="w-2.5 h-2.5"></i> ${formatReminder(note.reminderDateTime)}</span>` : ''}
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <button onclick="toggleDone(${note.id})" class="w-9 h-9 rounded-full ${note.isDone ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-400'} flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></button>
-                                    <button onclick="editNote(${note.id})" class="w-9 h-9 rounded-full bg-slate-50 text-slate-400 hover:text-blue-500 flex items-center justify-center"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-                                    <button onclick="deleteNote(${note.id})" class="w-9 h-9 rounded-full bg-slate-50 text-slate-400 hover:text-rose-500 flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="toggleDone(${note.id})" class="w-9 h-9 rounded-full ${note.isDone ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10 border border-white/5'} flex items-center justify-center transition-all"><i data-lucide="check" class="w-5 h-5"></i></button>
+                                    <button onclick="editNote(${note.id})" class="w-9 h-9 rounded-full bg-white/5 text-white/40 hover:text-white hover:bg-white/10 border border-white/5 flex items-center justify-center transition-all"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteNote(${note.id})" class="w-9 h-9 rounded-full bg-white/5 text-white/40 hover:text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 border border-white/5 flex items-center justify-center transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             </div>
-                            ${note.image ? `<img src="${note.image}" class="w-full h-auto rounded-3xl border border-slate-100">` : ''}
-                            ${note.drawing ? `<div class="bg-white rounded-3xl border border-slate-100 p-2"><img src="${note.drawing}" class="w-full h-auto max-h-48 object-contain"></div>` : ''}
+                            ${note.image ? `<img src="${note.image}" class="w-full h-auto rounded-2xl border border-white/10">` : ''}
+                            ${note.drawing ? `<div class="bg-white rounded-2xl border border-white/10 p-2"><img src="${note.drawing}" class="w-full h-auto max-h-48 object-contain"></div>` : ''}
                         </div>`;
                 }).join('');
+            }
+            lucide.createIcons({root: list});
 
-                // RENDERIZAR EN HUB (HORIZONTAL COMO BOTONES)
-                if(hubList) {
+            // RENDERIZAR EN HUB (Claro)
+            if(hubList) {
+                if (notes.length === 0) {
+                    hubList.innerHTML = `<div class="snap-center shrink-0 w-full max-w-[280px] bg-white rounded-[2rem] border border-slate-200 border-dashed p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition-colors" onclick="toggleAgenda(true)"><i data-lucide="plus-circle" class="w-8 h-8 text-slate-300 mb-2"></i><p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Crear nueva nota</p></div>`;
+                } else {
                     hubList.innerHTML = notes.map((note) => {
                         const isPassed = note.reminderDateTime && new Date(note.reminderDateTime) <= now;
-                        const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-200 bg-rose-50' : 'bg-white border-slate-200';
+                        const cardClass = isPassed && !note.isDone ? 'reminder-pulse border-rose-200 bg-rose-50' : 'bg-white border-slate-100';
                         const reminderLabel = formatReminder(note.reminderDateTime);
 
                         return `
-                        <div onclick="editNote(${note.id}); toggleAgenda(true);" class="snap-center shrink-0 w-64 ${cardClass} p-5 rounded-[2rem] border shadow-sm flex flex-col relative overflow-hidden cursor-pointer transition-transform active:scale-95">
+                        <div onclick="editNote(${note.id}); toggleAgenda(true);" class="snap-center shrink-0 w-64 ${cardClass} p-5 rounded-[2rem] border shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] flex flex-col relative overflow-hidden cursor-pointer transition-transform active:scale-95">
                             ${note.isDone ? '<div class="absolute top-4 right-4 text-emerald-500"><i data-lucide="check-circle" class="w-5 h-5"></i></div>' : ''}
                             <h4 class="text-sm font-black text-slate-800 truncate pr-6 ${note.isDone ? 'line-through opacity-40' : ''}">${note.text || 'Evidencia adjunta'}</h4>
                             <div class="flex items-center justify-between mt-6">
@@ -571,9 +563,8 @@
                         </div>`;
                     }).join('');
                 }
+                lucide.createIcons({root: hubList});
             }
-            lucide.createIcons({root: list});
-            if(hubList) lucide.createIcons({root: hubList});
         }
 
         // --- LÓGICA DE ALERTAS REAL-TIME ---
@@ -640,7 +631,7 @@
             checkReminders();
         }
 
-        // --- CALENDARIO (MODAL) ---
+        // --- CALENDARIO (MODAL PREMIUM) ---
         let calYear = new Date().getFullYear(); let calMonth = new Date().getMonth();
         function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
         function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
@@ -664,7 +655,7 @@
                 const isToday = today.getDate() === d && today.getMonth() === calMonth && today.getFullYear() === calYear;
                 
                 const cell = document.createElement('div');
-                cell.className = `cal-day ${isToday ? 'today shadow-md shadow-fuchsia-500/30' : (hasEvent ? 'has-event bg-rose-50 text-rose-600' : 'text-slate-700 bg-white hover:bg-slate-100 border border-slate-100')}`;
+                cell.className = `cal-day ${isToday ? 'today shadow-[0_10px_15px_-3px_rgba(124,58,237,0.4)]' : (hasEvent ? 'bg-rose-500/20 text-rose-400 border border-rose-500/20' : 'text-white/70 bg-white/5 hover:bg-white/10 border border-white/5')}`;
                 cell.innerText = d; 
                 
                 cell.onclick = () => { 
@@ -677,29 +668,54 @@
             }
         }
 
-        // --- CALCULADORA (MODAL) ---
+        // --- CALCULADORA (MODAL PREMIUM) ---
         let calcExpr = '';
         const calcKeys = ['AC','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','='];
+        
         function renderCalc() {
             const grid = document.getElementById('calc-buttons');
+            if(!grid) return;
             grid.innerHTML = calcKeys.map(k => {
-                const cls = k === '=' ? 'brand-gradient text-white shadow-lg shadow-fuchsia-500/30' : (isNaN(k) && k !== '.' ? 'bg-slate-50 text-fuchsia-600 border border-slate-100' : 'bg-white text-slate-800 border border-slate-200 shadow-sm');
-                return `<button class="calc-btn ${cls}" onclick="calcAction('${k}')">${k}</button>`;
+                let cls = 'h-12 sm:h-16 rounded-[1.25rem] text-2xl sm:text-3xl active:scale-[0.92] transition-all flex items-center justify-center select-none focus:outline-none ';
+                
+                if (k === '=') {
+                    cls += 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] font-medium text-3xl border border-white/20';
+                } else if (k === 'AC') {
+                    cls += 'bg-white/5 text-rose-400 hover:bg-white/10 border border-white/5';
+                } else if (k === '⌫' || k === '%') {
+                    cls += 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/5 text-xl';
+                } else if (isNaN(k) && k !== '.') {
+                    cls += 'bg-white/5 text-indigo-400 hover:bg-white/10 border border-white/5 text-3xl font-light';
+                } else if (k === '0') {
+                    cls += 'bg-transparent text-white hover:bg-white/5 font-light col-span-2';
+                } else {
+                    cls += 'bg-transparent text-white hover:bg-white/5 font-light';
+                }
+
+                return `<button class="${cls}" onclick="calcAction('${k}')">${k}</button>`;
             }).join('');
         }
+
         function calcAction(k) {
             const d = document.getElementById('calc-display'); const e = document.getElementById('calc-expr');
+            if (!d || !e) return;
+            
             if (k === 'AC') { calcExpr = ''; d.innerText = '0'; e.innerHTML = '&nbsp;'; return; }
             if (k === '⌫') { calcExpr = calcExpr.slice(0, -1); d.innerText = calcExpr || '0'; return; }
             if (k === '=') { 
                 try { 
                     const clean = calcExpr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/%/g,'/100');
-                    const r = eval(clean); 
+                    let r = eval(clean); 
+                    r = Math.round(r * 1000000) / 1000000;
                     e.innerText = calcExpr + ' ='; d.innerText = r; calcExpr = String(r); 
                 } catch { d.innerText = 'Error'; calcExpr = ''; } 
                 return; 
             }
+            if ((calcExpr === '0' || calcExpr === 'Error') && !isNaN(k)) calcExpr = '';
             calcExpr += k; d.innerText = calcExpr;
+            
+            if (d.innerText.length > 8) d.style.fontSize = "clamp(1.5rem, 8vw, 2.5rem)";
+            else d.style.fontSize = "clamp(2.5rem, 10vw, 4.5rem)";
         }
 
         // --- DIBUJO ---
@@ -723,36 +739,30 @@
             
             // 🔒 BLOQUEO DE SEGURIDAD
             if (!saved) {
-                window.top.location.replace('index.html');// Expulsa a login
-                return;
-            }
-
-            try {
-                const user = JSON.parse(saved);
-                
-                // Lee exactamente los parámetros del JSON que entrega el backend: name y role
-                const fullName = user.name || user.email || 'Socio';
-                const firstName = fullName.split(' ')[0];
-                const role = user.role || 'ejecutivo';
-                
-                // Modifica los textos en pantalla
-                document.getElementById('user-greeting').innerText = `Hola, ${firstName}`;
-                document.getElementById('user-initial').innerText = firstName.charAt(0).toUpperCase();
-                
-                // Cambia el título si es Admin
-                const roleEl = document.getElementById('user-role');
-                if (roleEl) {
-                    if (role.toLowerCase().includes('admin')) {
-                        roleEl.innerText = 'ADMIN 👑';
-                    } else {
-                        roleEl.innerText = 'EJECUTIVO ELITE';
+                // window.top.location.replace('index.html'); // Comentado para demo en web, habilítalo en producción
+                document.getElementById('user-greeting').innerText = `Hola, Demo`;
+                // return;
+            } else {
+                try {
+                    const user = JSON.parse(saved);
+                    const fullName = user.name || user.email || 'Socio';
+                    const firstName = fullName.split(' ')[0];
+                    const role = user.role || 'ejecutivo';
+                    
+                    document.getElementById('user-greeting').innerText = `Hola, ${firstName}`;
+                    document.getElementById('user-initial').innerText = firstName.charAt(0).toUpperCase();
+                    
+                    const roleEl = document.getElementById('user-role');
+                    if (roleEl) {
+                        if (role.toLowerCase().includes('admin')) {
+                            roleEl.innerText = 'ADMIN 👑';
+                        } else {
+                            roleEl.innerText = 'EJECUTIVO ELITE';
+                        }
                     }
+                } catch(e) {
+                    console.error("Error validando al usuario:", e);
                 }
-
-            } catch(e) {
-                console.error("Error validando al usuario:", e);
-                document.getElementById('user-greeting').innerText = `Hola, Socio`;
-                document.getElementById('user-initial').innerText = `S`;
             }
 
             renderAgendaNotes();
