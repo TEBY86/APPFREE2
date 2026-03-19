@@ -41,20 +41,9 @@
             opacity: 0; 
         }
         
-        /* Ruido y Cuadrícula Móvil de Alta Fidelidad */
+        /* Ruido estático y ligero */
         .bg-noise { 
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); 
-        }
-
-        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
-        .moving-grid {
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 4s linear infinite;
-            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
         }
 
         /* Animaciones del Núcleo Holográfico Ultra Premium */
@@ -152,18 +141,17 @@
 </head>
 <body>
 
-    <!-- Capa de Fondo e Infraestructura -->
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute inset-0 moving-grid"></div>
+    <!-- Capa de Fondo e Infraestructura Súper Ligera -->
+    <div class="fixed inset-0 z-0 pointer-events-none bg-[#020408]">
+        <!-- Patrón estático de cuadrícula de puntos sutil -->
+        <div class="absolute inset-0 opacity-[0.02]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
         
-        <!-- Canvas de Red de Conexiones (Networking Subliminal Intensificado) -->
-        <canvas id="network-canvas" class="absolute inset-0 w-full h-full mix-blend-screen opacity-90"></canvas>
+        <div class="absolute inset-0 bg-noise mix-blend-overlay opacity-60"></div>
         
-        <div class="absolute inset-0 bg-noise mix-blend-overlay"></div>
-        
-        <!-- Luces Atmosféricas Potenciadas -->
-        <div class="absolute top-[5%] left-[-15%] w-[700px] h-[700px] bg-fuchsia-600/20 rounded-full blur-[180px] mix-blend-screen"></div>
-        <div class="absolute bottom-[-10%] right-[-15%] w-[700px] h-[700px] bg-emerald-600/15 rounded-full blur-[180px] mix-blend-screen"></div>
+        <!-- Luces Atmosféricas Estáticas (No consumen rendimiento) -->
+        <div class="absolute top-[-10%] left-[-15%] w-[600px] h-[600px] bg-fuchsia-600/15 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-[-10%] right-[-15%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[150px]"></div>
+        <div class="absolute top-[40%] right-[10%] w-[400px] h-[400px] bg-violet-600/10 rounded-full blur-[150px]"></div>
     </div>
 
     <!-- Contenedor Principal -->
@@ -309,204 +297,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initScrambleText();
-            initNetworkCanvas();
         });
-
-        // ==========================================
-        // MOTOR CANVAS: RED DE DATOS (Nodos y Choques)
-        // ==========================================
-        function initNetworkCanvas() {
-            const canvas = document.getElementById('network-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-
-            // Paleta corporativa vibrante
-            const colors = ['#10b981', '#d946ef', '#8b5cf6', '#14b8a6'];
-
-            let nodes = [];
-            let connections = [];
-            let pulses = [];
-            let flashes = [];
-
-            const config = {
-                nodeCount: window.innerWidth < 600 ? 35 : 70,
-                connectionDistance: window.innerWidth < 600 ? 120 : 180,
-                pulseSpeed: 1.5,
-                pulseFrequency: 0.08 // Mayor frecuencia de luces
-            };
-
-            function resize() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            }
-
-            window.addEventListener('resize', () => {
-                resize();
-                createNodes();
-            });
-
-            class Node {
-                constructor(id) {
-                    this.id = id;
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.vx = (Math.random() - 0.5) * 0.3;
-                    this.vy = (Math.random() - 0.5) * 0.3;
-                    this.radius = Math.random() * 1.5 + 0.5;
-                    this.connections = []; 
-                }
-                update() {
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    if (this.x <= 0 || this.x >= width) this.vx *= -1;
-                    if (this.y <= 0 || this.y >= height) this.vy *= -1;
-                }
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    // Nodos más brillantes
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                    ctx.fill();
-                }
-            }
-
-            class Pulse {
-                constructor(fromNode, toNode) {
-                    this.from = fromNode;
-                    this.to = toNode;
-                    this.progress = 0; 
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    const dx = this.to.x - this.from.x;
-                    const dy = this.to.y - this.from.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    this.speed = config.pulseSpeed / dist;
-                    this.completed = false;
-                }
-                update() {
-                    this.progress += this.speed;
-                    if (this.progress >= 1) {
-                        this.progress = 1;
-                        this.completed = true;
-                        flashes.push(new Flash(this.to.x, this.to.y, this.color));
-                    }
-                }
-                draw() {
-                    const currentX = this.from.x + (this.to.x - this.from.x) * this.progress;
-                    const currentY = this.from.y + (this.to.y - this.from.y) * this.progress;
-                    
-                    ctx.beginPath();
-                    ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
-                    ctx.fillStyle = this.color;
-                    ctx.shadowColor = this.color;
-                    ctx.shadowBlur = 12;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                }
-            }
-
-            class Flash {
-                constructor(x, y, color) {
-                    this.x = x;
-                    this.y = y;
-                    this.color = color;
-                    this.radius = 2;
-                    this.maxRadius = Math.random() * 15 + 10;
-                    this.opacity = 1.0; // Destellos más fuertes
-                }
-                update() {
-                    this.radius += 0.8;
-                    this.opacity -= 0.04;
-                }
-                draw() {
-                    if (this.opacity <= 0) return;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.strokeStyle = this.color;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.lineWidth = 2.0;
-                    ctx.stroke();
-                    ctx.globalAlpha = 1.0; 
-                }
-            }
-
-            function createNodes() {
-                nodes = [];
-                for (let i = 0; i < config.nodeCount; i++) {
-                    nodes.push(new Node(i));
-                }
-            }
-
-            function updateConnections() {
-                connections = [];
-                nodes.forEach(n => n.connections = []);
-
-                for (let i = 0; i < nodes.length; i++) {
-                    for (let j = i + 1; j < nodes.length; j++) {
-                        const dx = nodes[i].x - nodes[j].x;
-                        const dy = nodes[i].y - nodes[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-
-                        if (dist < config.connectionDistance) {
-                            connections.push({ n1: nodes[i], n2: nodes[j], dist: dist });
-                            nodes[i].connections.push(nodes[j]);
-                            nodes[j].connections.push(nodes[i]);
-                        }
-                    }
-                }
-            }
-
-            function spawnPulses() {
-                if (Math.random() < config.pulseFrequency) {
-                    const validNodes = nodes.filter(n => n.connections.length > 0);
-                    if (validNodes.length > 0) {
-                        const fromNode = validNodes[Math.floor(Math.random() * validNodes.length)];
-                        const toNode = fromNode.connections[Math.floor(Math.random() * fromNode.connections.length)];
-                        pulses.push(new Pulse(fromNode, toNode));
-                    }
-                }
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-
-                nodes.forEach(n => { n.update(); n.draw(); });
-
-                updateConnections();
-                connections.forEach(c => {
-                    const opacity = 1 - (c.dist / config.connectionDistance);
-                    ctx.beginPath();
-                    ctx.moveTo(c.n1.x, c.n1.y);
-                    ctx.lineTo(c.n2.x, c.n2.y);
-                    // Líneas un poco más visibles
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.25})`;
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                });
-
-                spawnPulses();
-
-                for (let i = pulses.length - 1; i >= 0; i--) {
-                    const p = pulses[i];
-                    p.update();
-                    if (p.completed) { pulses.splice(i, 1); } 
-                    else { p.draw(); }
-                }
-
-                for (let i = flashes.length - 1; i >= 0; i--) {
-                    const f = flashes[i];
-                    f.update();
-                    if (f.opacity <= 0) { flashes.splice(i, 1); } 
-                    else { f.draw(); }
-                }
-
-                requestAnimationFrame(animate);
-            }
-
-            resize();
-            createNodes();
-            animate();
-        }
 
         // Efecto Terminal Scramble
         function initScrambleText() {
