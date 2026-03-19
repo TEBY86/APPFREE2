@@ -11,111 +11,136 @@
 
     <style>
         :root {
-            --glass-bg: rgba(7, 10, 15, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --fuchsia-glow: rgba(217, 70, 239, 0.5);
-            --emerald-glow: rgba(16, 185, 129, 0.5);
+            --bg-dark: #020408;
+            --glass-bg: rgba(10, 14, 23, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
         }
 
         body, html { 
             font-family: 'Inter', sans-serif; 
-            background-color: #030508; 
+            background-color: var(--bg-dark); 
             color: white;
             margin: 0; padding: 0; 
             width: 100%; height: 100%; 
             display: flex; flex-direction: column; 
             overflow: hidden;
             -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
             -webkit-tap-highlight-color: transparent; 
             user-select: none; -webkit-user-select: none;
         }
 
-        /* Utilidades de animación */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .animate-fade-in-up { animation: fadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        /* Utilidades de animación refinadas */
+        @keyframes fadeInUpPremium { 
+            from { opacity: 0; transform: translateY(40px) scale(0.97); filter: blur(4px); } 
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
+        }
+        .animate-fade-in-up { 
+            animation: fadeInUpPremium 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            opacity: 0; 
+        }
         
-        /* Ruido y Cuadrícula Móvil */
+        /* Ruido y Cuadrícula Móvil de Alta Fidelidad */
         .bg-noise { 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"); 
         }
 
         @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
         .moving-grid {
             background-image: 
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
             background-size: 40px 40px;
-            animation: gridMove 3s linear infinite;
-            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            animation: gridMove 4s linear infinite;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
         }
 
-        /* Animaciones del Núcleo Holográfico */
+        /* Animaciones del Núcleo Holográfico Ultra Premium */
         @keyframes spin-slow { 100% { transform: rotate(360deg); } }
         @keyframes spin-slow-reverse { 100% { transform: rotate(-360deg); } }
         
-        .ring-1-spin { animation: spin-slow 8s linear infinite; }
-        .ring-2-spin { animation: spin-slow-reverse 6s linear infinite; }
-        .ring-3-spin { animation: spin-slow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .ring-1-spin { animation: spin-slow 12s linear infinite; }
+        .ring-2-spin { animation: spin-slow-reverse 8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .ring-3-spin { animation: spin-slow 5s linear infinite; }
 
-        /* Tarjeta B2B VIP con efecto Shimmer */
+        /* Tarjeta VIP B2B Premium */
         .vip-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(16, 185, 129, 0.15);
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: 
+                0 40px 80px -20px rgba(0, 0, 0, 0.8), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-150%) skewX(-15deg); }
-            100% { transform: translateX(200%) skewX(-15deg); }
+            0% { transform: translateX(-150%) skewX(-20deg); }
+            100% { transform: translateX(200%) skewX(-20deg); }
         }
 
         .vip-card::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            animation: shimmer 4s infinite;
+            top: 0; left: 0; width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+            animation: shimmer 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             pointer-events: none;
         }
 
-        /* Texto Dinámico Gradiente */
+        /* Botón Premium Volumétrico */
+        .btn-premium {
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            box-shadow: 
+                inset 0 1px 1px rgba(255,255,255,0.3), 
+                inset 0 -2px 4px rgba(0,0,0,0.2),
+                0 8px 20px -5px rgba(16,185,129,0.4);
+            border: 1px solid rgba(16,185,129,0.8);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .btn-premium:active {
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.3),
+                0 4px 10px -5px rgba(16,185,129,0.4);
+        }
+
+        /* Texto Dinámico Gradiente Refinado */
         .text-gradient-flow {
-            background: linear-gradient(to right, #a855f7, #ec4899, #8b5cf6, #a855f7);
+            background: linear-gradient(to right, #e879f9, #f472b6, #c084fc, #e879f9);
             background-size: 200% auto;
             color: transparent;
             -webkit-background-clip: text;
-            animation: flowGradient 4s linear infinite;
+            animation: flowGradient 5s linear infinite;
+            text-shadow: 0 0 40px rgba(217, 70, 239, 0.3);
         }
         @keyframes flowGradient { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
         /* Scrambler text cursor */
-        .cursor-blink::after {
-            content: '_';
-            animation: blink 1s step-end infinite;
-        }
+        .cursor-blink::after { content: '_'; animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* Input Styles Premium */
+        /* Inputs Fintech Premium */
         .glass-input {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: white;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #f8fafc;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
         }
         .glass-input:focus {
             outline: none;
-            border-color: rgba(16, 185, 129, 0.6);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(16, 185, 129, 0.03);
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 
+                inset 0 2px 5px rgba(0,0,0,0.3), 
+                0 0 0 3px rgba(16, 185, 129, 0.1);
         }
-        .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        .glass-input::placeholder { color: rgba(255, 255, 255, 0.2); font-weight: 400; }
 
         /* Animación Modal Formulario */
         .form-modal-enter { opacity: 1 !important; pointer-events: auto !important; }
@@ -127,81 +152,89 @@
 </head>
 <body>
 
-    <!-- Capa de Fondo -->
+    <!-- Capa de Fondo e Infraestructura -->
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 moving-grid"></div>
+        
+        <!-- Canvas de Red de Conexiones (Networking Subliminal) -->
+        <canvas id="network-canvas" class="absolute inset-0 w-full h-full mix-blend-screen opacity-70"></canvas>
+        
         <div class="absolute inset-0 bg-noise mix-blend-overlay"></div>
         
-        <!-- Luces Atmosféricas -->
-        <div class="absolute top-[10%] left-[-20%] w-[600px] h-[600px] bg-fuchsia-600/10 rounded-full blur-[150px]"></div>
-        <div class="absolute bottom-[-10%] right-[-20%] w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[150px]"></div>
+        <!-- Luces Atmosféricas Refinadas -->
+        <div class="absolute top-[5%] left-[-15%] w-[700px] h-[700px] bg-fuchsia-600/10 rounded-full blur-[200px] mix-blend-screen"></div>
+        <div class="absolute bottom-[-10%] right-[-15%] w-[700px] h-[700px] bg-emerald-600/5 rounded-full blur-[200px] mix-blend-screen"></div>
     </div>
 
     <!-- Contenedor Principal -->
-    <!-- Margen inferior llevado a pb-80 para dejar un espacio gigante al final -->
     <div class="relative z-10 w-full h-full flex flex-col overflow-y-auto no-scrollbar pb-80 pt-[env(safe-area-inset-top)]">
         
         <!-- Cabecera -->
-        <div class="p-6 flex justify-end items-center shrink-0">
-            <!-- Terminal Text -->
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-fuchsia-500/20">
-                <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse"></div>
-                <span id="scramble-text" class="text-[9px] font-mono text-fuchsia-400 uppercase tracking-widest cursor-blink">CARGANDO...</span>
+        <div class="p-6 flex justify-between items-center shrink-0 w-full">
+            <!-- Logo Freework -->
+            <img src="imagenes/logo.svg" alt="Freework Logo" class="h-6 sm:h-8 w-auto opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+            
+            <!-- Terminal Text Ultra Minimalista -->
+            <div class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
+                <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_rgba(217,70,239,0.8)]"></div>
+                <span id="scramble-text" class="text-[9px] font-mono text-fuchsia-400 uppercase tracking-[0.2em] font-medium cursor-blink">CARGANDO...</span>
             </div>
         </div>
 
         <div class="flex-1 flex flex-col items-center justify-center px-6 mt-2">
             
-            <!-- NÚCLEO HOLOGRÁFICO -->
-            <div class="relative w-40 h-40 mb-10 flex items-center justify-center animate-fade-in-up">
-                <!-- Anillos -->
-                <div class="absolute inset-0 border-[1px] border-fuchsia-500/20 rounded-full ring-1-spin border-dashed"></div>
-                <div class="absolute inset-2 border-2 border-transparent border-t-fuchsia-400/60 border-b-violet-500/60 rounded-full ring-2-spin"></div>
-                <div class="absolute inset-6 border-[1px] border-fuchsia-300/30 rounded-full ring-3-spin"></div>
+            <!-- NÚCLEO HOLOGRÁFICO PREMIUM -->
+            <div class="relative w-40 h-40 mb-12 flex items-center justify-center animate-fade-in-up">
+                <!-- Anillos sofisticados -->
+                <div class="absolute inset-0 border-[0.5px] border-fuchsia-500/20 rounded-full ring-1-spin" style="border-style: dashed; border-width: 1px;"></div>
+                <div class="absolute inset-2 rounded-full ring-2-spin" style="background: conic-gradient(from 0deg, transparent 0%, rgba(217,70,239,0.1) 25%, rgba(139,92,246,0.5) 50%, transparent 50%); -webkit-mask-image: radial-gradient(transparent 65%, black 66%);"></div>
+                <div class="absolute inset-6 border border-fuchsia-400/10 rounded-full ring-3-spin shadow-[0_0_20px_rgba(217,70,239,0.1)_inset]"></div>
                 
                 <!-- Resplandor central -->
-                <div class="absolute inset-10 bg-fuchsia-500/20 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute inset-10 bg-fuchsia-500/15 rounded-full blur-2xl animate-pulse"></div>
                 
-                <!-- Icono Central -->
-                <div class="relative z-10 w-16 h-16 bg-black/50 rounded-2xl border border-white/10 backdrop-blur-sm flex items-center justify-center shadow-[0_0_30px_rgba(217,70,239,0.3)]">
-                    <i data-lucide="lock" class="w-7 h-7 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"></i>
+                <!-- Icono Central con volumen -->
+                <div class="relative z-10 w-16 h-16 bg-gradient-to-b from-white/10 to-transparent rounded-2xl border-t border-l border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_-2px_10px_rgba(0,0,0,0.3)]">
+                    <i data-lucide="lock" class="w-6 h-6 text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.6)]"></i>
                 </div>
             </div>
 
             <!-- TÍTULO Y MENSAJE EJECUTIVOS -->
-            <div class="text-center max-w-[320px] mb-12 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <h1 class="text-[2rem] font-black tracking-tighter leading-none mb-4 uppercase">
+            <div class="text-center max-w-[340px] mb-14 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h1 class="text-[2.2rem] font-black tracking-tighter leading-none mb-4 uppercase">
                     EXPANDIENDO <br> <span class="text-gradient-flow">EL DOMINIO</span>
                 </h1>
-                <p class="text-[13px] text-slate-400 font-medium leading-relaxed">
-                    Protocolos de negociación activos. Asegurando las mejores comisiones del mercado. <strong class="text-white font-bold">Mantén tu agenda lista</strong>, el arsenal está a punto de crecer.
+                <p class="text-[13px] text-slate-400/90 font-medium leading-relaxed">
+                    Protocolos de negociación encriptados. Asegurando las comisiones más altas del mercado. <strong class="text-white font-semibold">Prepara tu agenda</strong>, el ecosistema está por evolucionar.
                 </p>
             </div>
 
             <!-- TARJETA B2B VIP -->
-            <div class="w-full max-w-sm vip-card rounded-[2.5rem] p-1 animate-fade-in-up" style="animation-delay: 0.25s;">
-                <!-- Borde gradiente interior -->
-                <div class="bg-[#080B12]/90 rounded-[2.3rem] p-6 relative overflow-hidden z-10 h-full flex flex-col justify-between">
+            <div class="w-full max-w-sm vip-card rounded-[2.5rem] p-[1px] animate-fade-in-up" style="animation-delay: 0.25s;">
+                <!-- Fondo interior profundo -->
+                <div class="bg-[#05080E]/95 rounded-[2.4rem] p-7 relative overflow-hidden z-10 h-full flex flex-col justify-between">
                     
-                    <!-- Brillo de fondo esmeralda -->
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+                    <!-- Brillo esmeralda elegante -->
+                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/15 rounded-full blur-[50px] pointer-events-none"></div>
 
-                    <div class="flex items-start gap-4 relative z-10 mb-5">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-900/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                            <i data-lucide="handshake" class="w-6 h-6"></i>
+                    <div class="flex items-start gap-4 relative z-10 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-900/20 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                            <i data-lucide="handshake" class="w-5 h-5"></i>
                         </div>
-                        <div>
-                            <div class="inline-block px-2 py-0.5 rounded text-[8px] font-black tracking-[0.2em] bg-emerald-500/10 text-emerald-400 mb-1 border border-emerald-500/20 uppercase">Freework Partnership</div>
-                            <h3 class="text-base font-black text-white leading-tight">¿Representas a una Marca?</h3>
+                        <div class="pt-0.5">
+                            <div class="inline-block px-2 py-0.5 rounded text-[8px] font-black tracking-[0.25em] bg-emerald-500/10 text-emerald-400 mb-1.5 border border-emerald-500/20 uppercase shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                                Corporate Alliance
+                            </div>
+                            <h3 class="text-[17px] font-black text-white leading-tight tracking-tight">¿Representas a una Marca?</h3>
                         </div>
                     </div>
                     
-                    <p class="text-[11px] text-slate-400 font-medium leading-relaxed mb-6 relative z-10">
-                        Conecta tu empresa al hub inmersivo de ventas más agresivo de Chile. Ejecutivos de élite, tecnología propietaria y resultados inmediatos.
+                    <p class="text-[11.5px] text-slate-400/80 font-medium leading-relaxed mb-7 relative z-10">
+                        Integra tu empresa al hub de ventas más inmersivo y agresivo de Chile. Ejecutivos de élite, tecnología propietaria y cierre de negocios en tiempo real.
                     </p>
 
-                    <button onclick="openPartnerForm()" class="w-full h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-[11px] uppercase tracking-widest shadow-[0_10px_20px_-10px_rgba(16,185,129,0.6)] hover:shadow-[0_10px_25px_-5px_rgba(16,185,129,0.8)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 relative z-10 border border-emerald-400/50">
-                        <i data-lucide="zap" class="w-4 h-4"></i> Iniciar Integración
+                    <button onclick="openPartnerForm()" class="w-full h-12 rounded-xl btn-premium text-white font-black text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 relative z-10">
+                        <i data-lucide="zap" class="w-4 h-4 fill-white/20"></i> Iniciar Integración
                     </button>
                 </div>
             </div>
@@ -209,61 +242,60 @@
         </div>
     </div>
 
-    <!-- MODAL FORMULARIO B2B -->
-    <!-- Elevado dramáticamente con pb-80 para evadir menús nativos -->
-    <div id="partner-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4 pb-80">
-        <div class="form-content w-full max-w-sm max-h-[85vh] overflow-y-auto no-scrollbar bg-[#080B12] rounded-[2rem] border border-emerald-500/20 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative transform translate-y-8 scale-95 opacity-0 transition-all duration-300">
+    <!-- MODAL FORMULARIO B2B ULTRA PREMIUM -->
+    <div id="partner-modal" class="fixed inset-0 z-[100] bg-[#020408]/90 backdrop-blur-2xl opacity-0 pointer-events-none transition-opacity duration-400 flex items-center justify-center p-4">
+        <div class="form-content w-full max-w-sm max-h-[88dvh] overflow-y-auto no-scrollbar bg-[#060910] rounded-[2rem] border border-white/5 shadow-[0_40px_80px_rgba(0,0,0,1),inset_0_1px_1px_rgba(255,255,255,0.1)] relative transform translate-y-8 scale-95 opacity-0 transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1)">
             
-            <!-- Luces del formulario -->
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-600"></div>
-            <div class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+            <!-- Luces sutiles del formulario -->
+            <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
+            <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-[60px] pointer-events-none"></div>
 
-            <div class="p-5">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="pr-4">
-                        <h3 class="text-lg font-black text-white tracking-tight">Únete a la Familia 🤝</h3>
-                        <p class="text-[10px] text-emerald-400 font-medium leading-tight mt-1">Estamos emocionados de conocer tu visión. Cuéntanos de ti y construyamos juntos.</p>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="pr-4 relative z-10">
+                        <h3 class="text-xl font-black text-white tracking-tight">Únete a la Familia <span class="opacity-80">🤝</span></h3>
+                        <p class="text-[11px] text-emerald-400/80 font-medium leading-relaxed mt-1.5">Estamos listos para escuchar tu visión. Hablemos de negocios.</p>
                     </div>
-                    <button onclick="closePartnerForm()" class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:bg-white/10 hover:text-white transition-all shrink-0">
+                    <button onclick="closePartnerForm()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:bg-white/10 hover:text-white transition-all shrink-0 relative z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
 
-                <form id="b2b-form" onsubmit="sendWhatsApp(event)" class="space-y-3 relative z-10">
-                    <div class="grid grid-cols-2 gap-3">
+                <form id="b2b-form" onsubmit="sendWhatsApp(event)" class="space-y-4 relative z-10">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3 text-emerald-400"></i> ¿Cómo te llamas?</label>
-                            <input type="text" id="b2b-nombre" required class="w-full h-10 rounded-xl glass-input px-3 text-xs" placeholder="Tu nombre">
+                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="user" class="w-3 h-3 text-emerald-500"></i> ¿Tu Nombre?</label>
+                            <input type="text" id="b2b-nombre" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Ej. Juan Pérez">
                         </div>
                         <div>
-                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="smartphone" class="w-3 h-3 text-emerald-400"></i> Tu WhatsApp</label>
-                            <input type="tel" id="b2b-telefono" required class="w-full h-10 rounded-xl glass-input px-3 text-xs" placeholder="+56 9...">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="building-2" class="w-3 h-3 text-emerald-400"></i> ¿Qué marca es?</label>
-                            <input type="text" id="b2b-empresa" required class="w-full h-10 rounded-xl glass-input px-3 text-xs" placeholder="Tu empresa">
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3 h-3 text-emerald-400"></i> ¿Tu rol?</label>
-                            <input type="text" id="b2b-cargo" required class="w-full h-10 rounded-xl glass-input px-3 text-xs" placeholder="Ej. Fundador">
+                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="smartphone" class="w-3 h-3 text-emerald-500"></i> WhatsApp</label>
+                            <input type="tel" id="b2b-telefono" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="+56 9...">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="mail" class="w-3 h-3 text-emerald-400"></i> ¿A qué correo te escribimos?</label>
-                        <input type="email" id="b2b-email" required class="w-full h-10 rounded-xl glass-input px-3 text-xs" placeholder="Para enviarte la propuesta formal">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="building-2" class="w-3 h-3 text-emerald-500"></i> Marca</label>
+                            <input type="text" id="b2b-empresa" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Empresa">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="briefcase" class="w-3 h-3 text-emerald-500"></i> Cargo</label>
+                            <input type="text" id="b2b-cargo" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Rol actual">
+                        </div>
                     </div>
 
                     <div>
-                        <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1 flex items-center gap-1.5"><i data-lucide="lightbulb" class="w-3 h-3 text-emerald-400"></i> Cuéntanos tu visión</label>
-                        <textarea id="b2b-idea" required rows="2" class="w-full rounded-xl glass-input p-3 text-xs resize-none" placeholder="¿Cómo imaginas que podemos romperla juntos en el mercado?"></textarea>
+                        <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="mail" class="w-3 h-3 text-emerald-500"></i> Correo Corporativo</label>
+                        <input type="email" id="b2b-email" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="para propuestas formales">
                     </div>
 
-                    <button type="submit" class="w-full h-11 mt-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-[10px] uppercase tracking-widest shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-emerald-400/50">
-                        <i data-lucide="heart-handshake" class="w-4 h-4"></i> Conversar con el equipo
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="lightbulb" class="w-3 h-3 text-emerald-500"></i> Visión del Negocio</label>
+                        <textarea id="b2b-idea" required rows="3" class="w-full rounded-xl glass-input p-3.5 text-xs font-medium resize-none leading-relaxed" placeholder="¿Cómo imaginas que podemos romperla juntos en el mercado?"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full h-12 mt-2 rounded-xl btn-premium text-white font-black text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i> Enviar a Dirección
                     </button>
                 </form>
             </div>
@@ -274,7 +306,223 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initScrambleText();
+            initNetworkCanvas();
         });
+
+        // ==========================================
+        // MOTOR CANVAS: RED DE DATOS (Nodos y Choques)
+        // ==========================================
+        function initNetworkCanvas() {
+            const canvas = document.getElementById('network-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+
+            // Paleta corporativa para pulsos y nodos
+            const colors = ['#10b981', '#d946ef', '#8b5cf6', '#14b8a6'];
+
+            let nodes = [];
+            let connections = [];
+            let pulses = [];
+            let flashes = [];
+
+            // Parámetros de la red
+            const config = {
+                nodeCount: window.innerWidth < 600 ? 30 : 60,
+                connectionDistance: window.innerWidth < 600 ? 120 : 180,
+                pulseSpeed: 1.5,
+                pulseFrequency: 0.05 // Probabilidad por frame de generar un nuevo pulso
+            };
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', () => {
+                resize();
+                createNodes();
+            });
+
+            class Node {
+                constructor(id) {
+                    this.id = id;
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.radius = Math.random() * 1.5 + 0.5;
+                    this.connections = []; // IDs de nodos conectados a este
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    // Rebote en bordes suaves
+                    if (this.x <= 0 || this.x >= width) this.vx *= -1;
+                    if (this.y <= 0 || this.y >= height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fill();
+                }
+            }
+
+            class Pulse {
+                constructor(fromNode, toNode) {
+                    this.from = fromNode;
+                    this.to = toNode;
+                    this.progress = 0; // 0 to 1
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // Calcular distancia para normalizar velocidad
+                    const dx = this.to.x - this.from.x;
+                    const dy = this.to.y - this.from.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    this.speed = config.pulseSpeed / dist;
+                    this.completed = false;
+                }
+                update() {
+                    this.progress += this.speed;
+                    if (this.progress >= 1) {
+                        this.progress = 1;
+                        this.completed = true;
+                        // Generar choque/destello al llegar
+                        flashes.push(new Flash(this.to.x, this.to.y, this.color));
+                    }
+                }
+                draw() {
+                    const currentX = this.from.x + (this.to.x - this.from.x) * this.progress;
+                    const currentY = this.from.y + (this.to.y - this.from.y) * this.progress;
+                    
+                    ctx.beginPath();
+                    ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0; // Reset
+                }
+            }
+
+            class Flash {
+                constructor(x, y, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+                    this.radius = 2;
+                    this.maxRadius = Math.random() * 15 + 10;
+                    this.opacity = 0.8;
+                }
+                update() {
+                    this.radius += 0.8;
+                    this.opacity -= 0.04;
+                }
+                draw() {
+                    if (this.opacity <= 0) return;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.color;
+                    ctx.globalAlpha = this.opacity;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0; // Reset
+                }
+            }
+
+            function createNodes() {
+                nodes = [];
+                for (let i = 0; i < config.nodeCount; i++) {
+                    nodes.push(new Node(i));
+                }
+            }
+
+            function updateConnections() {
+                connections = [];
+                // Limpiar conexiones de nodos
+                nodes.forEach(n => n.connections = []);
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < config.connectionDistance) {
+                            connections.push({ n1: nodes[i], n2: nodes[j], dist: dist });
+                            // Guardar vecinos para los pulsos
+                            nodes[i].connections.push(nodes[j]);
+                            nodes[j].connections.push(nodes[i]);
+                        }
+                    }
+                }
+            }
+
+            function spawnPulses() {
+                if (Math.random() < config.pulseFrequency) {
+                    // Elegir nodo aleatorio con conexiones
+                    const validNodes = nodes.filter(n => n.connections.length > 0);
+                    if (validNodes.length > 0) {
+                        const fromNode = validNodes[Math.floor(Math.random() * validNodes.length)];
+                        const toNode = fromNode.connections[Math.floor(Math.random() * fromNode.connections.length)];
+                        pulses.push(new Pulse(fromNode, toNode));
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                // Update & Draw Nodes
+                nodes.forEach(n => {
+                    n.update();
+                    n.draw();
+                });
+
+                // Update Connections (Lines)
+                updateConnections();
+                connections.forEach(c => {
+                    const opacity = 1 - (c.dist / config.connectionDistance);
+                    ctx.beginPath();
+                    ctx.moveTo(c.n1.x, c.n1.y);
+                    ctx.lineTo(c.n2.x, c.n2.y);
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                });
+
+                // Spawn new Pulses randomly
+                spawnPulses();
+
+                // Update & Draw Pulses
+                for (let i = pulses.length - 1; i >= 0; i--) {
+                    const p = pulses[i];
+                    p.update();
+                    if (p.completed) {
+                        pulses.splice(i, 1);
+                    } else {
+                        p.draw();
+                    }
+                }
+
+                // Update & Draw Flashes (Choques)
+                for (let i = flashes.length - 1; i >= 0; i--) {
+                    const f = flashes[i];
+                    f.update();
+                    if (f.opacity <= 0) {
+                        flashes.splice(i, 1);
+                    } else {
+                        f.draw();
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            resize();
+            createNodes();
+            animate();
+        }
 
         // Efecto Terminal Scramble
         function initScrambleText() {
@@ -300,9 +548,9 @@
                         setTimeout(() => {
                             currentTextIdx = (currentTextIdx + 1) % finalTexts.length;
                             scramble(finalTexts[currentTextIdx]);
-                        }, 3000);
+                        }, 4000);
                     }
-                    iterations += 1/3; 
+                    iterations += 1/4; 
                 }, 30);
             }
             scramble(finalTexts[0]);
@@ -329,12 +577,10 @@
         }
 
         function sendWhatsApp(e) {
-            e.preventDefault(); // Evita que la página se recargue
+            e.preventDefault(); 
 
-            // Ya está configurado con tu número
             const numeroWhatsApp = "56927372611"; 
 
-            // Capturar datos
             const nombre = document.getElementById('b2b-nombre').value.trim();
             const telefono = document.getElementById('b2b-telefono').value.trim();
             const empresa = document.getElementById('b2b-empresa').value.trim();
@@ -342,7 +588,6 @@
             const email = document.getElementById('b2b-email').value.trim();
             const idea = document.getElementById('b2b-idea').value.trim();
 
-            // Construir el mensaje formateado con tono cordial
             const mensaje = `*¡HOLA! QUIERO UNIRME A LA FAMILIA FREEWORK* 🤝🚀\n\n` +
                             `Hola equipo, me encantaría explorar una alianza con ustedes. Aquí dejo mis datos:\n\n` +
                             `*👤 Mi Nombre:* ${nombre}\n` +
@@ -353,11 +598,9 @@
                             `*💡 Nuestra visión para crecer juntos:*\n_${idea}_\n\n` +
                             `¡Quedo súper atento para conversar!`;
 
-            // Crear el enlace y abrir WhatsApp
             const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
             window.open(url, '_blank');
 
-            // Limpiar y cerrar
             document.getElementById('b2b-form').reset();
             closePartnerForm();
         }
