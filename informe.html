@@ -926,7 +926,7 @@ function renderCards() {
     return;
   }
   tbody.innerHTML = filteredData.map((row,i) => {
-    const id = (row[0]||'').toString().replace(/\D/g,'').slice(-6) || 'N/A';
+    const id = row[17] || 'N/A'; // Columna R (Índice 17) -> ID Venta
     const fecha = (row[0]||'').toString().split(',')[0];
     const marca = row[1]||'Sin marca';
     const cliente = row[2]||'Sin nombre';
@@ -951,7 +951,7 @@ function renderCards() {
         <td>
             <div style="display:flex; flex-direction:column; gap:0.15rem;">
                 <span style="font-weight:700; font-size:0.9rem; color:var(--ink); font-family:var(--font-display); letter-spacing:-0.02em;">${cliente}</span>
-                <span style="font-size:0.7rem; color:var(--muted); font-weight:400;">${rut}</span>
+                <span style="font-size:0.7rem; color:var(--muted); font-weight:400;">${rut} &nbsp;•&nbsp; <span style="font-weight:600; color:var(--violet);">ID: #${id}</span></span>
             </div>
         </td>
         <td>
@@ -973,7 +973,7 @@ function renderCards() {
 // ── MODAL ──
 function openModal(i) {
   const row = filteredData[i];
-  const id = (row[0]||'').toString().replace(/\D/g,'').slice(-6)||'N/A';
+  const id = row[17] || 'N/A'; // Columna R (Índice 17) -> ID Venta
   const fecha = (row[0]||'').toString().split(',')[0];
   const marca = row[1]||'';
   const cliente = row[2]||'';
@@ -982,7 +982,7 @@ function openModal(i) {
   const dir = row[7]||'';
   const comuna = row[8]||'';
   const plan = row[10]||'Sin información';
-  const obs = row[11]||'';
+  const obs = row[16]||''; // Columna Q (Índice 16) -> Notas de backoffice
   const ejecutivo = row[12]||'Sin asignar';
   const supervisor = row[13]||'Sin asignar';
   const estado = row[14]||'Pendiente';
@@ -1004,7 +1004,7 @@ function openModal(i) {
   document.getElementById('m-exec').textContent = ejecutivo;
   document.getElementById('m-super').textContent = `Supervisor: ${supervisor}`;
   document.getElementById('m-client').textContent = cliente;
-  document.getElementById('m-rut').textContent = rut;
+  document.getElementById('m-rut').innerHTML = `${rut} &nbsp;&nbsp;|&nbsp;&nbsp; ID: #${id}`; // Se incluye ID a la vista con el RUT
   document.getElementById('m-tel').textContent = tel;
   document.getElementById('m-dir').textContent = `${dir}${comuna?', '+comuna:''}`;
   document.getElementById('m-plan').textContent = plan;
