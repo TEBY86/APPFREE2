@@ -43,14 +43,14 @@
         
         /* Ruido y Cuadrícula Móvil de Alta Fidelidad */
         .bg-noise { 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"); 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); 
         }
 
         @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
         .moving-grid {
             background-image: 
-                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
             background-size: 40px 40px;
             animation: gridMove 4s linear infinite;
             mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
@@ -70,7 +70,7 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             box-shadow: 
                 0 40px 80px -20px rgba(0, 0, 0, 0.8), 
                 inset 0 1px 1px rgba(255, 255, 255, 0.1),
@@ -88,7 +88,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
             animation: shimmer 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             pointer-events: none;
         }
@@ -97,16 +97,16 @@
         .btn-premium {
             background: linear-gradient(180deg, #10b981 0%, #059669 100%);
             box-shadow: 
-                inset 0 1px 1px rgba(255,255,255,0.3), 
-                inset 0 -2px 4px rgba(0,0,0,0.2),
-                0 8px 20px -5px rgba(16,185,129,0.4);
-            border: 1px solid rgba(16,185,129,0.8);
+                inset 0 1px 1px rgba(255,255,255,0.4), 
+                inset 0 -2px 4px rgba(0,0,0,0.3),
+                0 8px 25px -5px rgba(16,185,129,0.5);
+            border: 1px solid rgba(16,185,129,0.9);
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .btn-premium:active {
             box-shadow: 
-                inset 0 2px 4px rgba(0,0,0,0.3),
-                0 4px 10px -5px rgba(16,185,129,0.4);
+                inset 0 2px 4px rgba(0,0,0,0.4),
+                0 4px 10px -5px rgba(16,185,129,0.5);
         }
 
         /* Texto Dinámico Gradiente Refinado */
@@ -116,7 +116,7 @@
             color: transparent;
             -webkit-background-clip: text;
             animation: flowGradient 5s linear infinite;
-            text-shadow: 0 0 40px rgba(217, 70, 239, 0.3);
+            text-shadow: 0 0 40px rgba(217, 70, 239, 0.5);
         }
         @keyframes flowGradient { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
@@ -126,21 +126,21 @@
 
         /* Inputs Fintech Premium */
         .glass-input {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: #f8fafc;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
         }
         .glass-input:focus {
             outline: none;
-            background: rgba(16, 185, 129, 0.03);
-            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.5);
             box-shadow: 
-                inset 0 2px 5px rgba(0,0,0,0.3), 
-                0 0 0 3px rgba(16, 185, 129, 0.1);
+                inset 0 2px 5px rgba(0,0,0,0.4), 
+                0 0 0 3px rgba(16, 185, 129, 0.2);
         }
-        .glass-input::placeholder { color: rgba(255, 255, 255, 0.2); font-weight: 400; }
+        .glass-input::placeholder { color: rgba(255, 255, 255, 0.3); font-weight: 400; }
 
         /* Animación Modal Formulario */
         .form-modal-enter { opacity: 1 !important; pointer-events: auto !important; }
@@ -156,14 +156,14 @@
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 moving-grid"></div>
         
-        <!-- Canvas de Red de Conexiones (Networking Subliminal) -->
-        <canvas id="network-canvas" class="absolute inset-0 w-full h-full mix-blend-screen opacity-70"></canvas>
+        <!-- Canvas de Red de Conexiones (Networking Subliminal Intensificado) -->
+        <canvas id="network-canvas" class="absolute inset-0 w-full h-full mix-blend-screen opacity-90"></canvas>
         
         <div class="absolute inset-0 bg-noise mix-blend-overlay"></div>
         
-        <!-- Luces Atmosféricas Refinadas -->
-        <div class="absolute top-[5%] left-[-15%] w-[700px] h-[700px] bg-fuchsia-600/10 rounded-full blur-[200px] mix-blend-screen"></div>
-        <div class="absolute bottom-[-10%] right-[-15%] w-[700px] h-[700px] bg-emerald-600/5 rounded-full blur-[200px] mix-blend-screen"></div>
+        <!-- Luces Atmosféricas Potenciadas -->
+        <div class="absolute top-[5%] left-[-15%] w-[700px] h-[700px] bg-fuchsia-600/20 rounded-full blur-[180px] mix-blend-screen"></div>
+        <div class="absolute bottom-[-10%] right-[-15%] w-[700px] h-[700px] bg-emerald-600/15 rounded-full blur-[180px] mix-blend-screen"></div>
     </div>
 
     <!-- Contenedor Principal -->
@@ -172,11 +172,11 @@
         <!-- Cabecera -->
         <div class="p-6 flex justify-between items-center shrink-0 w-full">
             <!-- Logo Freework -->
-            <img src="imagenes/logo.svg" alt="Freework Logo" class="h-6 sm:h-8 w-auto opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+            <img src="imagenes/logo.svg" alt="Freework Logo" class="h-6 sm:h-8 w-auto opacity-100 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
             
             <!-- Terminal Text Ultra Minimalista -->
-            <div class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
-                <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_rgba(217,70,239,0.8)]"></div>
+            <div class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_10px_rgba(217,70,239,0.9)]"></div>
                 <span id="scramble-text" class="text-[9px] font-mono text-fuchsia-400 uppercase tracking-[0.2em] font-medium cursor-blink">CARGANDO...</span>
             </div>
         </div>
@@ -186,16 +186,16 @@
             <!-- NÚCLEO HOLOGRÁFICO PREMIUM -->
             <div class="relative w-40 h-40 mb-12 flex items-center justify-center animate-fade-in-up">
                 <!-- Anillos sofisticados -->
-                <div class="absolute inset-0 border-[0.5px] border-fuchsia-500/20 rounded-full ring-1-spin" style="border-style: dashed; border-width: 1px;"></div>
-                <div class="absolute inset-2 rounded-full ring-2-spin" style="background: conic-gradient(from 0deg, transparent 0%, rgba(217,70,239,0.1) 25%, rgba(139,92,246,0.5) 50%, transparent 50%); -webkit-mask-image: radial-gradient(transparent 65%, black 66%);"></div>
-                <div class="absolute inset-6 border border-fuchsia-400/10 rounded-full ring-3-spin shadow-[0_0_20px_rgba(217,70,239,0.1)_inset]"></div>
+                <div class="absolute inset-0 border-[0.5px] border-fuchsia-500/40 rounded-full ring-1-spin" style="border-style: dashed; border-width: 1px;"></div>
+                <div class="absolute inset-2 rounded-full ring-2-spin" style="background: conic-gradient(from 0deg, transparent 0%, rgba(217,70,239,0.2) 25%, rgba(139,92,246,0.6) 50%, transparent 50%); -webkit-mask-image: radial-gradient(transparent 65%, black 66%);"></div>
+                <div class="absolute inset-6 border border-fuchsia-400/20 rounded-full ring-3-spin shadow-[0_0_25px_rgba(217,70,239,0.2)_inset]"></div>
                 
                 <!-- Resplandor central -->
-                <div class="absolute inset-10 bg-fuchsia-500/15 rounded-full blur-2xl animate-pulse"></div>
+                <div class="absolute inset-10 bg-fuchsia-500/25 rounded-full blur-2xl animate-pulse"></div>
                 
                 <!-- Icono Central con volumen -->
-                <div class="relative z-10 w-16 h-16 bg-gradient-to-b from-white/10 to-transparent rounded-2xl border-t border-l border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_-2px_10px_rgba(0,0,0,0.3)]">
-                    <i data-lucide="lock" class="w-6 h-6 text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.6)]"></i>
+                <div class="relative z-10 w-16 h-16 bg-gradient-to-b from-white/10 to-transparent rounded-2xl border-t border-l border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_-2px_10px_rgba(0,0,0,0.4)]">
+                    <i data-lucide="lock" class="w-6 h-6 text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.8)]"></i>
                 </div>
             </div>
 
@@ -204,8 +204,8 @@
                 <h1 class="text-[2.2rem] font-black tracking-tighter leading-none mb-4 uppercase">
                     EXPANDIENDO <br> <span class="text-gradient-flow">EL DOMINIO</span>
                 </h1>
-                <p class="text-[13px] text-slate-400/90 font-medium leading-relaxed">
-                    Protocolos de negociación encriptados. Asegurando las comisiones más altas del mercado. <strong class="text-white font-semibold">Prepara tu agenda</strong>, el ecosistema está por evolucionar.
+                <p class="text-[13px] text-slate-300 font-medium leading-relaxed">
+                    Protocolos de negociación encriptados. Asegurando las comisiones más altas del mercado. <strong class="text-white font-bold">Prepara tu agenda</strong>, el ecosistema está por evolucionar.
                 </p>
             </div>
 
@@ -215,21 +215,21 @@
                 <div class="bg-[#05080E]/95 rounded-[2.4rem] p-7 relative overflow-hidden z-10 h-full flex flex-col justify-between">
                     
                     <!-- Brillo esmeralda elegante -->
-                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/15 rounded-full blur-[50px] pointer-events-none"></div>
+                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/20 rounded-full blur-[50px] pointer-events-none"></div>
 
                     <div class="flex items-start gap-4 relative z-10 mb-6">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-900/20 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-900/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
                             <i data-lucide="handshake" class="w-5 h-5"></i>
                         </div>
                         <div class="pt-0.5">
-                            <div class="inline-block px-2 py-0.5 rounded text-[8px] font-black tracking-[0.25em] bg-emerald-500/10 text-emerald-400 mb-1.5 border border-emerald-500/20 uppercase shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                            <div class="inline-block px-2 py-0.5 rounded text-[8px] font-black tracking-[0.25em] bg-emerald-500/15 text-emerald-400 mb-1.5 border border-emerald-500/30 uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                                 Corporate Alliance
                             </div>
                             <h3 class="text-[17px] font-black text-white leading-tight tracking-tight">¿Representas a una Marca?</h3>
                         </div>
                     </div>
                     
-                    <p class="text-[11.5px] text-slate-400/80 font-medium leading-relaxed mb-7 relative z-10">
+                    <p class="text-[11.5px] text-slate-300/90 font-medium leading-relaxed mb-7 relative z-10">
                         Integra tu empresa al hub de ventas más inmersivo y agresivo de Chile. Ejecutivos de élite, tecnología propietaria y cierre de negocios en tiempo real.
                     </p>
 
@@ -242,56 +242,58 @@
         </div>
     </div>
 
-    <!-- MODAL FORMULARIO B2B ULTRA PREMIUM -->
-    <div id="partner-modal" class="fixed inset-0 z-[100] bg-[#020408]/90 backdrop-blur-2xl opacity-0 pointer-events-none transition-opacity duration-400 flex items-center justify-center p-4">
-        <div class="form-content w-full max-w-sm max-h-[88dvh] overflow-y-auto no-scrollbar bg-[#060910] rounded-[2rem] border border-white/5 shadow-[0_40px_80px_rgba(0,0,0,1),inset_0_1px_1px_rgba(255,255,255,0.1)] relative transform translate-y-8 scale-95 opacity-0 transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1)">
+    <!-- MODAL FORMULARIO B2B ULTRA PREMIUM (Oscuro y Transparente) -->
+    <div id="partner-modal" class="fixed inset-0 z-[100] bg-[#020408]/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-400 flex items-center justify-center p-4">
+        
+        <!-- Formulario Glassmorphism Oscuro (Levemente Transparente) -->
+        <div class="form-content w-full max-w-sm max-h-[88dvh] overflow-y-auto no-scrollbar bg-[#060910]/60 backdrop-blur-[40px] rounded-[2rem] border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.15)] relative transform translate-y-8 scale-95 opacity-0 transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1)">
             
             <!-- Luces sutiles del formulario -->
-            <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
-            <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-[60px] pointer-events-none"></div>
+            <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent"></div>
+            <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/15 rounded-full blur-[60px] pointer-events-none"></div>
 
             <!-- Ajuste de padding interior pb-48 para generar el espacio de scroll necesario al final -->
-            <div class="p-6 pb-48">
+            <div class="p-6 pb-48 relative z-10">
                 <div class="flex justify-between items-start mb-6">
-                    <div class="pr-4 relative z-10">
-                        <h3 class="text-xl font-black text-white tracking-tight">Únete a la Familia <span class="opacity-80">🤝</span></h3>
-                        <p class="text-[11px] text-emerald-400/80 font-medium leading-relaxed mt-1.5">Estamos listos para escuchar tu visión. Hablemos de negocios.</p>
+                    <div class="pr-4">
+                        <h3 class="text-xl font-black text-white tracking-tight drop-shadow-md">Únete a la Familia <span class="opacity-90">🤝</span></h3>
+                        <p class="text-[11px] text-emerald-400/90 font-medium leading-relaxed mt-1.5 drop-shadow-sm">Estamos listos para escuchar tu visión. Hablemos de negocios.</p>
                     </div>
-                    <button onclick="closePartnerForm()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:bg-white/10 hover:text-white transition-all shrink-0 relative z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
+                    <button onclick="closePartnerForm()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all shrink-0 relative z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-white/10">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
 
-                <form id="b2b-form" onsubmit="sendWhatsApp(event)" class="space-y-4 relative z-10">
+                <form id="b2b-form" onsubmit="sendWhatsApp(event)" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="user" class="w-3 h-3 text-emerald-500"></i> ¿Tu Nombre?</label>
+                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="user" class="w-3 h-3 text-emerald-400"></i> ¿Tu Nombre?</label>
                             <input type="text" id="b2b-nombre" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Ej. Juan Pérez">
                         </div>
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="smartphone" class="w-3 h-3 text-emerald-500"></i> WhatsApp</label>
+                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="smartphone" class="w-3 h-3 text-emerald-400"></i> WhatsApp</label>
                             <input type="tel" id="b2b-telefono" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="+56 9...">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="building-2" class="w-3 h-3 text-emerald-500"></i> Marca</label>
+                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="building-2" class="w-3 h-3 text-emerald-400"></i> Marca</label>
                             <input type="text" id="b2b-empresa" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Empresa">
                         </div>
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="briefcase" class="w-3 h-3 text-emerald-500"></i> Cargo</label>
+                            <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="briefcase" class="w-3 h-3 text-emerald-400"></i> Cargo</label>
                             <input type="text" id="b2b-cargo" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="Rol actual">
                         </div>
                     </div>
 
                     <div>
-                        <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="mail" class="w-3 h-3 text-emerald-500"></i> Correo Corporativo</label>
+                        <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="mail" class="w-3 h-3 text-emerald-400"></i> Correo Corporativo</label>
                         <input type="email" id="b2b-email" required class="w-full h-11 rounded-xl glass-input px-3.5 text-xs font-medium" placeholder="para propuestas formales">
                     </div>
 
                     <div>
-                        <label class="text-[9px] font-bold text-slate-400 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="lightbulb" class="w-3 h-3 text-emerald-500"></i> Visión del Negocio</label>
+                        <label class="text-[9px] font-bold text-slate-300 ml-1 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="lightbulb" class="w-3 h-3 text-emerald-400"></i> Visión del Negocio</label>
                         <textarea id="b2b-idea" required rows="3" class="w-full rounded-xl glass-input p-3.5 text-xs font-medium resize-none leading-relaxed" placeholder="¿Cómo imaginas que podemos romperla juntos en el mercado?"></textarea>
                     </div>
 
@@ -318,7 +320,7 @@
             const ctx = canvas.getContext('2d');
             let width, height;
 
-            // Paleta corporativa para pulsos y nodos
+            // Paleta corporativa vibrante
             const colors = ['#10b981', '#d946ef', '#8b5cf6', '#14b8a6'];
 
             let nodes = [];
@@ -326,12 +328,11 @@
             let pulses = [];
             let flashes = [];
 
-            // Parámetros de la red
             const config = {
-                nodeCount: window.innerWidth < 600 ? 30 : 60,
+                nodeCount: window.innerWidth < 600 ? 35 : 70,
                 connectionDistance: window.innerWidth < 600 ? 120 : 180,
                 pulseSpeed: 1.5,
-                pulseFrequency: 0.05 // Probabilidad por frame de generar un nuevo pulso
+                pulseFrequency: 0.08 // Mayor frecuencia de luces
             };
 
             function resize() {
@@ -352,19 +353,19 @@
                     this.vx = (Math.random() - 0.5) * 0.3;
                     this.vy = (Math.random() - 0.5) * 0.3;
                     this.radius = Math.random() * 1.5 + 0.5;
-                    this.connections = []; // IDs de nodos conectados a este
+                    this.connections = []; 
                 }
                 update() {
                     this.x += this.vx;
                     this.y += this.vy;
-                    // Rebote en bordes suaves
                     if (this.x <= 0 || this.x >= width) this.vx *= -1;
                     if (this.y <= 0 || this.y >= height) this.vy *= -1;
                 }
                 draw() {
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    // Nodos más brillantes
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                     ctx.fill();
                 }
             }
@@ -373,10 +374,9 @@
                 constructor(fromNode, toNode) {
                     this.from = fromNode;
                     this.to = toNode;
-                    this.progress = 0; // 0 to 1
+                    this.progress = 0; 
                     this.color = colors[Math.floor(Math.random() * colors.length)];
                     
-                    // Calcular distancia para normalizar velocidad
                     const dx = this.to.x - this.from.x;
                     const dy = this.to.y - this.from.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -388,7 +388,6 @@
                     if (this.progress >= 1) {
                         this.progress = 1;
                         this.completed = true;
-                        // Generar choque/destello al llegar
                         flashes.push(new Flash(this.to.x, this.to.y, this.color));
                     }
                 }
@@ -400,9 +399,9 @@
                     ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
                     ctx.fillStyle = this.color;
                     ctx.shadowColor = this.color;
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 12;
                     ctx.fill();
-                    ctx.shadowBlur = 0; // Reset
+                    ctx.shadowBlur = 0;
                 }
             }
 
@@ -413,7 +412,7 @@
                     this.color = color;
                     this.radius = 2;
                     this.maxRadius = Math.random() * 15 + 10;
-                    this.opacity = 0.8;
+                    this.opacity = 1.0; // Destellos más fuertes
                 }
                 update() {
                     this.radius += 0.8;
@@ -425,9 +424,9 @@
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     ctx.strokeStyle = this.color;
                     ctx.globalAlpha = this.opacity;
-                    ctx.lineWidth = 1.5;
+                    ctx.lineWidth = 2.0;
                     ctx.stroke();
-                    ctx.globalAlpha = 1.0; // Reset
+                    ctx.globalAlpha = 1.0; 
                 }
             }
 
@@ -440,7 +439,6 @@
 
             function updateConnections() {
                 connections = [];
-                // Limpiar conexiones de nodos
                 nodes.forEach(n => n.connections = []);
 
                 for (let i = 0; i < nodes.length; i++) {
@@ -451,7 +449,6 @@
 
                         if (dist < config.connectionDistance) {
                             connections.push({ n1: nodes[i], n2: nodes[j], dist: dist });
-                            // Guardar vecinos para los pulsos
                             nodes[i].connections.push(nodes[j]);
                             nodes[j].connections.push(nodes[i]);
                         }
@@ -461,7 +458,6 @@
 
             function spawnPulses() {
                 if (Math.random() < config.pulseFrequency) {
-                    // Elegir nodo aleatorio con conexiones
                     const validNodes = nodes.filter(n => n.connections.length > 0);
                     if (validNodes.length > 0) {
                         const fromNode = validNodes[Math.floor(Math.random() * validNodes.length)];
@@ -474,47 +470,34 @@
             function animate() {
                 ctx.clearRect(0, 0, width, height);
 
-                // Update & Draw Nodes
-                nodes.forEach(n => {
-                    n.update();
-                    n.draw();
-                });
+                nodes.forEach(n => { n.update(); n.draw(); });
 
-                // Update Connections (Lines)
                 updateConnections();
                 connections.forEach(c => {
                     const opacity = 1 - (c.dist / config.connectionDistance);
                     ctx.beginPath();
                     ctx.moveTo(c.n1.x, c.n1.y);
                     ctx.lineTo(c.n2.x, c.n2.y);
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
-                    ctx.lineWidth = 0.5;
+                    // Líneas un poco más visibles
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.25})`;
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 });
 
-                // Spawn new Pulses randomly
                 spawnPulses();
 
-                // Update & Draw Pulses
                 for (let i = pulses.length - 1; i >= 0; i--) {
                     const p = pulses[i];
                     p.update();
-                    if (p.completed) {
-                        pulses.splice(i, 1);
-                    } else {
-                        p.draw();
-                    }
+                    if (p.completed) { pulses.splice(i, 1); } 
+                    else { p.draw(); }
                 }
 
-                // Update & Draw Flashes (Choques)
                 for (let i = flashes.length - 1; i >= 0; i--) {
                     const f = flashes[i];
                     f.update();
-                    if (f.opacity <= 0) {
-                        flashes.splice(i, 1);
-                    } else {
-                        f.draw();
-                    }
+                    if (f.opacity <= 0) { flashes.splice(i, 1); } 
+                    else { f.draw(); }
                 }
 
                 requestAnimationFrame(animate);
