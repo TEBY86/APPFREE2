@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Freework - Sistema en Desarrollo</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #020408;
+            --glass-bg: rgba(10, 14, 23, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.06);
+        }
+
+        body, html { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: white;
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; 
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; -webkit-user-select: none;
+        }
+
+        @keyframes fadeInUpPremium { 
+            from { opacity: 0; transform: translateY(40px) scale(0.97); filter: blur(4px); } 
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
+        }
+        .animate-fade-in-up { 
+            animation: fadeInUpPremium 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            opacity: 0; 
+        }
+        
+        .bg-noise { 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); 
+        }
+
+        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+        .moving-grid {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 4s linear infinite;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+        }
+
+        /* Animaciones del Núcleo Holográfico (Tonos Azules/Cian para Sistema) */
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+        @keyframes spin-slow-reverse { 100% { transform: rotate(-360deg); } }
+        
+        .ring-1-spin { animation: spin-slow 12s linear infinite; }
+        .ring-2-spin { animation: spin-slow-reverse 8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .ring-3-spin { animation: spin-slow 5s linear infinite; }
+
+        /* Tarjeta de Sistema Premium */
+        .system-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(56, 189, 248, 0.2); /* Borde Cian */
+            box-shadow: 
+                0 40px 80px -20px rgba(0, 0, 0, 0.8), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-150%) skewX(-20deg); }
+            100% { transform: translateX(200%) skewX(-20deg); }
+        }
+
+        .system-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            animation: shimmer 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            pointer-events: none;
+        }
+
+        /* Botón Premium Volumétrico (Cian/Azul) */
+        .btn-system {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            box-shadow: 
+                inset 0 1px 1px rgba(255,255,255,0.4), 
+                inset 0 -2px 4px rgba(0,0,0,0.3),
+                0 8px 25px -5px rgba(56,189,248,0.4);
+            border: 1px solid rgba(56,189,248,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .btn-system:active {
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.4),
+                0 4px 10px -5px rgba(56,189,248,0.5);
+        }
+
+        /* Texto Dinámico Gradiente Refinado (Cian a Azul) */
+        .text-gradient-flow {
+            background: linear-gradient(to right, #7dd3fc, #38bdf8, #818cf8, #7dd3fc);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: flowGradient 5s linear infinite;
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
+        }
+        @keyframes flowGradient { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+        /* Scrambler text cursor */
+        .cursor-blink::after { content: '_'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+        /* Barra de progreso de desarrollo */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            width: 0%;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(56,189,248,0.5);
+            animation: loadProgress 2s ease-out forwards;
+        }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 68%; } } /* Simula estar al 68% de desarrollo */
+
+    </style>
+</head>
+<body>
+
+    <!-- Capa de Fondo e Infraestructura Súper Ligera -->
+    <div class="fixed inset-0 z-0 pointer-events-none bg-[#020408]">
+        <div class="absolute inset-0 opacity-[0.02]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
+        <div class="absolute inset-0 bg-noise mix-blend-overlay opacity-60"></div>
+        
+        <!-- Luces Atmosféricas Estáticas (Tonos Tecnológicos Azules/Cian) -->
+        <div class="absolute top-[-10%] left-[-15%] w-[600px] h-[600px] bg-sky-600/10 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-[-10%] right-[-15%] w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px]"></div>
+        <div class="absolute top-[40%] right-[10%] w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[150px]"></div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="relative z-10 w-full h-full flex flex-col overflow-y-auto no-scrollbar pb-32 pt-[env(safe-area-inset-top)]">
+        
+        <!-- Cabecera -->
+        <div class="p-6 flex justify-between items-center shrink-0 w-full">
+            <!-- Logo Freework -->
+            <img src="imagenes/logo.svg" alt="Freework Logo" class="h-6 sm:h-8 w-auto opacity-100 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            
+            <!-- Terminal Text -->
+            <div class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                <div class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse shadow-[0_0_10px_rgba(56,189,248,0.9)]"></div>
+                <span id="scramble-text" class="text-[9px] font-mono text-sky-300 uppercase tracking-[0.2em] font-medium cursor-blink">SISTEMA...</span>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center px-6 mt-2">
+            
+            <!-- NÚCLEO HOLOGRÁFICO SISTEMA -->
+            <div class="relative w-40 h-40 mb-10 flex items-center justify-center animate-fade-in-up">
+                <!-- Anillos sofisticados Cian -->
+                <div class="absolute inset-0 border-[0.5px] border-sky-400/40 rounded-full ring-1-spin" style="border-style: dashed; border-width: 1px;"></div>
+                <div class="absolute inset-2 rounded-full ring-2-spin" style="background: conic-gradient(from 0deg, transparent 0%, rgba(56,189,248,0.2) 25%, rgba(99,102,241,0.6) 50%, transparent 50%); -webkit-mask-image: radial-gradient(transparent 65%, black 66%);"></div>
+                <div class="absolute inset-6 border border-sky-300/20 rounded-full ring-3-spin shadow-[0_0_25px_rgba(56,189,248,0.2)_inset]"></div>
+                
+                <!-- Resplandor central -->
+                <div class="absolute inset-10 bg-sky-500/20 rounded-full blur-2xl animate-pulse"></div>
+                
+                <!-- Icono Central (CPU / Tuerca) -->
+                <div class="relative z-10 w-16 h-16 bg-gradient-to-b from-white/10 to-transparent rounded-2xl border-t border-l border-white/20 backdrop-blur-xl flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_-2px_10px_rgba(0,0,0,0.4)]">
+                    <i data-lucide="cpu" class="w-7 h-7 text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.8)]"></i>
+                </div>
+            </div>
+
+            <!-- TÍTULO Y MENSAJE EJECUTIVOS -->
+            <div class="text-center max-w-[340px] mb-12 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h1 class="text-[2.2rem] font-black tracking-tighter leading-none mb-4 uppercase">
+                    FORJANDO <br> <span class="text-gradient-flow">EL ARSENAL</span>
+                </h1>
+                <p class="text-[13px] text-slate-300 font-medium leading-relaxed">
+                    Nuestros ingenieros están compilando esta nueva herramienta. Estamos preparando un módulo diseñado exclusivamente para <strong class="text-white font-bold">multiplicar tu rendimiento</strong>.
+                </p>
+            </div>
+
+            <!-- TARJETA ESTADO DEL SISTEMA -->
+            <div class="w-full max-w-sm system-card rounded-[2.5rem] p-[1px] animate-fade-in-up" style="animation-delay: 0.25s;">
+                <div class="bg-[#05080E]/95 rounded-[2.4rem] p-7 relative overflow-hidden z-10 h-full flex flex-col justify-between">
+                    
+                    <!-- Brillo azul elegante -->
+                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-sky-500/15 rounded-full blur-[50px] pointer-events-none"></div>
+
+                    <div class="flex items-start gap-4 relative z-10 mb-5">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500/10 to-blue-900/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                            <i data-lucide="terminal-square" class="w-5 h-5"></i>
+                        </div>
+                        <div class="pt-0.5 w-full">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <div class="inline-block px-2 py-0.5 rounded text-[8px] font-black tracking-[0.25em] bg-sky-500/15 text-sky-400 border border-sky-500/30 uppercase shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+                                    Status: Beta
+                                </div>
+                                <span class="text-[10px] font-mono text-sky-300">v2.0.1</span>
+                            </div>
+                            <h3 class="text-[16px] font-black text-white leading-tight tracking-tight">Módulo Restringido</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-7 relative z-10">
+                        <p class="text-[11.5px] text-slate-400/90 font-medium leading-relaxed mb-3">
+                            Despliegue programado para la próxima actualización global del ecosistema Freework.
+                        </p>
+                        <!-- Barra de progreso Falsa -->
+                        <div class="progress-bar-container mt-4">
+                            <div class="progress-bar-fill"></div>
+                        </div>
+                        <div class="flex justify-between mt-1.5">
+                            <span class="text-[9px] text-slate-500 font-mono uppercase">Compilando...</span>
+                            <span class="text-[9px] text-sky-400 font-mono font-bold">68%</span>
+                        </div>
+                    </div>
+
+                    <button onclick="closeCurrentModal()" class="w-full h-12 rounded-xl btn-system text-white font-black text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 relative z-10">
+                        <i data-lucide="arrow-left" class="w-4 h-4 fill-white/20"></i> Volver a Operaciones
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initScrambleText();
+        });
+
+        // Efecto Terminal Scramble (Versión Sistema)
+        function initScrambleText() {
+            const el = document.getElementById('scramble-text');
+            const finalTexts = [
+                "COMPILANDO CÓDIGO...",
+                "ACCESO RESTRINGIDO",
+                "MÓDULO EN BETA..."
+            ];
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>/\\";
+            let currentTextIdx = 0;
+
+            function scramble(targetText) {
+                let iterations = 0;
+                const interval = setInterval(() => {
+                    el.innerText = targetText.split('').map((char, index) => {
+                        if(index < iterations) return targetText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    }).join('');
+                    
+                    if(iterations >= targetText.length) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            currentTextIdx = (currentTextIdx + 1) % finalTexts.length;
+                            scramble(finalTexts[currentTextIdx]);
+                        }, 3500);
+                    }
+                    iterations += 1/3; 
+                }, 30);
+            }
+            scramble(finalTexts[0]);
+        }
+
+        // Cierra el iframe si está dentro del Portal, o vuelve atrás si se abrió directo
+        function closeCurrentModal() {
+            if (window.parent && window.parent.AppController) {
+                window.parent.AppController.closeModal();
+            } else if (window.parent && window.parent.toggleModal) {
+                // Compatibilidad por si se abre desde un modal en hub.html
+                window.parent.toggleModal('academia-modal', false); 
+            } else {
+                window.history.back();
+            }
+        }
+    </script>
+</body>
+</html>
