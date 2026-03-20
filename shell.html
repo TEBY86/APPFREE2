@@ -459,24 +459,37 @@
             }
         }
 
-        function createLayer(id, url, isImmediate = false) {
-            const iframe = document.createElement('iframe');
-            iframe.src = url; iframe.className = 'web-layer'; iframe.id = `layer-${id}`; iframe.dataset.loaded = "false";
-            
-            iframe.onload = () => {
-                iframe.dataset.loaded = "true";
-                try {
-                    const style = iframe.contentWindow.document.createElement('style');
-                    style.textContent = `* { -webkit-tap-highlight-color: transparent !important; user-select: none !important; -webkit-user-select: none !important; -webkit-touch-callout: none !important; } a, button, input { outline: none !important; } input, textarea { user-select: auto !important; -webkit-user-select: auto !important; }`;
-                    iframe.contentWindow.document.head.appendChild(style);
-                } catch (e) {}
+       function createLayer(id, url, isImmediate = false) {
+    const iframe = document.createElement('iframe');
+    
+    // 🔥 LA MAGIA: Le inyectamos los datos a la URL interna
+    let urlFinal = url;
+    if (usuarioNombreGlobal || usuarioIdGlobal) {
+        // Verifica si la URL ya tiene un '?' para poner '&' o '?'
+        const separador = urlFinal.includes('?') ? '&' : '?';
+        urlFinal += `${separador}nombre=${encodeURIComponent(usuarioNombreGlobal)}&id=${encodeURIComponent(usuarioIdGlobal)}`;
+    }
+    
+    iframe.src = urlFinal; // <-- Usa la URL con los datos pegados
+    iframe.className = 'web-layer'; 
+    iframe.id = `layer-${id}`; 
+    iframe.dataset.loaded = "false";
+    
+    // ... (el resto de tu función iframe.onload se queda exactamente igual)
+    iframe.onload = () => {
+        iframe.dataset.loaded = "true";
+        try {
+            const style = iframe.contentWindow.document.createElement('style');
+            style.textContent = `* { -webkit-tap-highlight-color: transparent !important; user-select: none !important; -webkit-user-select: none !important; -webkit-touch-callout: none !important; } a, button, input { outline: none !important; } input, textarea { user-select: auto !important; -webkit-user-select: auto !important; }`;
+            iframe.contentWindow.document.head.appendChild(style);
+        } catch (e) {}
 
-                if (iframe.classList.contains('active') || isImmediate) {
-                    clearTimeout(loadingTimeout); loaderOverlay.classList.remove('active'); iframe.classList.add('active');
-                }
-            };
-            container.appendChild(iframe); layers[id] = iframe;
+        if (iframe.classList.contains('active') || isImmediate) {
+            clearTimeout(loadingTimeout); loaderOverlay.classList.remove('active'); iframe.classList.add('active');
         }
+    };
+    container.appendChild(iframe); layers[id] = iframe;
+}
 
         /* ============================================================
            LÓGICA DEL DOCK INTEGRADO (5º BOTÓN) - MATEMÁTICA PERFECTA
@@ -631,6 +644,28 @@
             const tabButton = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
             if (tabButton) tabButton.click();
         };
+
+        // Leer usuario desde URL y guardarlo en localStorage
+let usuarioNombreGlobal = "";
+let usuarioIdGlobal = "";
+
+(function() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        usuarioNombreGlobal = params.get('nombre') || params.get('name') || "";
+        usuarioIdGlobal = params.get('id') || params.get('email') || "";
+        
+        // (Mantenemos tu código original de localStorage por si entran desde la web normal)
+        if (usuarioNombreGlobal) {
+            const user = { name: usuarioNombreGlobal, id: usuarioIdGlobal };
+            localStorage.setItem('freework_user', JSON.stringify(user));
+        }
+    } catch(e) {}
+})();
+
+
+
+
 
         window.onload = () => {
             const firstTab = document.querySelector('.nav-item.is-active');
