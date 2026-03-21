@@ -182,21 +182,33 @@
         }
 
         // ==========================================
-        // NUEVA LÓGICA DE CIERRE DE SESIÓN EN CASCADA
+        // LÓGICA DE CIERRE DE SESIÓN EN CASCADA
         // ==========================================
         function handleLogout() {
-            // 1. Limpiamos la memoria de Railway (Nivel 3)
-            localStorage.removeItem('freework_user');
-            localStorage.removeItem('fw_session');
-            localStorage.removeItem('freework_user_name');
-            localStorage.removeItem('freework_user_id');
+            // 1. Destruimos absolutamente toda la memoria
+            localStorage.clear();
 
-            // 2. Le gritamos al APK (Nivel 1) que destruya el Iframe y vuelva al inicio
+            // 2. Disparamos la señal de cierre hacia los contenedores superiores (APK y Shell)
             try {
+                window.parent.postMessage({ comando: 'DESTRUIR_SESION_APK' }, '*');
                 window.top.postMessage({ comando: 'DESTRUIR_SESION_APK' }, '*');
-            } catch(e) {
-                console.error("Error al comunicar con la APK", e);
-            }
+            } catch(e) {}
+
+            // 3. Pantalla visual de "Apagando..." para dar feedback INMEDIATO al usuario
+            document.body.innerHTML = `
+                <div style="height:100dvh;width:100vw;background:#0B0F19;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#d946ef;font-family:'Inter',sans-serif;">
+                    <div style="width:40px;height:40px;border:3px solid rgba(217,70,239,0.2);border-top-color:#d946ef;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px;"></div>
+                    <p style="font-size:10px;font-weight:900;letter-spacing:0.2em;text-transform:uppercase;">Apagando Sistema...</p>
+                    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+                </div>
+            `;
+
+            // 4. Si en 1 segundo no ha pasado nada (significa que estamos en versión Web), salimos forzoso al login web.
+            setTimeout(() => {
+                if (window.self === window.top) {
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
         }
         
         lucide.createIcons();
