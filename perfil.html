@@ -39,15 +39,13 @@
         .shadow-premium-dark { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0,0,0,0.1); }
     </style>
 </head>
-<!-- Bloqueos de seguridad activos para Producción -->
 <body class="bg-slate-50 text-slate-900 antialiased" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;" ondragstart="return false;">
     
     <div class="flex flex-col h-full w-full relative overflow-hidden">
         
-        <!-- CABECERA PREMIUM (Dark Elite) -->
+        <!-- CABECERA PREMIUM -->
         <header class="bg-[#0B0F19] pt-[calc(var(--safe-top)+1.5rem)] pb-12 px-6 relative shrink-0 shadow-premium-dark rounded-b-[2.5rem] z-20">
             <div class="absolute inset-0 bg-noise pointer-events-none opacity-40"></div>
-            <!-- Luz volumétrica -->
             <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-fuchsia-600/15 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/4"></div>
 
             <div class="flex items-center justify-between relative z-10">
@@ -65,7 +63,7 @@
         <div class="flex-1 overflow-y-auto px-5 pt-0 pb-[calc(var(--safe-bottom)+4rem)] no-scrollbar w-full relative z-10 -mt-6">
             <div class="max-w-xl mx-auto space-y-5">
                 
-                <!-- 1. TARJETA PRINCIPAL DE USUARIO -->
+                <!-- TARJETA USUARIO -->
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-200/60 shadow-premium flex items-center gap-5 relative overflow-hidden animate-fade-in-up">
                     <div class="absolute -right-6 -top-6 w-24 h-24 bg-fuchsia-50 rounded-full blur-[20px] pointer-events-none"></div>
                     
@@ -73,7 +71,6 @@
                         <div id="p-img" class="w-[72px] h-[72px] brand-gradient rounded-[1.25rem] flex items-center justify-center text-white font-black text-3xl shadow-[0_8px_20px_rgba(192,38,211,0.25)] ring-2 ring-white">
                             <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-white/50"></i>
                         </div>
-                        <!-- LUZ INDICADORA -->
                         <span id="status-light" class="absolute -bottom-1 -right-1 flex h-4 w-4 hidden">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
@@ -90,7 +87,7 @@
                     </div>
                 </div>
 
-                <!-- 2. DIRECTRIZ CORPORATIVA -->
+                <!-- DIRECTRIZ -->
                 <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
                     <div class="bg-gradient-to-br from-[#120F1D] to-[#0B0F19] rounded-[1.75rem] p-6 border border-fuchsia-500/20 shadow-premium-dark relative overflow-hidden">
                         <div class="absolute left-0 bottom-0 w-32 h-32 bg-violet-600/10 rounded-full blur-[40px] pointer-events-none"></div>
@@ -106,9 +103,8 @@
                     </div>
                 </div>
                 
-                <!-- 3. TARJETA DE DETALLES DE CONTACTO -->
+                <!-- CONTACTO -->
                 <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-premium overflow-hidden animate-fade-in-up" style="animation-delay: 0.15s;">
-                    
                     <div class="flex items-center justify-between p-5 border-b border-slate-100/80 hover:bg-slate-50/50 transition-colors">
                         <div class="flex items-center gap-3.5 text-slate-500">
                             <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-[1rem] text-slate-700 shadow-sm"><i data-lucide="mail" class="w-4.5 h-4.5"></i></div>
@@ -132,10 +128,9 @@
                         </div>
                         <span id="p-leader" class="text-[11px] font-black text-white bg-slate-800 px-3 py-1.5 rounded-lg truncate ml-4 uppercase tracking-wider shadow-sm">--</span>
                     </div>
-                    
                 </div>
                 
-                <!-- 4. BOTÓN DE APAGADO -->
+                <!-- BOTÓN DE APAGADO -->
                 <div class="pt-4 animate-fade-in-up" style="animation-delay: 0.2s;">
                     <button onclick="handleLogout()" class="w-full h-16 rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.15em] transition-all duration-300 flex items-center justify-center gap-3 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-500 hover:text-white shadow-sm active:scale-[0.98] group">
                         <i data-lucide="power" class="w-5 h-5 group-hover:animate-pulse"></i> Apagar Sistema
@@ -143,7 +138,6 @@
                     <p class="text-center text-[10px] font-bold text-slate-400 mt-4 uppercase tracking-widest">Freework App v2.0</p>
                 </div>
 
-                <!-- ESPACIADOR INFERIOR -->
                 <div class="h-24 w-full shrink-0"></div>
 
             </div>
@@ -151,9 +145,6 @@
     </div>
 
     <script>
-        // URL de tu página de Login en Wix (El Home Principal)
-        const LOGIN_URL = "index.html";
-
         let user = null;
         try {
             const userData = localStorage.getItem('freework_user');
@@ -163,30 +154,18 @@
         }
 
         if(!user) {
-            // LÓGICA DE VISUALIZACIÓN SIN SESIÓN:
-            // No redirigimos, simplemente mostramos que la sesión está vacía/inactiva.
             document.getElementById('p-img').innerText = '?';
             document.getElementById('p-name').innerText = 'Visitante no registrado';
-            
             document.getElementById('p-role').innerText = 'SIN INFORMACIÓN';
             document.getElementById('p-role').classList.remove('hidden');
-            
             document.getElementById('p-email').innerText = '---';
             document.getElementById('p-tel').innerText = '---';
             document.getElementById('p-leader').innerText = '---';
-            
-            // Ocultamos la luz de estar en línea
-            document.getElementById('status-light').classList.add('hidden');
-            document.getElementById('status-text').classList.add('hidden');
-            
         } else {
-            // Usuario validado, inyectamos los datos reales
             const firstName = user.name ? user.name.split(' ')[0] : 'Socio';
-            
             document.getElementById('p-img').innerText = firstName.charAt(0).toUpperCase();
             document.getElementById('p-name').innerText = user.name || 'Ejecutivo';
             
-            // Asignar rol con estilo Elite - Usando "Socio Comercial" por defecto
             let roleToDisplay = 'Socio Comercial';
             if (user.role && user.role.toLowerCase().trim() !== 'vendedor') {
                 roleToDisplay = user.role;
@@ -198,18 +177,25 @@
             document.getElementById('p-tel').innerText = user.telefono || 'No registrado';
             document.getElementById('p-leader').innerText = user.leader || 'Central';
             
-            // Encender luz y etiqueta de conexión
             document.getElementById('status-light').classList.remove('hidden');
             document.getElementById('status-text').classList.remove('hidden');
         }
 
+        // ==========================================
+        // NUEVA LÓGICA DE CIERRE DE SESIÓN EN CASCADA
+        // ==========================================
         function handleLogout() {
+            // 1. Limpiamos la memoria de Railway (Nivel 3)
             localStorage.removeItem('freework_user');
-            try { 
-                if (window.top !== window.self) window.top.location.href = LOGIN_URL; 
-                else window.location.href = LOGIN_URL; 
-            } catch(e) { 
-                window.location.href = LOGIN_URL; 
+            localStorage.removeItem('fw_session');
+            localStorage.removeItem('freework_user_name');
+            localStorage.removeItem('freework_user_id');
+
+            // 2. Le gritamos al APK (Nivel 1) que destruya el Iframe y vuelva al inicio
+            try {
+                window.top.postMessage({ comando: 'DESTRUIR_SESION_APK' }, '*');
+            } catch(e) {
+                console.error("Error al comunicar con la APK", e);
             }
         }
         
