@@ -27,14 +27,13 @@
         /* --- Estilos Base --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
          
-       body {
+      body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             margin: 0; padding: 0;
-            padding-bottom: 220px;
+            padding-bottom: 225px; /* <--- AUMENTA ESTE NÚMERO SI EL FOOTER TAPA EL FORMULARIO AL BAJAR DEL TODO */
             color: var(--text-main);
         }
-
         /* --- Header --- */
         .header {
             background: var(--gradient);
@@ -173,15 +172,18 @@
         .smart-paste-btn:active { transform: scale(0.9); }
 
         /* --- Footer --- */
-        .foote.footer {
-    position: fixed; bottom: 100px; left: 0; right: 0;
-    background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-    border-top: 1px solid #e2e8f0;
-    padding: 16px 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 100;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
-}
+      /* --- Footer --- */
+        .footer {
+            position: fixed; 
+            bottom: 85px; /* <--- CAMBIA ESTE NÚMERO PARA SUBIR O BAJAR LA BARRA */
+            left: 0; right: 0;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+        }
         .total-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
         .total-amount { font-size: 28px; font-weight: 900; color: var(--primary); line-height: 1; }
         
