@@ -674,6 +674,14 @@ let usuarioIdGlobal = "";
 
 
 
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -797,30 +805,61 @@ let usuarioIdGlobal = "";
         setIsOpen(prev => !prev);
       };
 
-      // Efecto para reajustar la posición si la ventana se sale del campo visual al abrirse
+      // Efecto ROBUSTO para reajustar la posición (incluye móviles y teclado virtual)
       useEffect(() => {
-        if (isOpen && pos) {
-          const isMobile = window.innerWidth < 640;
-          const chatWidth = isMobile ? window.innerWidth - 48 : 380; // 380px o w-[calc(100vw-3rem)]
-          const chatHeight = Math.min(550, window.innerHeight * 0.85); // 550px o max-h-[85vh]
-          const margin = 15; // Margen de seguridad con el borde de la pantalla
+        if (isOpen) {
+          const adjustPos = () => {
+            // Usamos visualViewport si está disponible (esencial para detectar el teclado en móviles)
+            const vHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            const vWidth  = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+            const margin  = 16;
+            const isMobile = vWidth < 640;
 
-          let newRight = pos.right;
-          let newBottom = pos.bottom;
+            // Dimensiones basadas en las clases CSS actuales
+            const chatWidth  = isMobile ? vWidth - 48 : 380; 
+            const chatHeight = Math.min(550, vHeight * 0.85);
 
-          const maxRight = window.innerWidth - chatWidth - margin;
-          const maxBottom = window.innerHeight - chatHeight - margin;
+            setPos(currentPos => {
+              // Si no hay posición registrada aún, asume la posición inicial del botón
+              let r = currentPos ? currentPos.right : 24;
+              let b = currentPos ? currentPos.bottom : 112;
 
-          // Clampear (limitar) los valores para que no se desborde ni por arriba/izquierda ni por abajo/derecha
-          if (newRight > maxRight) newRight = Math.max(margin, maxRight);
-          if (newBottom > maxBottom) newBottom = Math.max(margin, maxBottom);
-          if (newRight < margin) newRight = margin;
-          if (newBottom < margin) newBottom = margin;
+              const maxRight  = Math.max(margin, vWidth - chatWidth - margin);
+              const maxBottom = Math.max(margin, vHeight - chatHeight - margin);
 
-          // Si la posición tuvo que ser corregida, la actualizamos
-          if (newRight !== pos.right || newBottom !== pos.bottom) {
-            setPos({ right: newRight, bottom: newBottom });
+              if (r > maxRight)  r = maxRight;
+              if (b > maxBottom) b = maxBottom;
+              if (r < margin) r = margin;
+              if (b < margin) b = margin;
+
+              // En móviles, forzamos el centrado horizontal para evitar recortes
+              if (isMobile) {
+                r = (vWidth - chatWidth) / 2;
+              }
+
+              // Actualiza solo si es estrictamente necesario
+              if (!currentPos || r !== currentPos.right || b !== currentPos.bottom) {
+                return { right: r, bottom: b };
+              }
+              return currentPos;
+            });
+          };
+
+          // Pequeño retraso para dar tiempo a que las clases CSS de la ventana abierta se apliquen
+          setTimeout(adjustPos, 50);
+
+          // Escuchamos los cambios de tamaño, especialmente útiles para teclados móviles
+          window.addEventListener('resize', adjustPos);
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', adjustPos);
           }
+
+          return () => {
+            window.removeEventListener('resize', adjustPos);
+            if (window.visualViewport) {
+              window.visualViewport.removeEventListener('resize', adjustPos);
+            }
+          };
         }
       }, [isOpen]);
 
@@ -905,10 +944,6 @@ let usuarioIdGlobal = "";
       };
 
       // Envío de mensaje + bot client-side por keywords en títulos de Chat_Respuestas
-      // NOTA: el GS también responde automáticamente desde Chat_Auto (server-side).
-      // Si Chat_Auto tiene reglas, ambos bots pueden responder.
-      // Para evitar duplicados: deja Chat_Auto vacío si usas solo el bot del cliente,
-      // o elimina el bloque "Bot client-side" si usas solo el bot del servidor.
       const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !clientName) return;
