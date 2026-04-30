@@ -682,79 +682,516 @@ let usuarioIdGlobal = "";
 
 
 
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Factibilidad Freework</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreeWork Bot</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <!-- React + ReactDOM UMD (producción) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel standalone para transformar JSX en el navegador -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
   <style>
-    * { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-    ::-webkit-scrollbar { width:5px; }
-    ::-webkit-scrollbar-track { background:transparent; }
-    ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.1); border-radius:10px; }
-    @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-    .animate-slide-up { animation:slideUp 0.4s ease-out forwards; }
+    /* ── Reset / Global ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: 'DM Sans', sans-serif; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+
+    /* ── Animaciones globales ────────────────────────────── */
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+
     @keyframes shine {
-      0%{left:-100%;opacity:0} 10%{opacity:1} 20%{left:100%;opacity:0} 100%{left:100%;opacity:0}
+      0%   { left: -100%; opacity: 0; }
+      10%  { opacity: 1; }
+      20%  { left: 100%;  opacity: 0; }
+      100% { left: 100%;  opacity: 0; }
     }
     @keyframes breatheGlow {
-      0%,100%{box-shadow:0 10px 25px -5px rgba(178,51,255,0.4),inset 0 1px 2px rgba(255,255,255,0.4)}
-      50%{box-shadow:0 18px 40px 2px rgba(255,77,248,0.8),inset 0 1px 5px rgba(255,255,255,0.9)}
+      0%,100% { box-shadow: 0 10px 25px -5px rgba(178,51,255,0.4),  inset 0 1px 2px rgba(255,255,255,0.4); }
+      50%      { box-shadow: 0 18px 40px 2px  rgba(255,77,248,0.8),   inset 0 1px 5px rgba(255,255,255,0.9); }
     }
-    .btn-premium { animation:breatheGlow 3s infinite ease-in-out; }
+    .btn-premium { animation: breatheGlow 3s infinite ease-in-out; }
     .btn-premium::before {
-      content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
-      background:linear-gradient(to right,transparent,rgba(255,255,255,0.6),transparent);
-      transform:skewX(-25deg); animation:shine 6s infinite; z-index:0; pointer-events:none;
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
+      transform: skewX(-25deg); animation: shine 6s infinite;
+      z-index: 0; pointer-events: none;
     }
-    .dragging-active * { user-select:none !important; }
+    .dragging-active * { user-select: none !important; }
+
+    /* ── Utilidades Tailwind-like necesarias ─────────────── */
+    .fixed    { position: fixed; }
+    .absolute { position: absolute; }
+    .relative { position: relative; }
+    .inset-0  { top: 0; right: 0; bottom: 0; left: 0; }
+    .z-50     { z-index: 50; }
+    .pointer-events-none { pointer-events: none; }
+    .pointer-events-auto { pointer-events: auto; }
+    .flex           { display: flex; }
+    .flex-col       { flex-direction: column; }
+    .flex-1         { flex: 1 1 0%; }
+    .items-center   { align-items: center; }
+    .items-start    { align-items: flex-start; }
+    .items-end      { align-items: flex-end; }
+    .justify-center { justify-content: center; }
+    .justify-between{ justify-content: space-between; }
+    .self-start     { align-self: flex-start; }
+    .self-end       { align-self: flex-end; }
+    .shrink-0       { flex-shrink: 0; }
+    .overflow-hidden{ overflow: hidden; }
+    .overflow-y-auto{ overflow-y: auto; }
+    .w-full  { width: 100%; }
+    .h-full  { height: 100%; }
+    .font-sans { font-family: 'DM Sans', sans-serif; }
+    .font-black { font-weight: 900; }
+    .font-bold  { font-weight: 700; }
+    .font-medium{ font-weight: 500; }
+    .font-semibold{ font-weight: 600; }
+    .uppercase { text-transform: uppercase; }
+    .italic    { font-style: italic; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .whitespace-pre-wrap{ white-space: pre-wrap; }
+    .text-left  { text-align: left; }
+    .text-center{ text-align: center; }
+    .leading-relaxed { line-height: 1.625; }
+    .cursor-move { cursor: move; }
+    .select-none { user-select: none; }
+    .outline-none { outline: none; }
+    .transition-all { transition: all 0.15s ease; }
+    .transition-colors { transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease; }
+    .transition-transform { transition: transform 0.15s ease; }
+    .translate-x-neg1 { transform: translateX(-1px); }
+    .translate-y-1    { transform: translateY(1px); }
+    .border   { border-width: 1px; border-style: solid; }
+    .border-t { border-top-width: 1px; border-top-style: solid; }
+    .rounded-full { border-radius: 9999px; }
+    .opacity-0  { opacity: 0; }
+    .opacity-80 { opacity: 0.8; }
+    .gap-1   { gap: 0.25rem; }
+    .gap-2   { gap: 0.5rem; }
+    .gap-3   { gap: 0.75rem; }
+    .gap-4   { gap: 1rem; }
+    .gap-5   { gap: 1.25rem; }
+    .mb-1    { margin-bottom: 0.25rem; }
+    .mb-2    { margin-bottom: 0.5rem; }
+    .mb-4    { margin-bottom: 1rem; }
+    .mb-6    { margin-bottom: 1.5rem; }
+    .mb-8    { margin-bottom: 2rem; }
+    .mt-0-5  { margin-top: 0.125rem; }
+    .mt-1    { margin-top: 0.25rem; }
+    .pb-2    { padding-bottom: 0.5rem; }
+    .pr-2    { padding-right: 0.5rem; }
+    .pl-4    { padding-left: 1rem; }
+    .pr-5    { padding-right: 1.25rem; }
+    .h-2     { height: 0.5rem; }
+    .w-7     { width: 1.75rem;  height: 1.75rem; }
+    .w-8     { width: 2rem;     height: 2rem; }
+    .w-10    { width: 2.5rem;   height: 2.5rem; }
+    .w-11    { width: 2.75rem;  height: 2.75rem; }
+    .w-12    { width: 3rem;     height: 3rem; }
+    .w-20    { width: 5rem;     height: 5rem; }
+    .drop-shadow-md { filter: drop-shadow(0 4px 3px rgba(0,0,0,.07)) drop-shadow(0 2px 2px rgba(0,0,0,.06)); }
+    .shadow-sm  { box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .shadow-md  { box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); }
+    .shadow-lg  { box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); }
+    .animate-bounce { animation: bounce 1s infinite; }
+    @keyframes bounce {
+      0%,100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+      50%      { transform: translateY(0);   animation-timing-function: cubic-bezier(0,0,0.2,1); }
+    }
+
+    /* ── Widget flotante ─────────────────────────────────── */
+    #fw-root { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; font-family: 'DM Sans', sans-serif; }
+
+    /* ── Botón flotante específico ───────────────────────── */
+    .chat-float-btn {
+      display: flex; align-items: center;
+      background: linear-gradient(to right, rgba(178,51,255,0.8), rgba(255,77,248,0.8));
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: white; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.3);
+      cursor: move; transition: padding-right 0.3s, transform 0.3s;
+      outline: none; overflow: hidden; position: relative;
+    }
+    .chat-float-btn:hover { padding-right: 2rem; transform: scale(1.05); }
+    .chat-float-btn:active { transform: scale(0.95); }
+
+    /* ── Ventana chat ─────────────────────────────────────── */
+    .chat-window {
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-radius: 2rem; border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 25px 50px -12px rgba(178,51,255,0.25);
+      display: flex; flex-direction: column; overflow: hidden;
+      width: calc(100vw - 3rem); max-width: 380px;
+      height: 550px; max-height: 85vh;
+    }
+    @media (min-width: 640px) { .chat-window { width: 380px; } }
+
+    /* ── Menú ─────────────────────────────────────────────── */
+    .chat-menu {
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-radius: 2rem; border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 25px 50px -12px rgba(178,51,255,0.25);
+      display: flex; flex-direction: column; overflow: hidden;
+      width: calc(100vw - 3rem); max-width: 340px;
+    }
+    @media (min-width: 640px) { .chat-menu { width: 340px; } }
+
+    /* ── Cabecera drag ────────────────────────────────────── */
+    .drag-header {
+      background: linear-gradient(to right, #0f172a, #1e293b);
+      padding: 1.25rem; display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); z-index: 10;
+      cursor: move; user-select: none;
+    }
+    .drag-header-btn {
+      color: rgba(255,255,255,0.5); background: transparent; border: none;
+      width: 2rem; height: 2rem; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .drag-header-btn:hover { color: white; background: rgba(255,255,255,0.1); transform: rotate(90deg); }
+
+    /* Mensajes */
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1.5rem; background: rgba(248,250,252,0.4);
+      display: flex; flex-direction: column; gap: 1.25rem; position: relative;
+    }
+    .msg-bot  { background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border: 1px solid white; color: #334155; padding: 0.75rem 1.25rem; border-radius: 1.5rem; border-top-left-radius: 0.25rem; font-size: 13px; line-height: 1.6; box-shadow: 0 1px 2px rgba(0,0,0,.05); white-space: pre-wrap; }
+    .msg-user { background: linear-gradient(to right,#b233ff,#ff4df8); color: white; padding: 0.75rem 1.25rem; border-radius: 1.5rem; border-bottom-right-radius: 0.25rem; font-size: 13px; font-weight: 500; line-height: 1.6; box-shadow: 0 5px 15px -5px rgba(178,51,255,0.4); white-space: pre-wrap; max-width: 85%; align-self: flex-end; }
+    .msg-wrap-bot { display: flex; align-items: flex-start; gap: 0.5rem; align-self: flex-start; max-width: 85%; position: relative; z-index: 10; }
+    .msg-robot-icon { width: 1.75rem; height: 1.75rem; border-radius: 9999px; background: #d1fae5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.25rem; border: 1px solid #a7f3d0; }
+
+    /* Input área */
+    .chat-input-area {
+      padding: 0.75rem 1rem; background: rgba(255,255,255,0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255,255,255,0.6); display: flex; gap: 0.75rem;
+      flex-shrink: 0; position: relative; z-index: 20; align-items: center;
+    }
+    .chat-input-wrap {
+      position: relative; flex: 1; display: flex; align-items: center;
+      background: rgba(255,255,255,0.8); border: 1px solid white;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.06); border-radius: 9999px;
+      transition: all 0.3s;
+    }
+    .chat-input-wrap:focus-within { background: white; box-shadow: 0 0 0 2px rgba(178,51,255,0.3); }
+    .chat-input-wrap input {
+      flex: 1; background: transparent; padding: 0.875rem 1.25rem;
+      font-size: 0.875rem; outline: none; font-weight: 500; color: #334155;
+      border: none; width: 100%;
+    }
+    .emoji-toggle { padding-left: 1rem; padding-right: 0.5rem; color: #94a3b8; cursor: pointer; background: none; border: none; transition: color 0.3s; }
+    .emoji-toggle:hover, .emoji-toggle.active { color: #b233ff; }
+    .emoji-panel {
+      position: absolute; bottom: calc(100% + 12px); left: 0;
+      width: 240px; background: rgba(255,255,255,0.95); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 15px 35px -5px rgba(178,51,255,0.3);
+      border-radius: 1.5rem; padding: 0.75rem;
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 0.375rem; z-index: 50;
+    }
+    .emoji-btn { font-size: 1.25rem; background: none; border: none; cursor: pointer; padding: 0.375rem; border-radius: 0.75rem; transition: all 0.2s; }
+    .emoji-btn:hover { background: rgba(178,51,255,0.1); transform: scale(1.25); }
+    .send-btn {
+      background: linear-gradient(to right, #b233ff, #ff4df8); color: white;
+      width: 2.75rem; height: 2.75rem; display: flex; align-items: center; justify-content: center;
+      border-radius: 9999px; border: none; cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); transition: all 0.3s;
+    }
+    .send-btn:hover { box-shadow: 0 8px 20px -5px rgba(178,51,255,0.5); }
+    .send-btn:disabled { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+
+    /* Registro */
+    .register-screen { flex: 1; padding: 2.5rem; background: transparent; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; }
+    .register-screen input {
+      width: 100%; background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.06); border-radius: 1rem;
+      padding: 0.875rem 1.5rem; font-size: 0.875rem; margin-bottom: 1rem;
+      outline: none; font-weight: 600; color: #1e293b; transition: all 0.3s;
+    }
+    .register-screen input:focus { box-shadow: 0 0 0 2px rgba(178,51,255,0.4); }
+    .register-btn {
+      width: 100%; background: linear-gradient(to right, #b233ff, #ff4df8); color: white;
+      padding: 0.875rem 1.5rem; border-radius: 1rem; font-weight: 900; font-size: 0.625rem;
+      text-transform: uppercase; letter-spacing: 0.2em; border: none; cursor: pointer;
+      box-shadow: 0 10px 20px -5px rgba(178,51,255,0.4); transition: all 0.3s;
+    }
+    .register-btn:hover { box-shadow: 0 15px 25px -5px rgba(178,51,255,0.6); }
+
+    /* Unread badge */
+    .unread-badge {
+      position: absolute; top: 0.5rem; right: 0.5rem;
+      background: #f43f5e; color: white; width: 1.25rem; height: 1.25rem;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 9999px; border: 2px solid white;
+      animation: bounce 1s infinite; z-index: 50; font-size: 9px;
+    }
+
+    /* Menú opciones */
+    .menu-option {
+      position: relative; width: 100%; background: white; border: 2px solid #f1f5f9;
+      border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;
+      cursor: pointer; transition: all 0.3s; overflow: hidden; text-align: left;
+    }
+    .menu-option:hover { transform: translateY(-4px); }
+    .menu-option-icon { width: 3rem; height: 3rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.3s; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .menu-option:hover .menu-option-icon { transform: scale(1.1); }
+    .menu-option-chevron { position: absolute; right: 1.25rem; color: #cbd5e1; font-size: 0.875rem; transition: color 0.3s; }
+
+    /* =========================================================
+       CSS DE FACTIBILIDAD
+       ========================================================= */
+    :root {
+      --primary: #d12fd3;
+      --primary-gradient: linear-gradient(135deg, #b537f2 0%, #f02aa6 100%);
+      --primary-glow: rgba(209,47,211,0.2);
+      --success: #00f298;
+      --success-bg: rgba(0,242,152,0.1);
+      --warning: #ffb800;
+      --warning-bg: rgba(255,184,0,0.1);
+      --error: #ff4b81;
+      --error-bg: rgba(255,75,129,0.1);
+      --bg: #07050a;
+      --surface: #120f1d;
+      --surface-2: #1a1629;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(210,47,211,0.3);
+      --text: #ffffff;
+      --text-2: #a19eb1;
+      --text-3: #5f5b77;
+    }
+
+    /* Modal overlay */
+    #fw-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(7,5,10,0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9998; opacity: 0; transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #fw-modal-overlay.active { display: flex; opacity: 1; pointer-events: auto; }
+
+    /* Botón cerrar */
+    #fw-close-btn {
+      position: absolute; top: 25px; right: 25px;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+      color: #fff; width: 45px; height: 45px; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      cursor: pointer; transition: all 0.3s ease; z-index: 10000;
+    }
+    #fw-close-btn:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg) scale(1.1); }
+
+    .fw-app-container {
+      position: relative; background: var(--surface);
+      width: 92%; max-width: 440px; max-height: 90vh;
+      padding: 35px; border: 1px solid var(--border);
+      border-radius: 28px; box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+      overflow-y: auto; color: var(--text); font-family: 'DM Sans', sans-serif;
+      animation: fwPopIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+    }
+    @keyframes fwPopIn { from { transform: translateY(30px); } to { transform: translateY(0); } }
+    .fw-app-container::-webkit-scrollbar { width: 6px; }
+    .fw-app-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    .fw-app-container header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .fw-logo { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--text); }
+    .fw-logo em { font-style: normal; color: var(--primary); font-weight: 800; filter: drop-shadow(0 0 8px var(--primary-glow)); }
+    .fw-badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 100px; font-size: 0.62rem; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-2); text-transform: uppercase; }
+    .fw-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success); animation: fwPulse 2.5s infinite; }
+    @keyframes fwPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
+
+    .fw-app-container h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 10px; color: #fff; line-height: 1.2; }
+    .fw-subtitle { font-size: 0.9rem; color: var(--text-2); line-height: 1.5; margin-bottom: 25px; }
+
+    .fw-tabs-container { display: flex; gap: 10px; margin-bottom: 25px; }
+    .fw-tab-btn { flex: 1; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; color: var(--text-2); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .fw-tab-btn.active { background: var(--primary-gradient); color: #fff; border-color: transparent; box-shadow: 0 4px 15px rgba(209,47,211,0.2); }
+    .fw-tab-btn:hover:not(.active) { border-color: var(--border-hover); color: #fff; background: rgba(255,255,255,0.05); }
+
+    .fw-input-row { display: flex; flex-direction: column; gap: 15px; }
+    .fw-input-wrap { position: relative; }
+    .fw-input-wrap svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+    .fw-app-container input[type="text"] { width: 100%; padding: 18px 20px 18px 52px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 18px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; transition: all 0.3s ease; }
+    .fw-app-container input[type="text"]::placeholder { color: var(--text-3); }
+    .fw-app-container input[type="text"]:focus { border-color: var(--primary); background: #1d1930; box-shadow: 0 0 0 3px var(--primary-glow); }
+
+    .fw-main-btn { width: 100%; height: 56px; background: var(--primary-gradient); color: #fff; border: none; border-radius: 18px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; box-shadow: 0 10px 20px rgba(181,55,242,0.2); }
+    .fw-main-btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 15px 30px rgba(240,42,166,0.3); }
+    .fw-main-btn:disabled { background: var(--surface-2); color: var(--text-3); box-shadow: none; transform: none; cursor: not-allowed; }
+
+    .fw-clearBtn { width: 100%; height: 48px; background: transparent; color: var(--text-2); border: 1px solid var(--border); border-radius: 18px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; transition: all 0.2s; }
+    .fw-clearBtn:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: var(--text-3); }
+    .fw-clearBtn.active { display: flex; animation: fwFadeIn 0.3s ease; }
+
+    .fw-log-section { margin-top: 30px; display: none; animation: fwFadeIn 0.4s ease; }
+    .fw-log-section.active { display: block; }
+    .fw-log-label { font-size: 0.75rem; font-weight: 600; color: var(--text-2); margin-bottom: 15px; display: flex; justify-content: space-between; }
+
+    .fw-progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-bottom: 20px; position: relative; }
+    .fw-progress-bar { height: 100%; width: 40%; background: var(--primary-gradient); border-radius: 10px; box-shadow: 0 0 15px var(--primary-glow); animation: fwProgressMove 1.8s infinite cubic-bezier(0.445,0.05,0.55,0.95); position: absolute; }
+    @keyframes fwProgressMove { 0%{left:-40%} 100%{left:100%} }
+
+    .fw-status-feed { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 20px; padding: 18px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+    .fw-status-feed::-webkit-scrollbar { width: 4px; }
+    .fw-status-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .fw-status-item { font-size: 0.88rem; line-height: 1.4; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px; animation: fwItemSlide 0.3s ease forwards; }
+    .fw-status-item i { margin-top: 4px; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--primary); box-shadow: 0 0 5px var(--primary-glow); display: block; }
+    .fw-status-item.ok   { color: var(--success); } .fw-status-item.ok   i { background: var(--success); box-shadow: 0 0 5px var(--success); }
+    .fw-status-item.warn { color: var(--warning); } .fw-status-item.warn i { background: var(--warning); box-shadow: 0 0 5px var(--warning); }
+    .fw-status-item.err  { color: var(--error);   } .fw-status-item.err  i { background: var(--error);   box-shadow: 0 0 5px var(--error); }
+
+    .fw-result-section { margin-top: 25px; display: none; }
+    .fw-result-section.active { display: block; }
+    .fw-result-card { border-radius: 24px; padding: 24px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .fw-result-card.success { background: var(--success-bg); border-color: rgba(0,242,152,0.15); }
+    .fw-result-card.warning { background: var(--warning-bg); border-color: rgba(255,184,0,0.15); }
+    .fw-result-card.error   { background: var(--error-bg);   border-color: rgba(255,75,129,0.15); }
+    .fw-result-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .fw-result-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .fw-result-body { font-size: 0.9rem; line-height: 1.5; color: var(--text-2); white-space: pre-line; }
+    .fw-result-img { margin-top: 15px; width: 100%; border-radius: 16px; border: 1px solid var(--border); display: none; }
+    .fw-result-img.visible { display: block; }
+
+    .fw-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: fwSpin 0.7s linear infinite; }
+    @keyframes fwSpin { to { transform: rotate(360deg); } }
+
+    @keyframes fwItemSlide { from{opacity:0;transform:translateX(-5px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes fwFadeIn    { from{opacity:0} to{opacity:1} }
+
+    .fw-footer { margin-top: 30px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 20px; }
+    .fw-footer span { font-size: 0.68rem; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; }
+
+    /* Custom Prompt */
+    #customPromptOverlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85); z-index: 10005;
+      justify-content: center; align-items: center;
+      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    }
+    #customPromptOverlay.active { display: flex; }
+    .custom-prompt-box {
+      background: var(--surface); padding: 30px; border-radius: 20px;
+      border: 1px solid var(--primary); text-align: center;
+      width: 85%; max-width: 320px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      animation: fwPopIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+      color: white; font-family: 'DM Sans', sans-serif;
+    }
+    .custom-prompt-box h3 { margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 1rem; }
+    .custom-prompt-box p  { font-size: 0.85rem; color: var(--text-2); margin-bottom: 20px; }
+    .custom-prompt-box input {
+      width: 100%; padding: 12px; margin-bottom: 15px;
+      border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface-2); color: white; outline: none;
+      text-align: center; font-size: 0.95rem; transition: border-color 0.3s;
+    }
+    .custom-prompt-box input:focus { border-color: var(--primary); }
+    .custom-prompt-box .fw-main-btn { height: 46px; border-radius: 12px; font-size: 0.9rem; }
+
+    @media (max-width: 480px) {
+      .fw-app-container {
+        width: 100%; height: 100vh; max-height: none;
+        border-radius: 0; border: none; padding: 25px;
+      }
+      #fw-close-btn { top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; }
+    }
   </style>
 </head>
-<body class="bg-transparent m-0 p-0 overflow-hidden">
-  <div id="root"></div>
+<body>
+  <div id="fw-root"></div>
+
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
 
-    // ── CAMBIA ESTE URL POR EL DE TU DESPLIEGUE ──────────────
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFQrjcC_LLuDTzdvh_ERtODENeSiwv1N0ATBnq7Qenkb3SK8eHlMWkLcMaZligaluxIw/exec";
+    /* ── Configuración ─────────────────────────────────────── */
+    const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbyFQrjcC_LLuDTzdvh_ERtODENeSiwv1N0ATBnq7Qenkb3SK8eHlMWkLcMaZligaluxIw/exec";
+    const SERVER_BASE = "https://botintegrar-production.up.railway.app";
 
+    /* ── API helper ────────────────────────────────────────── */
     const api = {
       get: async (action) => {
-        try { const r = await fetch(`${SCRIPT_URL}?action=${action}`); return await r.json(); }
-        catch(e) { return []; }
+        try {
+          const r = await fetch(`${SCRIPT_URL}?action=${action}`);
+          return await r.json();
+        } catch(e) { console.error(`Error GET ${action}:`, e); return []; }
       },
       post: async (action, data) => {
         try {
           const r = await fetch(SCRIPT_URL, {
-            method:"POST", body:JSON.stringify({ action, data }),
-            headers:{ "Content-Type":"text/plain;charset=utf-8" }
+            method: "POST",
+            body: JSON.stringify({ action, data }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
           });
           return await r.json();
-        } catch(e) { return { success:false }; }
+        } catch(e) { console.error(`Error POST ${action}:`, e); return { success: false }; }
       }
     };
 
-    // ============================================================
-    //  WIDGET DEL CLIENTE
-    // ============================================================
+    /* ================================================================
+       WIDGET DEL CLIENTE
+    ================================================================ */
     function ClientWebsite({ allMessages, cannedResponses }) {
+
+      /* ── Chat / menú ─────────────────────────────────────── */
       const [isOpen,     setIsOpen]     = useState(false);
+      const [showMenu,   setShowMenu]   = useState(false);
       const [newMessage, setNewMessage] = useState("");
       const [showEmojis, setShowEmojis] = useState(false);
       const emojis = ["😀","😂","😊","🥰","😎","🤔","👍","👎","🔥","✨","🎉","🚀","✅","❌","👀","⚡","📡","🔧","🏢","📝"];
 
-      // SISTEMA DE ARRASTRE
+      /* ── Factibilidad ────────────────────────────────────── */
+      const [showFactibilidadModal,  setShowFactibilidadModal]  = useState(false);
+      const [factMode,               setFactMode]               = useState("direccion");
+      const [direccionInput,         setDireccionInput]         = useState("");
+      const [rutInput,               setRutInput]               = useState("");
+      const [isLoadingFact,          setIsLoadingFact]          = useState(false);
+      const [factLogs,               setFactLogs]               = useState([]);
+      const [factResult,             setFactResult]             = useState(null);
+      const [searchBtnDisabled,      setSearchBtnDisabled]      = useState(false);
+      const [rutBtnDisabled,         setRutBtnDisabled]         = useState(false);
+      const [showCustomPrompt,       setShowCustomPrompt]       = useState(false);
+      const [customPromptInput,      setCustomPromptInput]      = useState("");
+      const pendingActionRef = useRef(null);
+      const logStreamRef     = useRef(null);
+
+      /* ── Arrastre ────────────────────────────────────────── */
       const [pos,        setPos]        = useState(null);
       const [isDragging, setIsDragging] = useState(false);
       const widgetRef = useRef(null);
       const dragRef   = useRef({ startX:0, startY:0, initialRight:0, initialBottom:0, isDragMove:false });
 
+      /* Auto-scroll logs */
+      useEffect(() => {
+        if (logStreamRef.current) logStreamRef.current.scrollTop = logStreamRef.current.scrollHeight;
+      }, [factLogs]);
+
+      /* ── Arrastre: inicio ────────────────────────────────── */
       const handleDragStart = (e) => {
         if (e.type.includes("mouse") && e.button !== 0) return;
         if (e.target.closest("button") && !e.target.closest(".drag-handle")) return;
@@ -776,8 +1213,8 @@ let usuarioIdGlobal = "";
           const clientY = e.type.includes("mouse") ? e.clientY : e.touches[0].clientY;
           const dx = clientX - dragRef.current.startX;
           const dy = clientY - dragRef.current.startY;
-          if (Math.abs(dx)>3||Math.abs(dy)>3) dragRef.current.isDragMove = true;
-          const rect = widgetRef.current.getBoundingClientRect();
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.isDragMove = true;
+          const rect      = widgetRef.current.getBoundingClientRect();
           const maxRight  = window.innerWidth  - rect.width;
           const maxBottom = window.innerHeight - rect.height;
           setPos({
@@ -800,75 +1237,57 @@ let usuarioIdGlobal = "";
         };
       }, [isDragging]);
 
+      /* ── Toggle abrir/cerrar ─────────────────────────────── */
       const toggleOpen = (e) => {
         if (dragRef.current?.isDragMove) { e.preventDefault(); e.stopPropagation(); return; }
-        setIsOpen(prev => !prev);
+        if (!isOpen && !showMenu) {
+          setShowMenu(true);
+        } else {
+          setIsOpen(false);
+          setShowMenu(false);
+        }
       };
 
-      // Efecto ROBUSTO para reajustar la posición (incluye móviles y teclado virtual)
+      /* ── Reajuste de posición ────────────────────────────── */
       useEffect(() => {
-        if (isOpen) {
+        if (isOpen || showMenu) {
           const adjustPos = () => {
-            // Usamos visualViewport si está disponible (esencial para detectar el teclado en móviles)
-            const vHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            const vWidth  = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-            const margin  = 16;
+            const vHeight  = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            const vWidth   = window.visualViewport ? window.visualViewport.width  : window.innerWidth;
+            const margin   = 16;
             const isMobile = vWidth < 640;
-
-            // Dimensiones basadas en las clases CSS actuales
-            const chatWidth  = isMobile ? vWidth - 48 : 380; 
+            const chatWidth  = isMobile ? vWidth - 48 : 380;
             const chatHeight = Math.min(550, vHeight * 0.85);
-
             setPos(currentPos => {
-              // Si no hay posición registrada aún, asume la posición inicial del botón
-              let r = currentPos ? currentPos.right : 24;
+              let r = currentPos ? currentPos.right  : 24;
               let b = currentPos ? currentPos.bottom : 112;
-
-              const maxRight  = Math.max(margin, vWidth - chatWidth - margin);
+              const maxRight  = Math.max(margin, vWidth  - chatWidth  - margin);
               const maxBottom = Math.max(margin, vHeight - chatHeight - margin);
-
               if (r > maxRight)  r = maxRight;
               if (b > maxBottom) b = maxBottom;
               if (r < margin) r = margin;
               if (b < margin) b = margin;
-
-              // En móviles, forzamos el centrado horizontal para evitar recortes
-              if (isMobile) {
-                r = (vWidth - chatWidth) / 2;
-              }
-
-              // Actualiza solo si es estrictamente necesario
-              if (!currentPos || r !== currentPos.right || b !== currentPos.bottom) {
-                return { right: r, bottom: b };
-              }
+              if (isMobile) r = (vWidth - chatWidth) / 2;
+              if (!currentPos || r !== currentPos.right || b !== currentPos.bottom) return { right:r, bottom:b };
               return currentPos;
             });
           };
-
-          // Pequeño retraso para dar tiempo a que las clases CSS de la ventana abierta se apliquen
           setTimeout(adjustPos, 50);
-
-          // Escuchamos los cambios de tamaño, especialmente útiles para teclados móviles
-          window.addEventListener('resize', adjustPos);
-          if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', adjustPos);
-          }
-
+          window.addEventListener("resize", adjustPos);
+          if (window.visualViewport) window.visualViewport.addEventListener("resize", adjustPos);
           return () => {
-            window.removeEventListener('resize', adjustPos);
-            if (window.visualViewport) {
-              window.visualViewport.removeEventListener('resize', adjustPos);
-            }
+            window.removeEventListener("resize", adjustPos);
+            if (window.visualViewport) window.visualViewport.removeEventListener("resize", adjustPos);
           };
         }
-      }, [isOpen]);
+      }, [isOpen, showMenu]);
 
-      // Detectar usuario logueado en el sitio principal
+      /* ── Detección usuario logueado ──────────────────────── */
       const getEliteUser = () => {
         try {
           const params = new URLSearchParams(window.location.search);
-          const pName = params.get("nombre") || params.get("name");
-          const pId   = params.get("id")     || params.get("email");
+          const pName  = params.get("nombre") || params.get("name");
+          const pId    = params.get("id")     || params.get("email");
           if (pName) return { name:pName, id:pId };
           const userStr = localStorage.getItem("freework_user");
           if (userStr) { const u = JSON.parse(userStr); return { name:u.name||u.nombre, id:u.id||u.email }; }
@@ -884,7 +1303,6 @@ let usuarioIdGlobal = "";
       const messagesEndRef = useRef(null);
       const prevMsgCount   = useRef(0);
 
-      // Polling para detectar usuario logueado dinámicamente
       useEffect(() => {
         const interval = setInterval(() => {
           if (!isRegistered) {
@@ -895,7 +1313,6 @@ let usuarioIdGlobal = "";
         return () => clearInterval(interval);
       }, [isRegistered]);
 
-      // ID único del cliente — persiste en localStorage
       const [clientId] = useState(() => {
         const user = getEliteUser();
         let id = user?.id || localStorage.getItem("chat_client_id");
@@ -916,20 +1333,18 @@ let usuarioIdGlobal = "";
       useEffect(() => {
         if (myMessages.length > prevMsgCount.current) {
           const last = myMessages[myMessages.length - 1];
-          if (last.sender !== "client" && !isOpen) setHasUnread(true);
+          if (last.sender !== "client" && !isOpen && !showMenu) setHasUnread(true);
         }
         prevMsgCount.current = myMessages.length;
-      }, [myMessages, isOpen]);
+      }, [myMessages, isOpen, showMenu]);
 
-      useEffect(() => { if (isOpen) setHasUnread(false); }, [isOpen]);
+      useEffect(() => { if (isOpen || showMenu) setHasUnread(false); }, [isOpen, showMenu]);
       useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior:"smooth" }); }, [myMessages, isOpen]);
 
-      // Registro + mensaje ONBOARDING
+      /* ── Registro + Onboarding ───────────────────────────── */
       const handleRegister = () => {
         if (!clientName.trim()) return;
         setIsRegistered(true);
-
-        // Bot client-side: mensaje de bienvenida (título = ONBOARDING)
         const onboard = cannedResponses?.find(r => r.title?.toUpperCase().trim() === "ONBOARDING");
         if (onboard) {
           setTimeout(() => {
@@ -943,22 +1358,18 @@ let usuarioIdGlobal = "";
         }
       };
 
-      // Envío de mensaje + bot client-side por keywords en títulos de Chat_Respuestas
+      /* ── Envío de mensajes + bot keywords ───────────────── */
       const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !clientName) return;
         const text = newMessage.trim();
         setNewMessage(""); setShowEmojis(false);
-
-        // 1. Enviar mensaje del cliente
         await api.post("sendMessage", {
           chatId:     clientId,
           senderRole: "client",
           senderName: clientName,
           text
         });
-
-        // 2. Bot client-side — keywords en títulos de Chat_Respuestas
         const textLower = text.toLowerCase();
         const matched = cannedResponses?.find(r => {
           if (!r.title || r.title.toUpperCase().trim() === "ONBOARDING") return false;
@@ -979,165 +1390,382 @@ let usuarioIdGlobal = "";
 
       const addEmoji = (emoji) => setNewMessage(prev => prev + emoji);
 
-      return (
-        <div className={`h-screen w-full relative overflow-hidden flex flex-col font-sans pointer-events-none ${isDragging ? "dragging-active" : ""}`}>
+      /* ── Factibilidad helpers ────────────────────────────── */
+      const addLogFact = (texto, tipo = "info") => {
+        const cleanText = texto.replace(/\[.*?\]:?\s?/, "").replace(/^[✅⚠️❌]\s?/, "");
+        setFactLogs(prev => [...prev, { text: cleanText, type: tipo }]);
+      };
 
-          {/* CONTENEDOR ARRASTRABLE */}
+      const limpiarPantallaFact = () => {
+        setDireccionInput(""); setRutInput("");
+        setFactLogs([]); setFactResult(null);
+      };
+
+      const cambiarModoFact = (modo) => { setFactMode(modo); limpiarPantallaFact(); };
+
+      const obtenerUserIdFact = (callback) => {
+        const userId = localStorage.getItem("freework_user_id");
+        if (userId) { callback(userId); }
+        else { pendingActionRef.current = callback; setShowCustomPrompt(true); }
+      };
+
+      const guardarCustomId = () => {
+        const val = customPromptInput.trim();
+        if (!val) return;
+        localStorage.setItem("freework_user_id", val);
+        setShowCustomPrompt(false); setCustomPromptInput("");
+        if (pendingActionRef.current) { pendingActionRef.current(val); pendingActionRef.current = null; }
+      };
+
+      const verificarPermisoWeb = async (userId) => {
+        const res = await fetch(`${SERVER_BASE}/permisos/${userId}?accion=consultar`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      };
+
+      const finalizarLoadingDireccion = () => { setSearchBtnDisabled(false); setIsLoadingFact(false); };
+      const finalizarLoadingRut       = () => { setRutBtnDisabled(false);    setIsLoadingFact(false); };
+
+      /* ── Factibilidad: consulta dirección (SSE) ──────────── */
+      const iniciarConsultaDireccion = () => {
+        const dir = direccionInput.trim();
+        if (!dir) return;
+        obtenerUserIdFact((userId) => {
+          setSearchBtnDisabled(true); setIsLoadingFact(true);
+          setFactLogs([]); setFactResult(null);
+          addLogFact("Verificando permisos...");
+          verificarPermisoWeb(userId)
+            .then(permiso => {
+              if (!permiso.permitido) {
+                addLogFact(`Sin permiso: ${permiso.mensaje}`, "err");
+                if (permiso.estadisticas) {
+                  const s = permiso.estadisticas;
+                  setFactResult({ type:"error", title:"Sin acceso", body:`Cupo diario: ${s.dia.usadas}/${s.dia.maximo} usadas\nRestantes hoy: ${s.dia.restantes}\nRestantes esta semana: ${s.semana.restantes}` });
+                }
+                finalizarLoadingDireccion(); return;
+              }
+              if (permiso.estadisticas) {
+                const s = permiso.estadisticas;
+                const usado  = Number(s.dia.usadas)  || 0;
+                const maximo = Math.max(1, Number(s.dia.maximo) || 0);
+                const pct    = Math.min(100, Math.round((usado / maximo) * 100));
+                addLogFact(`Cupo hoy: ${s.dia.restantes} restantes (${usado}/${maximo} · ${pct}%)`, "ok");
+              }
+              continuarConsultaDireccion(dir, userId);
+            })
+            .catch(err => { addLogFact(`Error al verificar permisos: ${err.message}`, "err"); finalizarLoadingDireccion(); });
+        });
+      };
+
+      const continuarConsultaDireccion = (direccion, userId) => {
+        addLogFact(`Iniciando búsqueda para: ${direccion}`);
+        const url = `${SERVER_BASE}/verificar?direccion=${encodeURIComponent(direccion)}&userId=${encodeURIComponent(userId)}`;
+        fetch(`${SERVER_BASE}/health`, { signal: AbortSignal.timeout(3000) })
+          .then(() => {
+            const evtSource = new EventSource(url);
+            let mensajesAcumulados = [];
+            evtSource.onmessage = (e) => {
+              const payload = JSON.parse(e.data);
+              if (payload.tipo === "mensaje") {
+                mensajesAcumulados.push(payload.texto);
+                let tipo = "info";
+                if (payload.texto.includes("✅")) tipo = "ok";
+                if (payload.texto.includes("⚠️")) tipo = "warn";
+                if (payload.texto.includes("❌")) tipo = "err";
+                addLogFact(payload.texto, tipo);
+              }
+              if (payload.tipo === "foto" && payload.base64) {
+                setFactResult(prev => ({ ...(prev||{}), type:"success", title:"Factibilidad Confirmada", body:"Se ha capturado la evidencia de cobertura.", img:payload.base64 }));
+              }
+              if (payload.tipo === "fin") {
+                const finalMsg  = mensajesAcumulados.join("\n");
+                const tipoFinal = finalMsg.includes("✅") ? "success" : (finalMsg.includes("⚠️") ? "warning" : "error");
+                setFactResult(prev => {
+                  if (prev && prev.img) return { ...prev, type:tipoFinal, body:finalMsg };
+                  return { type:tipoFinal, title:tipoFinal==="success"?"Disponible":tipoFinal==="warning"?"Observación":"No Disponible", body:finalMsg };
+                });
+                evtSource.close(); finalizarLoadingDireccion();
+              }
+              if (payload.tipo === "error") {
+                addLogFact(payload.texto, "err");
+                setFactResult({ type:"error", title:"Error del Sistema", body:payload.texto });
+                evtSource.close(); finalizarLoadingDireccion();
+              }
+            };
+            evtSource.onerror = () => { evtSource.close(); finalizarLoadingDireccion(); };
+          })
+          .catch(() => {
+            addLogFact("No se pudo establecer conexión con el bot.", "err");
+            setFactResult({ type:"error", title:"Error de Conexión", body:"Asegúrate de que el servidor esté activo." });
+            finalizarLoadingDireccion();
+          });
+      };
+
+      /* ── Factibilidad: consulta RUT (POST) ───────────────── */
+      const consultarRut = () => {
+        const rut = rutInput.trim();
+        if (!rut) return;
+        obtenerUserIdFact((userId) => {
+          setRutBtnDisabled(true); setIsLoadingFact(true);
+          setFactLogs([]); setFactResult(null);
+          addLogFact("Verificando permisos...");
+          verificarPermisoWeb(userId)
+            .then(permiso => {
+              if (!permiso.permitido) {
+                addLogFact(`Sin permiso: ${permiso.mensaje}`, "err");
+                if (permiso.estadisticas) {
+                  const s = permiso.estadisticas;
+                  setFactResult({ type:"error", title:"Sin acceso", body:`Cupo diario: ${s.dia.usadas}/${s.dia.maximo} usadas\nRestantes hoy: ${s.dia.restantes}\nRestantes esta semana: ${s.semana.restantes}` });
+                }
+                finalizarLoadingRut(); return;
+              }
+              if (permiso.estadisticas) {
+                const s = permiso.estadisticas;
+                const usado  = Number(s.dia.usadas)  || 0;
+                const maximo = Math.max(1, Number(s.dia.maximo) || 0);
+                const pct    = Math.min(100, Math.round((usado / maximo) * 100));
+                addLogFact(`Cupo hoy: ${s.dia.restantes} restantes (${usado}/${maximo} · ${pct}%)`, "ok");
+              }
+              addLogFact(`Evaluando RUT: ${rut}...`);
+              fetch(`${SERVER_BASE}/rut`, {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify({ rut, userId })
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.ocr) {
+                  addLogFact("OCR: " + (data.ocr.tieneAprobado ? "APROBADO" : "NO DETECTADO"), "info");
+                  if (data.ocr.cupoDetectado) addLogFact("OCR Cupo: " + data.ocr.cupoDetectado, "ok");
+                }
+                let screenshot = data.screenshot_recortado || data.screenshot || null;
+                if (screenshot && screenshot.startsWith("data:image")) screenshot = screenshot.split(",")[1];
+                if (data.ok) {
+                  const mensaje    = data.mensaje || "Evaluación completada";
+                  const esAprobado = data.resultado === "aprobado" || mensaje.includes("✅");
+                  addLogFact(mensaje, esAprobado ? "ok" : "warn");
+                  setFactResult({ type:esAprobado?"success":"warning", title:esAprobado?"RUT Aprobado":"RUT con Observaciones", body:mensaje, img:screenshot });
+                } else {
+                  addLogFact(data.error || "Error al evaluar RUT", "err");
+                  setFactResult({ type:"error", title:"Error", body:data.error || "No se pudo evaluar el RUT" });
+                }
+                finalizarLoadingRut();
+              })
+              .catch(() => {
+                addLogFact("Error de conexión con el servidor", "err");
+                setFactResult({ type:"error", title:"Error de Conexión", body:"El servidor no respondió a la solicitud." });
+                finalizarLoadingRut();
+              });
+            })
+            .catch(err => { addLogFact(`Error al verificar permisos: ${err.message}`, "err"); finalizarLoadingRut(); });
+        });
+      };
+
+      /* ── RENDER ──────────────────────────────────────────── */
+      const widgetStyle = pos
+        ? { right: pos.right, bottom: pos.bottom, transition: isDragging ? "none" : "bottom 0.2s, right 0.2s" }
+        : { right: 24, bottom: 112 };
+
+      return (
+        <div id="fw-root" className={isDragging ? "dragging-active" : ""} style={{ position:"fixed", inset:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:9999 }}>
+
+          {/* ── WIDGET FLOTANTE ─────────────────────────────── */}
           <div
             ref={widgetRef}
-            className={`absolute z-50 flex flex-col items-end pointer-events-auto ${!pos ? "bottom-28 right-6" : ""}`}
-            style={pos ? { right:pos.right, bottom:pos.bottom, transition:isDragging ? "none" : "bottom 0.2s, right 0.2s" } : {}}
+            style={{ ...widgetStyle, position:"absolute", zIndex:50, display:"flex", flexDirection:"column", alignItems:"flex-end", pointerEvents:"auto" }}
           >
-
-            {/* BOTÓN FLOTANTE */}
-            {!isOpen && (
+            {/* Botón flotante */}
+            {!isOpen && !showMenu && (
               <button
+                className="drag-handle btn-premium chat-float-btn"
                 onMouseDown={handleDragStart}
                 onTouchStart={handleDragStart}
                 onClick={toggleOpen}
-                className={`drag-handle btn-premium group flex items-center bg-gradient-to-r from-[#b233ff]/80 to-[#ff4df8]/80 backdrop-blur-md text-white rounded-full transition-all duration-300 outline-none relative overflow-hidden border border-white/30 cursor-move ${isDragging ? "scale-95" : "hover:pr-8 hover:scale-105"}`}
                 style={{ WebkitTapHighlightColor:"transparent" }}
               >
                 {hasUnread && (
-                  <span className="absolute top-2 right-2 bg-rose-500 text-white w-5 h-5 flex items-center justify-center rounded-full animate-bounce shadow-lg border-2 border-white z-50">
-                    <i className="fa-solid fa-bell text-[9px]"></i>
+                  <span className="unread-badge">
+                    <i className="fa-solid fa-bell" style={{ fontSize:9 }}></i>
                   </span>
                 )}
-                <div className="w-12 h-12 flex items-center justify-center shrink-0 relative z-10 pointer-events-none">
-                  <i className="fa-solid fa-location-dot text-[20px] group-hover:scale-110 transition-transform duration-500 drop-shadow-md"></i>
+                <div style={{ width:48, height:48, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, position:"relative", zIndex:10, pointerEvents:"none" }}>
+                  <i className="fa-solid fa-location-dot" style={{ fontSize:20 }}></i>
                 </div>
-                <div className="max-w-0 overflow-hidden opacity-0 group-hover:max-w-[220px] group-hover:opacity-100 transition-all duration-500 ease-in-out flex items-center whitespace-nowrap relative z-10 pointer-events-none">
-                  <span className="font-black text-[11px] sm:text-xs uppercase tracking-[0.2em] pr-2 drop-shadow-md">
-                    Validar Factibilidad
-                  </span>
+                <div style={{ maxWidth:0, overflow:"hidden", opacity:0, transition:"all 0.5s ease-in-out", display:"flex", alignItems:"center", whiteSpace:"nowrap", position:"relative", zIndex:10, pointerEvents:"none" }}
+                  className="btn-label">
+                  <span style={{ fontWeight:900, fontSize:11, textTransform:"uppercase", letterSpacing:"0.2em", paddingRight:"0.5rem" }}>Opciones</span>
                 </div>
               </button>
             )}
 
-            {/* VENTANA DEL CHAT */}
-            {isOpen && (
-              <div className="w-[calc(100vw-3rem)] sm:w-[380px] h-[550px] max-h-[85vh] bg-white/85 backdrop-blur-2xl rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(178,51,255,0.25)] flex flex-col overflow-hidden z-50 border border-white/60 animate-slide-up">
-
-                {/* CABECERA */}
+            {/* Menú de selección */}
+            {showMenu && !isOpen && (
+              <div className="chat-menu animate-slide-up">
                 <div
-                  className="drag-handle bg-gradient-to-r from-slate-900 to-slate-800 p-5 flex justify-between items-center relative shrink-0 shadow-md z-10 cursor-move select-none"
+                  className="drag-handle drag-header"
                   onMouseDown={handleDragStart}
                   onTouchStart={handleDragStart}
                 >
-                  <div className="flex items-center gap-3 sm:gap-4 pointer-events-none">
-                    <div className="w-10 h-10 bg-gradient-to-br from-[#b233ff] to-[#ff4df8] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
-                      <i className="fa-solid fa-location-dot text-lg"></i>
+                  <div style={{ display:"flex", alignItems:"center", gap:12, pointerEvents:"none" }}>
+                    <div style={{ width:32, height:32, background:"rgba(255,255,255,0.1)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", color:"white" }}>
+                      <i className="fa-solid fa-bars" style={{ fontSize:14 }}></i>
+                    </div>
+                    <h3 style={{ fontWeight:900, color:"white", fontSize:14, textTransform:"uppercase", letterSpacing:"-0.5px", fontStyle:"italic" }}>Selecciona una opción</h3>
+                  </div>
+                  <button className="drag-header-btn" onClick={toggleOpen}>
+                    <i className="fa-solid fa-xmark" style={{ fontSize:20, pointerEvents:"none" }}></i>
+                  </button>
+                </div>
+                <div style={{ padding:24, display:"flex", flexDirection:"column", gap:16 }}>
+                  {/* Soporte */}
+                  <button
+                    className="menu-option"
+                    onClick={(e) => { e.preventDefault(); setShowMenu(false); setIsOpen(true); }}
+                    style={{ borderColor:"#f1f5f9" }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor="rgba(178,51,255,0.5)"; e.currentTarget.style.boxShadow="0 10px 20px -5px rgba(178,51,255,0.2)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor="#f1f5f9"; e.currentTarget.style.boxShadow="none"; }}
+                  >
+                    <div className="absolute inset-0" style={{ background:"linear-gradient(to right,rgba(178,51,255,0.05),transparent)", opacity:0, transition:"opacity 0.3s" }}></div>
+                    <div className="menu-option-icon" style={{ background:"#eff6ff", color:"#3b82f6" }}>
+                      <i className="fa-solid fa-headset" style={{ fontSize:20 }}></i>
+                    </div>
+                    <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start", textAlign:"left", position:"relative", zIndex:10 }}>
+                      <span style={{ fontWeight:900, color:"#1e293b", textTransform:"uppercase", letterSpacing:"-0.5px" }}>Soporte</span>
+                      <span style={{ fontSize:11, color:"#64748b", fontWeight:500 }}>Ayuda con tu servicio actual</span>
+                    </div>
+                    <i className="fa-solid fa-chevron-right menu-option-chevron"></i>
+                  </button>
+                  {/* Factibilidad */}
+                  <button
+                    className="menu-option"
+                    onClick={(e) => { e.preventDefault(); setShowMenu(false); setShowFactibilidadModal(true); }}
+                    style={{ borderColor:"#f1f5f9" }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor="rgba(255,77,248,0.5)"; e.currentTarget.style.boxShadow="0 10px 20px -5px rgba(255,77,248,0.2)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor="#f1f5f9"; e.currentTarget.style.boxShadow="none"; }}
+                  >
+                    <div className="absolute inset-0" style={{ background:"linear-gradient(to right,rgba(255,77,248,0.05),transparent)", opacity:0, transition:"opacity 0.3s" }}></div>
+                    <div className="menu-option-icon" style={{ background:"#fdf4ff", color:"#ff4df8" }}>
+                      <i className="fa-solid fa-location-dot" style={{ fontSize:20 }}></i>
+                    </div>
+                    <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start", textAlign:"left", position:"relative", zIndex:10 }}>
+                      <span style={{ fontWeight:900, color:"#1e293b", textTransform:"uppercase", letterSpacing:"-0.5px" }}>Factibilidad</span>
+                      <span style={{ fontSize:11, color:"#64748b", fontWeight:500 }}>Consulta de nueva cobertura</span>
+                    </div>
+                    <i className="fa-solid fa-chevron-right menu-option-chevron"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Ventana del chat */}
+            {isOpen && (
+              <div className="chat-window animate-slide-up">
+                {/* Cabecera */}
+                <div
+                  className="drag-handle drag-header"
+                  onMouseDown={handleDragStart}
+                  onTouchStart={handleDragStart}
+                >
+                  <div style={{ display:"flex", alignItems:"center", gap:16, pointerEvents:"none" }}>
+                    <div style={{ width:40, height:40, background:"linear-gradient(135deg,#b233ff,#ff4df8)", borderRadius:16, display:"flex", alignItems:"center", justifyContent:"center", color:"white", boxShadow:"0 10px 15px -3px rgba(168,85,247,0.3)" }}>
+                      <i className="fa-solid fa-location-dot" style={{ fontSize:18 }}></i>
                     </div>
                     <div>
-                      <h3 className="font-black text-white text-base uppercase tracking-tight italic drop-shadow-sm">Terminal BOT</h3>
-                      <p className="text-slate-300 text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5 opacity-80">Sistema de Factibilidad</p>
+                      <h3 style={{ fontWeight:900, color:"white", fontSize:16, textTransform:"uppercase", letterSpacing:"-0.5px", fontStyle:"italic" }}>Terminal BOT</h3>
+                      <p style={{ color:"#cbd5e1", fontSize:9, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.15em", marginTop:2, opacity:0.8 }}>Sistema de Soporte</p>
                     </div>
                   </div>
-                  <button onClick={toggleOpen} className="text-white/50 hover:text-white hover:bg-white/10 hover:rotate-90 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300">
-                    <i className="fa-solid fa-xmark text-xl pointer-events-none"></i>
+                  <button className="drag-header-btn" onClick={toggleOpen}>
+                    <i className="fa-solid fa-xmark" style={{ fontSize:20, pointerEvents:"none" }}></i>
                   </button>
                 </div>
 
-                {/* PANTALLA DE REGISTRO */}
+                {/* Pantalla de registro */}
                 {!isRegistered ? (
-                  <div className="flex-1 p-8 sm:p-10 bg-transparent flex flex-col justify-center items-center text-center relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-50/30 -z-10"></div>
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/80 border border-white shadow-[0_15px_35px_-5px_rgba(178,51,255,0.15)] text-[#b233ff] rounded-[2.5rem] flex items-center justify-center mb-6 sm:mb-8 shrink-0">
-                      <i className="fa-solid fa-fingerprint text-4xl sm:text-5xl opacity-80"></i>
+                  <div className="register-screen">
+                    <div style={{ width:80, height:80, background:"rgba(255,255,255,0.8)", border:"1px solid white", boxShadow:"0 15px 35px -5px rgba(178,51,255,0.15)", color:"#b233ff", borderRadius:40, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:24, flexShrink:0 }}>
+                      <i className="fa-solid fa-fingerprint" style={{ fontSize:40, opacity:0.8 }}></i>
                     </div>
-                    <h4 className="text-xl sm:text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">Acceso Requerido</h4>
-                    <p className="text-xs text-slate-500 mb-6 sm:mb-8 font-medium leading-relaxed px-4">Identifícate para iniciar el escaneo de factibilidad técnica.</p>
+                    <h4 style={{ fontSize:22, fontWeight:900, color:"#1e293b", marginBottom:8, textTransform:"uppercase", letterSpacing:"-0.5px" }}>Acceso Requerido</h4>
+                    <p style={{ fontSize:12, color:"#64748b", marginBottom:24, fontWeight:500, lineHeight:1.6, paddingLeft:16, paddingRight:16 }}>Identifícate para iniciar la atención de soporte.</p>
                     <input
                       type="text"
                       placeholder="Tu nombre completo"
                       value={clientName}
                       onChange={e => setClientName(e.target.value)}
-                      onKeyDown={e => { if (e.key==="Enter") handleRegister(); }}
-                      className="w-full bg-white/80 border border-white/60 shadow-inner rounded-2xl px-5 sm:px-6 py-3.5 sm:py-4 text-sm mb-4 outline-none focus:ring-2 focus:ring-[#b233ff]/40 transition-all font-semibold"
+                      onKeyDown={e => { if (e.key === "Enter") handleRegister(); }}
                     />
-                    <button
-                      onClick={handleRegister}
-                      className="w-full bg-gradient-to-r from-[#b233ff] to-[#ff4df8] text-white py-3.5 sm:py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_-5px_rgba(178,51,255,0.4)] hover:shadow-[0_15px_25px_-5px_rgba(178,51,255,0.6)] active:scale-95 transition-all duration-300">
-                      Inicializar Escaneo
-                    </button>
+                    <button className="register-btn" onClick={handleRegister}>Inicializar Sesión</button>
                   </div>
                 ) : (
                   <>
-                    {/* MENSAJES */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/40 flex flex-col gap-5 relative">
-                      <div className="absolute inset-0 bg-gradient-to-b from-purple-50/20 to-transparent pointer-events-none"></div>
-
-                      {/* Mensaje inicial estático de bienvenida */}
-                      <div className="flex flex-col items-start relative z-10">
-                        <div className="px-4 sm:px-5 py-3.5 rounded-3xl rounded-tl-sm bg-white/90 backdrop-blur-md border border-white shadow-sm text-slate-700 text-sm">
-                          <p className="font-black text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#b233ff] to-[#ff4df8] uppercase tracking-widest border-b border-slate-100 pb-2 mb-3">CONEXIÓN ESTABLECIDA</p>
-                          <p className="font-bold text-slate-900 mb-1">HOLA, {clientName.toUpperCase()}</p>
-                          <p className="text-slate-500 leading-relaxed">Envía la dirección para validar la cobertura de fibra óptica e infraestructura.</p>
+                    {/* Mensajes */}
+                    <div className="chat-messages">
+                      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom,rgba(233,213,255,0.2),transparent)", pointerEvents:"none" }}></div>
+                      {/* Bienvenida */}
+                      <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start", position:"relative", zIndex:10 }}>
+                        <div className="msg-bot">
+                          <p style={{ fontWeight:900, fontSize:10, background:"linear-gradient(to right,#b233ff,#ff4df8)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", textTransform:"uppercase", letterSpacing:"0.2em", borderBottom:"1px solid #f1f5f9", paddingBottom:8, marginBottom:12 }}>CONEXIÓN ESTABLECIDA</p>
+                          <p style={{ fontWeight:700, color:"#0f172a", marginBottom:4 }}>HOLA, {clientName.toUpperCase()}</p>
+                          <p style={{ color:"#64748b", lineHeight:1.6 }}>¿En qué podemos ayudarte el día de hoy?</p>
                         </div>
                       </div>
-
                       {myMessages.map(msg => {
                         const isMe     = msg.sender === "client";
                         const isSystem = msg.senderName === "SISTEMA" || msg.senderName === "Bot Automático";
-
-                        // Mensajes del bot — burbuja amigable con ícono
                         if (isSystem) return (
-                          <div key={msg.id} className="flex items-start gap-2 self-start max-w-[85%] relative z-10">
-                            <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1 border border-emerald-200">
-                              <i className="fa-solid fa-robot text-emerald-500 text-xs"></i>
+                          <div key={msg.id} className="msg-wrap-bot">
+                            <div className="msg-robot-icon">
+                              <i className="fa-solid fa-robot" style={{ color:"#10b981", fontSize:12 }}></i>
                             </div>
-                            <div className="flex flex-col items-start">
-                              <div className="bg-white/90 backdrop-blur-md border border-white text-slate-700 px-4 sm:px-5 py-3 sm:py-3.5 rounded-3xl rounded-tl-sm text-[13px] leading-relaxed shadow-sm whitespace-pre-wrap">
-                                {msg.text}
-                              </div>
+                            <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start" }}>
+                              <div className="msg-bot">{msg.text}</div>
                             </div>
                           </div>
                         );
-
-                        // Mensajes normales (cliente y agente)
                         return (
-                          <div key={msg.id} className={`flex flex-col max-w-[85%] relative z-10 ${isMe ? "self-end items-end" : "self-start items-start"}`}>
-                            <div className={`px-4 sm:px-5 py-3 sm:py-3.5 rounded-3xl text-[13px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap ${
-                              isMe
-                                ? "bg-gradient-to-r from-[#b233ff] to-[#ff4df8] text-white rounded-br-sm shadow-[0_5px_15px_-5px_rgba(178,51,255,0.4)]"
-                                : "bg-white/90 backdrop-blur-md border border-white text-slate-700 rounded-bl-sm"
-                            }`}>
-                              {msg.text}
-                            </div>
+                          <div key={msg.id} style={{ display:"flex", flexDirection:"column", maxWidth:"85%", position:"relative", zIndex:10, alignSelf:isMe?"flex-end":"flex-start", alignItems:isMe?"flex-end":"flex-start" }}>
+                            <div className={isMe ? "msg-user" : "msg-bot"}>{msg.text}</div>
                           </div>
                         );
                       })}
-                      <div ref={messagesEndRef} className="h-2"/>
+                      <div ref={messagesEndRef} style={{ height:8 }}></div>
                     </div>
 
-                    {/* INPUT */}
-                    <form onSubmit={handleSendMessage} className="p-3 sm:p-4 bg-white/70 backdrop-blur-xl border-t border-white/60 flex gap-3 shrink-0 relative z-20 items-center">
-                      <div className="relative flex-1 flex items-center bg-white/80 border border-white shadow-inner rounded-full focus-within:bg-white focus-within:ring-2 focus-within:ring-[#b233ff]/30 transition-all">
-                        <button type="button" onClick={()=>setShowEmojis(!showEmojis)}
-                          className={`pl-4 pr-2 transition-colors duration-300 ${showEmojis ? "text-[#b233ff]" : "text-slate-400 hover:text-[#b233ff]"}`}>
-                          <i className="fa-regular fa-face-smile text-lg"></i>
+                    {/* Input */}
+                    <form
+                      onSubmit={handleSendMessage}
+                      className="chat-input-area"
+                      style={{ display:"flex" }}
+                    >
+                      <div className="chat-input-wrap" style={{ position:"relative" }}>
+                        <button
+                          type="button"
+                          className={"emoji-toggle" + (showEmojis ? " active" : "")}
+                          onClick={() => setShowEmojis(!showEmojis)}
+                        >
+                          <i className="fa-regular fa-face-smile" style={{ fontSize:18 }}></i>
                         </button>
                         <input
                           type="text"
                           value={newMessage}
                           onChange={e => setNewMessage(e.target.value)}
-                          placeholder="Escribe la dirección..."
-                          className="flex-1 bg-transparent py-3.5 sm:py-4 pr-5 text-sm outline-none font-medium text-slate-700 w-full"
+                          placeholder="Escribe tu mensaje..."
                         />
                         {showEmojis && (
-                          <div className="absolute bottom-[calc(100%+12px)] left-0 w-[240px] bg-white/95 backdrop-blur-3xl border border-white/60 shadow-[0_15px_35px_-5px_rgba(178,51,255,0.3)] rounded-3xl p-3 grid grid-cols-5 gap-1.5 z-50 animate-slide-up">
+                          <div className="emoji-panel animate-slide-up">
                             {emojis.map(emoji => (
-                              <button key={emoji} type="button" onClick={()=>addEmoji(emoji)}
-                                className="text-xl hover:bg-[#b233ff]/10 rounded-xl p-1.5 transition-all hover:scale-125 active:scale-95 flex items-center justify-center">
-                                {emoji}
-                              </button>
+                              <button key={emoji} type="button" className="emoji-btn" onClick={() => addEmoji(emoji)}>{emoji}</button>
                             ))}
                           </div>
                         )}
                       </div>
-                      <button type="submit" disabled={!newMessage.trim()}
-                        className="bg-gradient-to-r from-[#b233ff] to-[#ff4df8] text-white w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full hover:shadow-[0_8px_20px_-5px_rgba(178,51,255,0.5)] disabled:opacity-40 disabled:grayscale flex-shrink-0 shadow-md active:scale-95 transition-all duration-300">
-                        <i className="fa-solid fa-paper-plane text-sm translate-x-[-1px] translate-y-[1px]"></i>
+                      <button
+                        type="submit"
+                        disabled={!newMessage.trim()}
+                        className="send-btn"
+                      >
+                        <i className="fa-solid fa-paper-plane" style={{ fontSize:14, transform:"translateX(-1px) translateY(1px)" }}></i>
                       </button>
                     </form>
                   </>
@@ -1145,13 +1773,172 @@ let usuarioIdGlobal = "";
               </div>
             )}
           </div>
+
+          {/* ── MODAL DE FACTIBILIDAD ───────────────────────── */}
+          <div
+            id="fw-modal-overlay"
+            className={showFactibilidadModal ? "active" : ""}
+            onClick={(e) => { if (e.target.id === "fw-modal-overlay") setShowFactibilidadModal(false); }}
+          >
+            <button id="fw-close-btn" title="Cerrar" onClick={() => setShowFactibilidadModal(false)}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+              </svg>
+            </button>
+
+            <div className="fw-app-container">
+              <header>
+                <div className="fw-logo">Free<em>work</em>Bot</div>
+                <div className="fw-badge"><span className="fw-badge-dot"></span>Conectado</div>
+              </header>
+
+              <h1>Validación</h1>
+              <p className="fw-subtitle">Consulta factibilidad técnica o evaluación de RUT de forma automatizada.</p>
+
+              {/* Tabs */}
+              <div className="fw-tabs-container">
+                <button className={"fw-tab-btn" + (factMode === "direccion" ? " active" : "")} onClick={() => cambiarModoFact("direccion")}>📍 Dirección</button>
+                <button className={"fw-tab-btn" + (factMode === "rut"       ? " active" : "")} onClick={() => cambiarModoFact("rut")}>🪪 RUT</button>
+              </div>
+
+              {/* Panel Dirección */}
+              {factMode === "direccion" && (
+                <div className="fw-input-row animate-slide-up">
+                  <div className="fw-input-wrap">
+                    <input
+                      type="text"
+                      value={direccionInput}
+                      onChange={e => setDireccionInput(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
+                      placeholder="Calle, Número, Comuna"
+                      autoComplete="off"
+                      spellCheck="false"
+                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                  <button className="fw-main-btn" onClick={iniciarConsultaDireccion} disabled={searchBtnDisabled || isLoadingFact}>
+                    {isLoadingFact && factMode === "direccion"
+                      ? <div className="fw-spinner"></div>
+                      : <span>Verificar Cobertura</span>
+                    }
+                  </button>
+                </div>
+              )}
+
+              {/* Panel RUT */}
+              {factMode === "rut" && (
+                <div className="fw-input-row animate-slide-up">
+                  <div className="fw-input-wrap">
+                    <input
+                      type="text"
+                      value={rutInput}
+                      onChange={e => setRutInput(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && consultarRut()}
+                      placeholder="12.345.678-9"
+                      autoComplete="off"
+                      spellCheck="false"
+                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <button className="fw-main-btn" onClick={consultarRut} disabled={rutBtnDisabled || isLoadingFact}>
+                    {isLoadingFact && factMode === "rut"
+                      ? <div className="fw-spinner"></div>
+                      : <span>Verificar RUT</span>
+                    }
+                  </button>
+                </div>
+              )}
+
+              {/* Nueva Consulta */}
+              {(factLogs.length > 0 || factResult) && !isLoadingFact && (
+                <button className="fw-clearBtn active" onClick={limpiarPantallaFact}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                  </svg>
+                  Nueva Consulta
+                </button>
+              )}
+
+              {/* Logs */}
+              {factLogs.length > 0 && (
+                <div className="fw-log-section active">
+                  <div className="fw-log-label">
+                    <span>Estado del proceso</span>
+                    <span>{isLoadingFact ? "Analizando..." : "Finalizado"}</span>
+                  </div>
+                  {isLoadingFact && (
+                    <div className="fw-progress-container">
+                      <div className="fw-progress-bar"></div>
+                    </div>
+                  )}
+                  <div className="fw-status-feed" ref={logStreamRef}>
+                    {factLogs.map((log, i) => (
+                      <div key={i} className={"fw-status-item " + (log.type || "")}>
+                        <i></i><span>{log.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Resultado */}
+              {factResult && (
+                <div className="fw-result-section active animate-slide-up">
+                  <div className={"fw-result-card " + (factResult.type || "")}>
+                    <div className="fw-result-head">
+                      <span className="fw-result-icon">
+                        {factResult.type === "success" ? "✅" : factResult.type === "warning" ? "⚠️" : "❌"}
+                      </span>
+                      <span className="fw-result-title">{factResult.title}</span>
+                    </div>
+                    <div className="fw-result-body">{factResult.body}</div>
+                    {factResult.img && (
+                      <img
+                        className="fw-result-img visible"
+                        src={"data:image/png;base64," + factResult.img}
+                        alt="Evidencia"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <footer className="fw-footer">
+                <span>FREEOPS © 2026</span>
+                <span style={{ color:"var(--primary)", fontWeight:700 }}>ACTIVE ENGINE</span>
+              </footer>
+            </div>
+          </div>
+
+          {/* ── CUSTOM PROMPT MODAL ─────────────────────────── */}
+          <div id="customPromptOverlay" className={showCustomPrompt ? "active" : ""} style={{ pointerEvents: showCustomPrompt ? "auto" : "none" }}>
+            <div className="custom-prompt-box">
+              <h3>🔐 Ingresa tu ID</h3>
+              <p>Necesitamos validar tu identidad para continuar.</p>
+              <input
+                type="text"
+                value={customPromptInput}
+                onChange={e => setCustomPromptInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && guardarCustomId()}
+                placeholder="Tu ID de acceso"
+              />
+              <button className="fw-main-btn" onClick={guardarCustomId}>Guardar y Continuar</button>
+            </div>
+          </div>
         </div>
       );
     }
 
-    // ============================================================
-    //  COORDINADOR DE DATOS
-    // ============================================================
+    /* ================================================================
+       COORDINADOR PRINCIPAL
+    ================================================================ */
     function App() {
       const [allMessages,     setAllMessages]     = useState([]);
       const [cannedResponses, setCannedResponses] = useState([]);
@@ -1183,20 +1970,12 @@ let usuarioIdGlobal = "";
         return () => { isMounted = false; clearInterval(interval); };
       }, []);
 
-      return <ClientWebsite allMessages={allMessages} cannedResponses={cannedResponses}/>;
+      return <ClientWebsite allMessages={allMessages} cannedResponses={cannedResponses} />;
     }
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+    /* ── Mount ─────────────────────────────────────────────── */
+    const root = ReactDOM.createRoot(document.getElementById("fw-root"));
+    root.render(<App />);
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
