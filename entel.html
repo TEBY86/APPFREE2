@@ -490,7 +490,7 @@
 
         const CONFIG = {
             empresa: "Entel", 
-            scriptUrl: "https://script.google.com/macros/s/AKfycbzUn0OHXXwbUX9QHXh2E0YUE9BYhKPU2psJ_lQ-OwDAfu7Cznxu01CIu9XgMA5GGdVI/exec",
+            scriptUrl: "https://script.google.com/macros/s/AKfycbwaGekD2yCC5ysUYXDYDDf4lKoE6vygJorVGfKzKSehj3xoQkQQsNI99GyYIeFuP0bVUg/exec",
             
             plans: [
                 { planKey: "600", name: "Fibra 600" },
@@ -760,7 +760,7 @@
             const saleData = {
                 timestamp: new Date().toLocaleString("es-CL"),
                 empresa: CONFIG.empresa,
-                serie: "",
+                serie: "ENTEL-" + Date.now(),
                 nombre: document.getElementById('nombre').value,
                 rUT: document.getElementById('rut').value,
                 teléfono: document.getElementById('telefono').value,
