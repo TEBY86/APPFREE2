@@ -401,9 +401,9 @@
             empresa: "Entel", 
             scriptUrl: "https://script.google.com/macros/s/AKfycbzUn0OHXXwbUX9QHXh2E0YUE9BYhKPU2psJ_lQ-OwDAfu7Cznxu01CIu9XgMA5GGdVI/exec",
             plans: [
-                { id: "e600", name: "Fibra 600", promo: 15990, normal: 22990, tvPrices: { eLite: 28990, eFull: 29990 }, tvNormalPrices: { eLite: 40990, eFull: 49490 } },
-                { id: "e800", name: "Fibra 800", promo: 16990, normal: 25990, tvPrices: { eLite: 29990, eFull: 30990 }, tvNormalPrices: { eLite: 43990, eFull: 52490 } },
-                { id: "e940", name: "Fibra 940", promo: 20990, normal: 33990, tvPrices: { eLite: 33990, eFull: 34990 }, tvNormalPrices: { eLite: 51990, eFull: 60490 } }
+                { id: "e600", name: "Fibra 600", promo: 17990, normal: 22990, tvPrices: { eLite: 28990, eFull: 29990 }, tvNormalPrices: { eLite: 40990, eFull: 49490 } },
+                { id: "e800", name: "Fibra 800", promo: 18990, normal: 25990, tvPrices: { eLite: 29990, eFull: 30990 }, tvNormalPrices: { eLite: 43990, eFull: 52490 } },
+                { id: "e940", name: "Fibra 940", promo: 22990, normal: 33990, tvPrices: { eLite: 33990, eFull: 34990 }, tvNormalPrices: { eLite: 51990, eFull: 60490 } }
             ],
             tv: [
                 { id: "eLite", name: "TV Lite+", price: 13000 },
