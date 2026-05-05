@@ -490,7 +490,7 @@
 
        const CONFIG = {
             empresa: "Entel", 
-            scriptUrl: "https://script.google.com/macros/s/AKfycbw8y9xB9Qa95sMPyEdv12D3HbVj6zDhPWTnJ_VM4k4kszuluqQIpU05VCWkzjU7BUoKoQ/exec",
+            scriptUrl: "https://script.google.com/macros/s/AKfycbw7nASHwsEaD0xCn70A_u6UVdqmUejV19yv8noq65it_7nRE18ePWGP3hYZ6uk0wKEERw/exec",
             
             plans: [
                 { planKey: "600", name: "Fibra 600" },
@@ -757,23 +757,23 @@
             if (state.tipo === 'tv') planLabel += ` + TV ${CONFIG.tvOptions[state.tvIdx].name}`;
             if (state.tipo === 'tel') planLabel += ' + TV Full+ + Teléfono';
 
-            const saleData = {
-                timestamp: new Date().toLocaleString("es-CL"),
-                empresa: CONFIG.empresa,
-                serie: "ENTEL-" + Date.now(),
-                nombre: document.getElementById('nombre').value,
-                rUT: document.getElementById('rut').value,
-                teléfono: document.getElementById('telefono').value,
-                correo: document.getElementById('correo').value,
-                dirección: document.getElementById('direccion').value,
-                comuna: document.getElementById('comuna').value,
-                región: document.getElementById('region').value,
-                planContratado: planLabel,
-                observaciones: document.getElementById('obs').value + ` | Ext:${state.ext} Deco:${state.deco} | Total: ${document.getElementById('total-display').innerText}`,
-                ejecutivo: document.getElementById('ejecutivo').value,
-                supervisor: document.getElementById('lider').value,
-                obsback: "Pendiente"
-            };
+           const saleData = {
+    timestamp:      new Date().toLocaleString("es-CL"),
+    empresa:        CONFIG.empresa,
+    serie:          "ENTEL-" + Date.now(),
+    nombre:         document.getElementById('nombre').value,
+    rut:            document.getElementById('rut').value,      // ← minúscula
+    teléfono:       document.getElementById('telefono').value,
+    correo:         document.getElementById('correo').value,
+    dirección:      document.getElementById('direccion').value,
+    comuna:         document.getElementById('comuna').value,
+    región:         document.getElementById('region').value,
+    planContratado: planLabel,
+    observaciones:  document.getElementById('obs').value + ` | Ext:${state.ext} Deco:${state.deco} | Total: ${document.getElementById('total-display').innerText}`,
+    ejecutivo:      document.getElementById('ejecutivo').value,
+    supervisor:     document.getElementById('lider').value,
+    obsback:        "Pendiente"
+};
 
             try {
                const res = await fetch(CONFIG.scriptUrl, {
