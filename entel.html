@@ -359,13 +359,35 @@
         <div class="section-card">
             <div class="floating-icon"><i data-lucide="map-pin"></i></div>
             <div class="section-title">¿Dónde instalamos?</div>
-            <select id="region" onchange="actualizarComunas()">
-                <option value="">Selecciona Región</option>
-                <option value="Metropolitana">Metropolitana</option>
-                <option value="Valparaíso">Valparaíso</option>
-                <option value="Biobío">Biobío</option>
-                <option value="O'Higgins">O'Higgins</option>
-            </select>
+
+
+
+
+
+   <select id="region" onchange="actualizarComunas()">
+    <option value="">Selecciona Región</option>
+    <option value="Arica y Parinacota">Arica y Parinacota</option>
+    <option value="Tarapacá">Tarapacá</option>
+    <option value="Antofagasta">Antofagasta</option>
+    <option value="Atacama">Atacama</option>
+    <option value="Coquimbo">Coquimbo</option>
+    <option value="Valparaíso">Valparaíso</option>
+    <option value="Metropolitana">Metropolitana</option>
+    <option value="O'Higgins">O'Higgins</option>
+    <option value="Maule">Maule</option>
+    <option value="Ñuble">Ñuble</option>
+    <option value="Biobío">Biobío</option>
+    <option value="La Araucanía">La Araucanía</option>
+    <option value="Los Ríos">Los Ríos</option>
+    <option value="Los Lagos">Los Lagos</option>
+    <option value="Aysén">Aysén</option>
+    <option value="Magallanes">Magallanes</option>
+</select>
+
+
+
+
+
             <select id="comuna" disabled><option value="">Selecciona Comuna</option></select>
         </div>
 
@@ -529,12 +551,24 @@
 
             equipos: { extensor: 3500, deco: 4990 },
 
-            comunas: {
-                "Metropolitana": ["Santiago", "Maipú", "Puente Alto", "La Florida", "Las Condes", "Providencia", "San Bernardo", "Peñalolén", "Pudahuel", "Ñuñoa", "Vitacura", "Colina", "Buin", "Melipilla", "Talagante", "San José de Maipo"],
-                "Valparaíso": ["Viña del Mar", "Valparaíso", "Quilpué", "Villa Alemana", "San Antonio", "Quillota", "San Felipe", "Los Andes", "Concón", "Limache", "Casablanca"],
-                "Biobío": ["Concepción", "Talcahuano", "Coronel", "Los Ángeles", "Chiguayante", "Hualpén", "San Pedro de la Paz", "Tomé", "Penco", "Lota"],
-                "O'Higgins": ["Rancagua", "San Fernando", "Rengo", "Machalí", "Graneros", "San Vicente", "Pichilemu", "Santa Cruz", "Mostazal"]
-            }
+          comunas: {
+    "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"],
+    "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Huara", "Pica", "Camiña", "Colchane"],
+    "Antofagasta": ["Antofagasta", "Calama", "Tocopilla", "Mejillones", "San Pedro de Atacama", "María Elena", "Ollagüe", "Taltal", "Sierra Gorda"],
+    "Atacama": ["Copiapó", "Vallenar", "Caldera", "Chañaral", "Diego de Almagro", "Alto del Carmen", "Freirina", "Huasco", "Tierra Amarilla"],
+    "Coquimbo": ["La Serena", "Coquimbo", "Ovalle", "Illapel", "Vicuña", "Andacollo", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado", "Salamanca", "Canela", "Los Vilos", "Paiguano", "La Higuera"],
+    "Valparaíso": ["Valparaíso", "Viña del Mar", "Concón", "Quilpué", "Villa Alemana", "Limache", "Olmué", "Quillota", "La Calera", "Nogales", "Hijuelas", "La Cruz", "San Antonio", "Cartagena", "El Tabo", "El Quisco", "Algarrobo", "Santo Domingo", "San Felipe", "Los Andes", "Calle Larga", "Rinconada", "Putaendo", "Santa María", "Panquehue", "Llay Llay", "Catemu", "Quintero", "Puchuncaví", "Casablanca", "Juan Fernández", "Isla de Pascua", "Zapallar", "Papudo", "Petorca", "Cabildo", "La Ligua"],
+    "Metropolitana": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"],
+    "O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "San Fernando", "Santa Cruz", "Marchihue", "Litueche", "La Estrella", "Pichilemu", "Navidad", "Rosario"],
+    "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"],
+    "Ñuble": ["Chillán", "Bulnes", "Chillán Viejo", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "San Carlos", "Coihueco", "Ñiquén", "San Fabián", "San Nicolás"],
+    "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"],
+    "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre Las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"],
+    "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"],
+    "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"],
+    "Aysén": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Río Ibáñez", "Chile Chico", "Cochrane", "O'Higgins", "Tortel"],
+    "Magallanes": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"]
+}
         };
 
         let state = {
