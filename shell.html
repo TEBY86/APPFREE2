@@ -1176,6 +1176,14 @@ let usuarioIdGlobal = "";
       const [searchBtnDisabled,      setSearchBtnDisabled]      = useState(false);
       const [rutBtnDisabled,         setRutBtnDisabled]         = useState(false);
       const [showCustomPrompt,       setShowCustomPrompt]       = useState(false);
+
+
+        const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem("freework_user_id") || "No definido");
+  const [editandoId, setEditandoId] = useState(false);
+  const [nuevoIdTemp, setNuevoIdTemp] = useState("");
+
+
+
       const [customPromptInput,      setCustomPromptInput]      = useState("");
       const pendingActionRef = useRef(null);
       const logStreamRef     = useRef(null);
@@ -1424,7 +1432,31 @@ let usuarioIdGlobal = "";
       };
 
       const finalizarLoadingDireccion = () => { setSearchBtnDisabled(false); setIsLoadingFact(false); };
-      const finalizarLoadingRut       = () => { setRutBtnDisabled(false);    setIsLoadingFact(false); };
+
+
+
+
+
+            const finalizarLoadingRut       = () => { setRutBtnDisabled(false);    setIsLoadingFact(false); };
+
+      const guardarNuevoId = () => {
+        if (!nuevoIdTemp.trim()) return;
+        localStorage.setItem("freework_user_id", nuevoIdTemp.trim());
+        setCurrentUserId(nuevoIdTemp.trim());
+        setEditandoId(false);
+        setNuevoIdTemp("");
+        limpiarPantallaFact();
+      };
+
+      const eliminarId = () => {
+        if (confirm("¿Eliminar ID actual?")) {
+          localStorage.removeItem("freework_user_id");
+          setCurrentUserId("No definido");
+          limpiarPantallaFact();
+        }
+      };
+
+
 
       /* ── Factibilidad: consulta dirección (SSE) ──────────── */
       const iniciarConsultaDireccion = () => {
@@ -1791,7 +1823,37 @@ let usuarioIdGlobal = "";
                 <div className="fw-logo">Free<em>work</em>Bot</div>
                 <div className="fw-badge"><span className="fw-badge-dot"></span>Conectado</div>
               </header>
+               
+              
+  {/* AQUÍ PEGAS EL PANEL DE ID */}
+  <div style={{ background:"rgba(255,255,255,0.03)", borderRadius:"12px", padding:"10px 12px", marginBottom:"20px", border:"1px solid var(--border)" }}>
+    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:"8px" }}>
+      <div style={{ fontSize:"11px", color:"var(--text-2)" }}>
+        <i className="fa-regular fa-id-card"></i> ID: <strong style={{ color: currentUserId !== "No definido" ? "#00f298" : "#ffb800" }}>{currentUserId}</strong>
+      </div>
+      
+      <div style={{ display:"flex", gap:"6px" }}>
+        {!editandoId ? (
+          <>
+            <button onClick={() => { setNuevoIdTemp(currentUserId !== "No definido" ? currentUserId : ""); setEditandoId(true); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✏️ Cambiar</button>
+            {currentUserId !== "No definido" && (
+              <button onClick={eliminarId} style={{ background:"none", border:"1px solid rgba(255,75,129,0.3)", borderRadius:"8px", padding:"4px 8px", color:"#ff4b81", fontSize:"10px", cursor:"pointer" }}>🗑️ Eliminar</button>
+            )}
+          </>
+        ) : (
+          <>
+            <input type="text" value={nuevoIdTemp} onChange={e => setNuevoIdTemp(e.target.value)} onKeyDown={e => e.key === "Enter" && guardarNuevoId()} placeholder="Nuevo ID" autoFocus style={{ background:"rgba(255,255,255,0.1)", border:"1px solid var(--primary)", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", width:"120px", outline:"none" }} />
+            <button onClick={guardarNuevoId} style={{ background:"linear-gradient(135deg,#b233ff,#ff4df8)", border:"none", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", cursor:"pointer" }}>✓</button>
+            <button onClick={() => { setEditandoId(false); setNuevoIdTemp(""); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✕</button>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
 
+
+
+ 
               <h1>Validación</h1>
               <p className="fw-subtitle">Consulta factibilidad técnica o evaluación de RUT de forma automatizada.</p>
 
