@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entel Fibra | Contrátalo Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--blue-deep:#001233;--blue-mid:#023e8a;--blue-bright:#0077b6;--blue-light:#00b4d8;--cyan:#90e0ef;--off-white:#f0f6ff;--text:#0d1b2a;--muted:#64748b;--success:#06d6a0;--error:#ef233c;--surface:rgba(255,255,255,0.85);--shadow-lg:0 20px 60px rgba(0,66,130,0.18);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(135deg,#001233 0%,#023e8a 45%,#0077b6 100%);overflow:hidden;}
+.bg-layer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(0,180,216,.25) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 100%,rgba(144,224,239,.15) 0%,transparent 60%);}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:drift 18s ease-in-out infinite;}
+.bg-orb:nth-child(1){width:500px;height:500px;background:#00b4d8;top:-100px;left:-100px;}
+.bg-orb:nth-child(2){width:400px;height:400px;background:#90e0ef;bottom:-100px;right:-50px;animation-delay:-9s;}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.05);}66%{transform:translate(-20px,40px) scale(.97);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.page-wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px 180px;}
+/* HEADER */
+.header{text-align:center;margin-bottom:32px;width:100%;max-width:600px;}
+.logo-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:50px;padding:8px 20px 8px 8px;margin-bottom:20px;}
+.logo-dot{width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.logo-dot i{color:var(--blue-mid);font-size:14px;}
+.logo-badge span{color:white;font-family:'Sora';font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;}
+.hero-title{font-family:'Sora';font-size:clamp(28px,5vw,44px);font-weight:800;color:white;line-height:1.1;margin-bottom:12px;}
+.hero-title em{font-style:normal;color:var(--cyan);}
+.hero-sub{color:rgba(255,255,255,.7);font-size:16px;line-height:1.5;}
+/* ALERT LINK */
+.link-error{width:100%;max-width:600px;background:rgba(239,35,60,.15);border:1.5px solid rgba(239,35,60,.45);border-radius:16px;padding:14px 18px;margin-bottom:18px;display:none;align-items:center;gap:12px;animation:slideUp .4s ease;}
+.link-error.show{display:flex;}
+.link-error i{color:#ef233c;font-size:20px;flex-shrink:0;}
+.link-error span{font-size:13px;color:white;line-height:1.4;}
+/* PROGRESS */
+.progress-wrap{width:100%;max-width:480px;margin-bottom:28px;}
+.steps-row{display:flex;align-items:center;justify-content:center;}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:18px;left:60%;width:80%;height:2px;background:rgba(255,255,255,.2);transition:background .4s;}
+.step-item.done:not(:last-child)::after{background:var(--success);}
+.step-circle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Sora';font-weight:700;font-size:13px;color:rgba(255,255,255,.6);transition:all .4s;position:relative;z-index:1;}
+.step-item.active .step-circle{background:white;border-color:white;color:var(--blue-mid);box-shadow:0 0 0 6px rgba(255,255,255,.2);}
+.step-item.done .step-circle{background:var(--success);border-color:var(--success);color:white;}
+.step-label{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.5px;text-align:center;}
+.step-item.active .step-label{color:rgba(255,255,255,.9);}
+.step-item.done .step-label{color:var(--success);}
+/* CARD */
+.wizard-card{width:100%;max-width:600px;background:var(--surface);backdrop-filter:blur(20px);border-radius:28px;border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow-lg);overflow:hidden;display:none;animation:slideUp .4s cubic-bezier(.22,1,.36,1);}
+.wizard-card.active{display:block;}
+.card-top{background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-mid) 100%);padding:28px 30px 24px;}
+.card-eyebrow{font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+.card-title{font-family:'Sora';font-size:22px;font-weight:700;color:white;margin-bottom:4px;}
+.card-sub{font-size:14px;color:rgba(255,255,255,.6);}
+.card-body{padding:28px 30px;}
+/* PACK */
+.pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.pack-btn{background:white;border:2px solid #e2e8f0;border-radius:16px;padding:18px 10px;cursor:pointer;text-align:center;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.pack-btn i{font-size:24px;color:var(--muted);transition:color .25s;}
+.pack-btn .pack-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);transition:color .25s;}
+.pack-btn:hover{border-color:var(--blue-bright);transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,119,182,.15);}
+.pack-btn.active{border-color:var(--blue-bright);background:#eff6ff;}
+.pack-btn.active i,.pack-btn.active .pack-name{color:var(--blue-bright);}
+/* TV */
+.tv-row{display:flex;gap:10px;margin-bottom:20px;}
+.tv-opt{flex:1;padding:12px 10px;background:white;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;text-align:center;transition:all .25s;}
+.tv-opt .tv-name{font-weight:700;font-size:13px;color:var(--muted);}
+.tv-opt .tv-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.tv-opt.active{border-color:var(--blue-bright);background:#eff6ff;}
+.tv-opt.active .tv-name,.tv-opt.active .tv-desc{color:var(--blue-bright);}
+/* PLANES */
+.plans-list{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.plan-row{background:white;border:2px solid #e2e8f0;border-radius:18px;padding:18px 20px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:space-between;gap:15px;position:relative;overflow:hidden;}
+.plan-row::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;background:var(--blue-bright);transform:scaleY(0);transition:transform .25s;}
+.plan-row:hover{border-color:var(--blue-bright);box-shadow:0 8px 24px rgba(0,119,182,.12);transform:translateX(4px);}
+.plan-row:hover::before,.plan-row.selected::before{transform:scaleY(1);}
+.plan-row.selected{border-color:var(--blue-bright);background:#f0f8ff;}
+.plan-badge{position:absolute;top:-1px;right:20px;background:linear-gradient(90deg,var(--blue-mid),var(--blue-light));color:white;font-size:10px;font-weight:700;padding:4px 12px;border-radius:0 0 8px 8px;text-transform:uppercase;letter-spacing:.5px;}
+.plan-left{flex:1;}
+.plan-speed-row{display:flex;align-items:baseline;gap:4px;margin-bottom:4px;}
+.plan-speed{font-family:'Sora';font-size:32px;font-weight:800;color:var(--text);}
+.plan-speed-unit{font-size:14px;font-weight:600;color:var(--muted);}
+.plan-name-label{font-size:12px;color:var(--muted);}
+.plan-features-mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.feat-chip{background:#f1f5f9;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;color:var(--muted);}
+.plan-right{text-align:right;flex-shrink:0;}
+.plan-old-price{font-size:12px;text-decoration:line-through;color:#cbd5e1;display:block;}
+.plan-promo-price{font-family:'Sora';font-size:26px;font-weight:800;color:var(--blue-mid);}
+.plan-promo-price sup{font-size:14px;}
+.plan-duration{font-size:11px;color:var(--success);font-weight:600;background:rgba(6,214,160,.1);padding:2px 8px;border-radius:6px;display:inline-block;margin-top:3px;}
+.plan-select-ring{width:22px;height:22px;border-radius:50%;border:2px solid #cbd5e1;margin-left:12px;flex-shrink:0;transition:all .25s;display:flex;align-items:center;justify-content:center;}
+.plan-row.selected .plan-select-ring{background:var(--blue-bright);border-color:var(--blue-bright);}
+.plan-row.selected .plan-select-ring::after{content:'';width:8px;height:8px;background:white;border-radius:50%;}
+.no-plans-msg{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+/* EXTRAS */
+.extras-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.extra-row{background:white;border:1.5px solid #e2e8f0;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;}
+.extra-row.disabled{opacity:.4;pointer-events:none;filter:grayscale(1);}
+.extra-ico{width:40px;height:40px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.extra-ico i{color:var(--blue-bright);font-size:18px;}
+.extra-info{flex:1;}
+.extra-info strong{font-size:14px;font-weight:700;color:var(--text);display:block;}
+.extra-info span{font-size:12px;color:var(--muted);}
+.extra-price{font-size:14px;font-weight:700;color:var(--blue-mid);margin-right:12px;white-space:nowrap;}
+.counter{display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:4px 8px;}
+.btn-cnt{width:26px;height:26px;border:none;border-radius:7px;cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.btn-cnt.minus{background:#f1f5f9;color:var(--muted);}
+.btn-cnt.plus{background:var(--blue-bright);color:white;}
+.cnt-val{font-family:'Sora';font-weight:700;font-size:15px;width:22px;text-align:center;color:var(--text);}
+/* INPUTS */
+.field{margin-bottom:20px;}
+.field-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.field-label .opt{color:var(--muted);font-weight:400;font-size:11px;margin-left:4px;}
+.input-wrap{position:relative;}
+.field-input{width:100%;background:white;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 16px;font-family:'DM Sans';font-size:15px;color:var(--text);outline:none;transition:all .25s;-webkit-appearance:none;}
+.field-input::placeholder{color:#cbd5e1;}
+.field-input:focus{border-color:var(--blue-bright);box-shadow:0 0 0 4px rgba(0,119,182,.08);}
+.field-input.err{border-color:var(--error);background:#fff5f5;}
+.field-input.ok{border-color:var(--success);}
+.field-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+.field-ico.ok{color:var(--success);}
+.field-ico.err{color:var(--error);}
+.field-msg{font-size:12px;margin-top:5px;margin-left:4px;display:none;}
+.field-msg.show{display:block;}
+.field-msg.err{color:var(--error);}
+.field-msg.ok{color:var(--success);}
+select.field-input{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%2364748b' fill='none' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:480px){.field-grid{grid-template-columns:1fr;}}
+/* COBERTURA */
+.check-box{background:#f0f8ff;border:1.5px solid #bfdbfe;border-radius:16px;padding:20px;margin-top:20px;display:none;}
+.check-step-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;margin-bottom:8px;transition:all .3s;opacity:.4;}
+.check-step-row:last-child{margin-bottom:0;}
+.check-step-row.active{opacity:1;background:white;box-shadow:0 2px 8px rgba(0,119,182,.1);}
+.check-step-row.done{opacity:1;}
+.csr-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:var(--muted);transition:all .3s;}
+.check-step-row.active .csr-ico{background:var(--blue-bright);color:white;animation:pulse 1.2s infinite;}
+.check-step-row.done .csr-ico{background:var(--success);color:white;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,119,182,.4)}50%{box-shadow:0 0 0 8px rgba(0,119,182,0)}}
+.csr-text strong{font-size:13px;font-weight:700;color:var(--text);display:block;}
+.csr-text span{font-size:12px;color:var(--muted);}
+.coverage-ok{display:none;background:rgba(6,214,160,.08);border:1.5px solid var(--success);border-radius:12px;padding:14px 18px;margin-top:16px;align-items:center;gap:12px;}
+.coverage-ok i{color:var(--success);font-size:22px;flex-shrink:0;}
+.coverage-ok strong{font-size:14px;font-weight:700;color:var(--text);display:block;}
+.coverage-ok span{font-size:12px;color:var(--muted);}
+/* RESUMEN */
+.summary-box{background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-mid) 100%);border-radius:18px;padding:22px;margin-bottom:24px;color:white;}
+.summary-line{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:14px;}
+.summary-line:last-child{border-bottom:none;}
+.summary-line .sl-label{color:rgba(255,255,255,.7);}
+.summary-line .sl-val{font-weight:700;}
+.summary-total-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);}
+.summary-total-row .st-label{color:rgba(255,255,255,.8);font-size:13px;text-transform:uppercase;letter-spacing:.5px;}
+.summary-total-row .st-price{font-family:'Sora';font-size:32px;font-weight:800;color:white;}
+.summary-total-row .st-price sup{font-size:16px;}
+.summary-normal{display:flex;justify-content:flex-end;margin-top:4px;}
+.summary-normal span{font-size:12px;color:rgba(255,255,255,.5);}
+.summary-normal del{color:rgba(255,255,255,.4);}
+/* TÉRMINOS */
+.terms-check{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;background:#f8fafc;border-radius:12px;padding:14px;}
+.terms-check input[type=checkbox]{width:18px;height:18px;flex-shrink:0;accent-color:var(--blue-bright);margin-top:2px;cursor:pointer;}
+.terms-check label{font-size:13px;color:var(--muted);line-height:1.5;cursor:pointer;}
+.terms-check a{color:var(--blue-bright);text-decoration:none;font-weight:600;}
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--blue-mid) 0%,var(--blue-bright) 100%);color:white;border:none;border-radius:14px;padding:18px;font-family:'Sora';font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(0,86,179,.35);transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-submit:hover{transform:translateY(-2px);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+/* FOOTER */
+.footer-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-top:1px solid rgba(0,0,0,.08);box-shadow:0 -8px 32px rgba(0,0,0,.1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.footer-total{display:flex;flex-direction:column;}
+.footer-total-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.footer-total-price{font-family:'Sora';font-size:24px;font-weight:800;color:var(--blue-mid);line-height:1;}
+.footer-total-normal{font-size:11px;color:var(--muted);}
+.footer-total-normal del{color:#cbd5e1;}
+.footer-actions{display:flex;gap:10px;}
+.btn-back{background:white;border:1.5px solid #e2e8f0;color:var(--muted);padding:12px 20px;border-radius:12px;font-family:'Sora';font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;}
+.btn-back:hover{border-color:var(--blue-bright);color:var(--blue-bright);}
+.btn-fwd{background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;border:none;padding:12px 24px;border-radius:12px;font-family:'Sora';font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(0,86,179,.3);transition:all .2s;display:flex;align-items:center;gap:8px;}
+.btn-fwd:hover{transform:translateY(-1px);}
+.btn-fwd:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(0,18,51,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-card{background:white;border-radius:28px;padding:40px 32px;text-align:center;max-width:440px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.25);animation:popUp .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popUp{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-icon{width:80px;height:80px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.modal-icon.ok{background:rgba(6,214,160,.12);color:var(--success);}
+.modal-title{font-family:'Sora';font-size:24px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.modal-body{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px;}
+.modal-body strong{color:var(--text);}
+.modal-phone-tag{display:inline-block;background:#eff6ff;color:var(--blue-mid);font-family:'Sora';font-size:18px;font-weight:700;padding:8px 20px;border-radius:10px;margin:8px 0 16px;}
+.btn-modal-close{width:100%;background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;border:none;border-radius:14px;padding:16px;font-family:'Sora';font-size:15px;font-weight:700;cursor:pointer;}
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;z-index:300;background:white;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateX(120%);transition:transform .35s cubic-bezier(.22,1,.36,1);max-width:320px;border-left:4px solid var(--blue-bright);}
+.toast.err{border-left-color:var(--error);}
+.toast.ok{border-left-color:var(--success);}
+.toast.show{transform:translateX(0);}
+.toast i{font-size:18px;flex-shrink:0;}
+.toast.err i{color:var(--error);}
+.toast.ok i{color:var(--success);}
+.toast span{font-size:13px;color:var(--text);line-height:1.4;font-weight:500;}
+/* SPINNER */
+.spinner-overlay{position:absolute;inset:0;background:rgba(255,255,255,.9);display:none;align-items:center;justify-content:center;border-radius:28px;z-index:10;}
+.spinner-overlay.show{display:flex;}
+.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:var(--blue-bright);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.page-wrap{padding:20px 16px 160px;}.card-body,.card-top{padding:22px 20px;}.plan-speed{font-size:26px;}.plan-promo-price{font-size:22px;}.pack-grid{gap:8px;}.pack-btn{padding:14px 6px;}.pack-btn i{font-size:20px;}.pack-btn .pack-name{font-size:10px;}}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"><div class="bg-orb"></div><div class="bg-orb"></div></div>
+
+<!-- MODAL ÉXITO -->
+<div class="modal-bg" id="modalSuccess">
+  <div class="modal-card">
+    <div class="modal-icon ok"><i class="fa-solid fa-circle-check"></i></div>
+    <div class="modal-title">¡Solicitud Enviada! 🎉</div>
+    <div class="modal-body">
+      Tu contratación de fibra Entel ha sido recibida.<br><br>
+      Un ejecutivo te contactará al número<br>
+      <div class="modal-phone-tag" id="modalPhoneShow">+56 9 XXXX XXXX</div>
+      para coordinar la instalación.<br><br>
+      <strong>¡Bienvenido a Entel Fibra!</strong>
+    </div>
+    <button class="btn-modal-close" onclick="location.reload()"><i class="fa-solid fa-house"></i> Volver al inicio</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa-solid fa-info-circle"></i><span id="toastMsg"></span></div>
+
+<div class="page-wrap">
+
+  <div class="header">
+    <div class="logo-badge">
+      <div class="logo-dot"><i class="fa-solid fa-bolt"></i></div>
+      <span>Entel Fibra</span>
+    </div>
+    <div class="hero-title">Fibra óptica <em>al instante,</em><br>sin salir de casa</div>
+    <div class="hero-sub">Elige tu plan, confirma tu dirección y listo.<br>Te instalamos sin costo.</div>
+  </div>
+
+  <!-- ALERTA: link sin ejecutivo -->
+  <div class="link-error" id="linkError">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>Este link no tiene ejecutivo asignado. Solicita el link correcto a tu asesor Entel.</span>
+  </div>
+
+  <!-- PROGRESO -->
+  <div class="progress-wrap">
+    <div class="steps-row">
+      <div class="step-item active" id="dot1"><div class="step-circle">1</div><div class="step-label">Tu Plan</div></div>
+      <div class="step-item" id="dot2"><div class="step-circle">2</div><div class="step-label">Cobertura</div></div>
+      <div class="step-item" id="dot3"><div class="step-circle">3</div><div class="step-label">Tus Datos</div></div>
+    </div>
+  </div>
+
+  <!-- PASO 1: PLAN -->
+  <div class="wizard-card active" id="step1" style="position:relative;">
+    <div class="spinner-overlay" id="loader1"><div class="spinner"></div></div>
+    <div class="card-top">
+      <div class="card-eyebrow"><i class="fa-solid fa-bolt"></i> Paso 1 de 3</div>
+      <div class="card-title">¿Qué plan te conviene?</div>
+      <div class="card-sub">Elige el tipo de servicio y tu velocidad ideal</div>
+    </div>
+    <div class="card-body">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Tipo de servicio</div>
+      <div class="pack-grid">
+        <div class="pack-btn active" id="btn-net" onclick="setTipo('net')"><i class="fa-solid fa-wifi"></i><div class="pack-name">Solo Internet</div></div>
+        <div class="pack-btn" id="btn-tv" onclick="setTipo('tv')"><i class="fa-solid fa-tv"></i><div class="pack-name">Con TV</div></div>
+        <div class="pack-btn" id="btn-tel" onclick="setTipo('tel')"><i class="fa-solid fa-phone"></i><div class="pack-name">+ Teléfono</div></div>
+      </div>
+      <div id="tvWrapper" style="display:none;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Plan de TV</div>
+        <div class="tv-row" id="tvOptionsContainer"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Velocidad disponible</div>
+      <div class="plans-list" id="plansList"></div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Equipos opcionales</div>
+      <div class="extras-grid">
+        <div class="extra-row disabled" id="decoRow">
+          <div class="extra-ico"><i class="fa-solid fa-box-open"></i></div>
+          <div class="extra-info"><strong>Deco TV Adicional</strong><span id="decoHint">Activa un pack con TV para agregar</span></div>
+          <div class="extra-price" id="decoPrice">+$4.990</div>
+          <div class="counter">
+            <button class="btn-cnt minus" onclick="updateDeco(-1)">−</button>
+            <span class="cnt-val" id="cntDeco">0</span>
+            <button class="btn-cnt plus" onclick="updateDeco(1)">+</button>
+          </div>
+        </div>
+        <div class="extra-row">
+          <div class="extra-ico"><i class="fa-solid fa-wifi"></i></div>
+          <div class="extra-info"><strong>Extensor WiFi</strong><span>Amplía la señal a toda la casa</span></div>
+          <div class="extra-price" id="meshPrice">+$3.500</div>
+          <div class="counter">
+            <button class="btn-cnt minus" onclick="updateMesh(-1)">−</button>
+            <span class="cnt-val" id="cntMesh">0</span>
+            <button class="btn-cnt plus" onclick="updateMesh(1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2: COBERTURA -->
+  <div class="wizard-card" id="step2" style="position:relative;">
+    <div class="spinner-overlay" id="loader2"><div class="spinner"></div></div>
+    <div class="card-top">
+      <div class="card-eyebrow"><i class="fa-solid fa-map-pin"></i> Paso 2 de 3</div>
+      <div class="card-title">¿Llegamos a tu dirección?</div>
+      <div class="card-sub">Verificamos cobertura de fibra en tu zona</div>
+    </div>
+    <div class="card-body">
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Región</label>
+          <select class="field-input" id="regionSel" onchange="actualizarComunas()">
+            <option value="">Selecciona región</option>
+            <option>Arica y Parinacota</option><option>Tarapacá</option><option>Antofagasta</option>
+            <option>Atacama</option><option>Coquimbo</option><option>Valparaíso</option>
+            <option>Metropolitana</option><option>O'Higgins</option><option>Maule</option>
+            <option>Ñuble</option><option>Biobío</option><option>La Araucanía</option>
+            <option>Los Ríos</option><option>Los Lagos</option><option>Aysén</option><option>Magallanes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Comuna</label>
+          <select class="field-input" id="comunaSel" disabled><option value="">Primero elige región</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Calle y número</label>
+        <input type="text" class="field-input" id="calleInput" placeholder="Ej: Av. Libertad 1234">
+      </div>
+      <div class="field">
+        <label class="field-label">Departamento <span class="opt">(opcional)</span></label>
+        <input type="text" class="field-input" id="deptInput" placeholder="Ej: Depto 502 Torre B">
+      </div>
+      <div class="check-box" id="checkBox">
+        <div class="check-step-row" id="cs1"><div class="csr-ico"><i class="fa-solid fa-search"></i></div><div class="csr-text"><strong>Localizando dirección</strong><span>Buscando en nuestro sistema</span></div></div>
+        <div class="check-step-row" id="cs2"><div class="csr-ico"><i class="fa-solid fa-satellite-dish"></i></div><div class="csr-text"><strong>Verificando red de fibra</strong><span>Consultando cobertura en tu zona</span></div></div>
+        <div class="check-step-row" id="cs3"><div class="csr-ico"><i class="fa-solid fa-check"></i></div><div class="csr-text"><strong>¡Cobertura confirmada!</strong><span>Tu dirección tiene fibra disponible</span></div></div>
+      </div>
+      <div class="coverage-ok" id="coverageOk">
+        <i class="fa-solid fa-circle-check"></i>
+        <div><strong>¡Fibra disponible en tu dirección!</strong><span>Instalación y router WiFi incluidos sin costo.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3: DATOS -->
+  <div class="wizard-card" id="step3">
+    <div class="card-top">
+      <div class="card-eyebrow"><i class="fa-solid fa-rocket"></i> Paso 3 de 3</div>
+      <div class="card-title">Casi listo, ¡casi tuyo!</div>
+      <div class="card-sub">Revisa tu selección e ingresa tus datos de contacto</div>
+    </div>
+    <div class="card-body">
+      <div class="summary-box" id="summaryBox"></div>
+      <div class="field">
+        <label class="field-label">¿Cómo te llamas?</label>
+        <input type="text" class="field-input" id="nombreInput" placeholder="Tu nombre completo">
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">RUT</label>
+          <div class="input-wrap">
+            <input type="text" class="field-input" id="rutInput" placeholder="12.345.678-9" oninput="fmtRut(this);valRut(this)">
+            <span class="field-ico" id="rutIco"></span>
+          </div>
+          <div class="field-msg" id="rutMsg"></div>
+        </div>
+        <div class="field">
+          <label class="field-label">Teléfono</label>
+          <div class="input-wrap">
+            <input type="tel" class="field-input" id="telefonoInput" placeholder="9 1234 5678" oninput="fmtPhone(this);valPhone(this)">
+            <span class="field-ico" id="phoneIco"></span>
+          </div>
+          <div class="field-msg" id="phoneMsg"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Correo electrónico <span class="opt">(opcional)</span></label>
+        <input type="email" class="field-input" id="emailInput" placeholder="tucorreo@email.com">
+      </div>
+      <div class="terms-check">
+        <input type="checkbox" id="termsCheck">
+        <label for="termsCheck">Acepto los <a href="#" onclick="return false">Términos y Condiciones</a> y la <a href="#" onclick="return false">Política de Privacidad</a> de Entel. Autorizo el uso de mis datos para procesar esta contratación.</label>
+      </div>
+      <button class="btn-submit" id="btnSubmit" onclick="submitOrder()">
+        <i class="fa-solid fa-paper-plane"></i> Contratar ahora
+      </button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<div class="footer-bar" id="footerBar">
+  <div class="footer-total">
+    <div class="footer-total-label">Tu mensualidad</div>
+    <div class="footer-total-price">$<span id="ftTotal">0</span></div>
+    <div class="footer-total-normal">Precio normal: <del>$<span id="ftNormal">0</span></del></div>
+  </div>
+  <div class="footer-actions">
+    <button class="btn-back" id="btnBack" onclick="goBack()" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="btn-fwd" id="btnFwd" onclick="goNext()">Continuar <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  ① CONFIGURACIÓN — REEMPLAZA SOLO LA URL DEL GS
+// ═══════════════════════════════════════════════════
+const GS_URL = "https://script.google.com/macros/s/AKfycbz4MWEVhL0At60SlEeMmuCtdK3bCsaW21jIfOGSgJ_bDQtg8EwhsY-jposl1zmvKTN7/exec";
+
+// WA de respaldo si el GS no devuelve teléfono del ejecutivo
+const WA_FALLBACK = "56933750669";
+
+// ═══════════════════════════════════════════════════
+//  ② LEER EJECUTIVO DESDE LA URL
+//  Link del ejecutivo: https://tudominio.com/entel-fibra-cliente.html?exec=juan.perez
+//  El código debe coincidir EXACTAMENTE con la columna
+//  "ejecutivo" de tu hoja "Solicitudes" en el GS
+// ═══════════════════════════════════════════════════
+const EXEC_CODE = new URLSearchParams(window.location.search).get('exec') || '';
+
+// ═══════════════════════════════════════════════════
+//  DATOS FALLBACK
+// ═══════════════════════════════════════════════════
+let PLANS = [
+  {id:1,name:"Fibra 600", speed:"600",unit:"Megas",tag:"Más Económico", promoDuration:"x 12 meses",features:["Simetría total","WiFi Dual Band","Instalación gratis"]},
+  {id:2,name:"Fibra 800", speed:"800",unit:"Megas",tag:"Estándar",      promoDuration:"x 12 meses",features:["Alta velocidad","Router WiFi 6","Soporte prioritario"]},
+  {id:3,name:"Fibra Giga",speed:"940",unit:"Megas",tag:"Más Vendido",   promoDuration:"x 12 meses",features:["Máxima potencia","Asistencia full","Ideal gaming/4K"]},
+  {id:4,name:"Fibra 2 Gb",speed:"2",  unit:"Gigas",tag:"Ultra Pro",     promoDuration:"x 12 meses",features:["2 Gbps simétrico","Mesh WiFi 6E","Para toda la familia"]}
+];
+const PM_DEFAULT = {
+  "600": {net:{none:{promo:17990,normal:22990}},tv:{lite:{promo:28990,normal:40990},full:{promo:34990,normal:49490}},tel:{full:{promo:37990,normal:54490}}},
+  "800": {net:{none:{promo:18990,normal:25990}},tv:{lite:{promo:29990,normal:43990},full:{promo:35990,normal:52490}},tel:{full:{promo:38990,normal:57490}}},
+  "giga":{net:{none:{promo:22990,normal:33990}},tv:{lite:{promo:33990,normal:51990},full:{promo:39990,normal:60490}},tel:{full:{promo:40990,normal:65490}}},
+  "2g":  {net:{none:{promo:29990,normal:39990}},tv:{full:{promo:55990,normal:66490}},tel:{full:{promo:60990,normal:71490}}}
+};
+const PLAN_KEY = {1:"600",2:"800",3:"giga",4:"2g"};
+let TV_OPT = [{id:"lite",name:"TV Lite+",description:"60+ Canales"},{id:"full",name:"TV Full+",description:"130+ Canales HD"}];
+let PRICES = {mesh:3500,deco:4990};
+let PRICE_MAP = JSON.parse(JSON.stringify(PM_DEFAULT));
+
+const COMUNAS = {
+  "Arica y Parinacota":["Arica","Camarones","Putre","General Lagos"],
+  "Tarapacá":["Iquique","Alto Hospicio","Pozo Almonte","Huara","Pica"],
+  "Antofagasta":["Antofagasta","Calama","Tocopilla","Mejillones","San Pedro de Atacama","Taltal"],
+  "Atacama":["Copiapó","Vallenar","Caldera","Chañaral","Diego de Almagro","Freirina","Huasco"],
+  "Coquimbo":["La Serena","Coquimbo","Ovalle","Illapel","Vicuña","Los Vilos","Salamanca"],
+  "Valparaíso":["Valparaíso","Viña del Mar","Concón","Quilpué","Villa Alemana","Limache","Olmué","Quillota","La Calera","San Antonio","San Felipe","Los Andes","Cartagena","Casablanca","Quintero"],
+  "Metropolitana":["Santiago","Las Condes","Providencia","La Florida","Maipú","Ñuñoa","Pudahuel","Peñalolén","Lo Barnechea","Vitacura","Puente Alto","San Bernardo","Melipilla","Talagante","La Reina","Macul","Recoleta","Independencia","Cerrillos","Huechuraba"],
+  "O'Higgins":["Rancagua","San Fernando","Machalí","Rengo","Santa Cruz","Pichilemu"],
+  "Maule":["Talca","Curicó","Linares","Constitución","Parral","San Javier"],
+  "Ñuble":["Chillán","Chillán Viejo","Bulnes","San Carlos"],
+  "Biobío":["Concepción","Talcahuano","Los Ángeles","Coronel","San Pedro de la Paz","Chiguayante","Hualpén","Lota"],
+  "La Araucanía":["Temuco","Padre Las Casas","Villarrica","Pucón","Angol"],
+  "Los Ríos":["Valdivia","La Unión","Panguipulli"],
+  "Los Lagos":["Puerto Montt","Puerto Varas","Osorno","Castro","Ancud"],
+  "Aysén":["Coyhaique","Aysén","Cochrane"],
+  "Magallanes":["Punta Arenas","Natales","Torres del Paine"]
+};
+
+let S = {step:1,tipo:'net',tvIdx:0,planId:null,mesh:0,deco:0,total:0,totalNormal:0};
+let execWaPhone = WA_FALLBACK; // se sobrescribe si el GS retorna teléfono
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!EXEC_CODE) document.getElementById('linkError').classList.add('show');
+  await loadConfig();
+});
+
+async function loadConfig() {
+  try {
+    // Manda el exec al GS; el GS puede buscar el teléfono del ejecutivo
+    // y retornarlo junto con la configuración de planes
+    const r = await fetch(GS_URL + '?action=config&exec=' + encodeURIComponent(EXEC_CODE) + '&t=' + Date.now());
+    const d = await r.json();
+    if (d.status === 'success') {
+      if (d.planes?.length)    PLANS     = d.planes;
+      if (d.tvOptions?.length) TV_OPT    = d.tvOptions;
+      if (d.priceMap)          PRICE_MAP = d.priceMap;
+      if (d.prices)            PRICES    = d.prices;
+      // Si el GS retorna el teléfono del ejecutivo, úsalo para WA
+      if (d.ejecutivoPhone)    execWaPhone = d.ejecutivoPhone;
+    }
+  } catch(e) { console.warn('Usando datos locales.'); }
+  document.getElementById('decoPrice').innerText = '+$' + PRICES.deco.toLocaleString('es-CL');
+  document.getElementById('meshPrice').innerText = '+$' + PRICES.mesh.toLocaleString('es-CL');
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════
+//  LÓGICA PRECIOS
+// ═══════════════════════════════════════════════════
+function tvKey(){ return S.tipo==='net'?'none':S.tipo==='tel'?'full':TV_OPT[S.tvIdx]?.id||'full'; }
+function getPrice(pid){ const k=PLAN_KEY[pid]; return PRICE_MAP[k]?.[S.tipo]?.[tvKey()]||null; }
+function availPlans(){ return PLANS.filter(p=>getPrice(p.id)); }
+function renderAll(){ renderTipo();renderTvOpts();renderPlans();calcTotal(); }
+
+function renderTipo(){
+  ['net','tv','tel'].forEach(t=>{ document.getElementById('btn-'+t).className='pack-btn'+(S.tipo===t?' active':''); });
+  document.getElementById('tvWrapper').style.display = S.tipo==='tv'?'block':'none';
+  const hasDeco = S.tipo==='tv'||S.tipo==='tel';
+  const dr = document.getElementById('decoRow');
+  if(hasDeco){
+    dr.classList.remove('disabled');
+    document.getElementById('decoHint').innerText='Pantalla adicional en tu hogar';
+  } else {
+    dr.classList.add('disabled');
+    document.getElementById('decoHint').innerText='Activa un pack con TV para agregar';
+    S.deco=0; document.getElementById('cntDeco').innerText='0';
+  }
+}
+function setTipo(t){ S.tipo=t;S.planId=null;renderTipo();renderTvOpts();renderPlans();calcTotal(); }
+
+function renderTvOpts(){
+  const c=document.getElementById('tvOptionsContainer'); c.innerHTML='';
+  TV_OPT.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='tv-opt'+(i===S.tvIdx?' active':'');
+    d.onclick=()=>{ S.tvIdx=i;S.planId=null;renderTvOpts();renderPlans();calcTotal(); };
+    d.innerHTML=`<div class="tv-name">${t.name}</div><div class="tv-desc">${t.description||''}</div>`;
+    c.appendChild(d);
+  });
+}
+
+function renderPlans(){
+  const c=document.getElementById('plansList');
+  const avail=availPlans();
+  if(!avail.length){ c.innerHTML='<div class="no-plans-msg"><i class="fa-solid fa-info-circle"></i> Sin planes para esta combinación</div>'; return; }
+  c.innerHTML='';
+  avail.forEach(p=>{
+    const pr=getPrice(p.id);
+    const div=document.createElement('div');
+    div.className='plan-row'+(S.planId===p.id?' selected':'')+(p.tag==='Más Vendido'?' featured':'');
+    div.onclick=()=>{ S.planId=p.id;renderPlans();calcTotal(); };
+    const chips=(p.features||[]).slice(0,3).map(f=>`<span class="feat-chip">${f}</span>`).join('');
+    div.innerHTML=`
+      ${p.tag?`<div class="plan-badge">${p.tag}</div>`:''}
+      <div class="plan-left">
+        <div class="plan-speed-row"><div class="plan-speed">${p.speed}</div><div class="plan-speed-unit">${p.unit||'Megas'}</div></div>
+        <div class="plan-name-label">${p.name} · Fibra Óptica</div>
+        <div class="plan-features-mini">${chips}</div>
+      </div>
+      <div class="plan-right">
+        <span class="plan-old-price">$${pr.normal.toLocaleString('es-CL')}</span>
+        <div class="plan-promo-price"><sup>$</sup>${pr.promo.toLocaleString('es-CL')}</div>
+        <span class="plan-duration">${p.promoDuration||'x 12 meses'}</span>
+      </div>
+      <div class="plan-select-ring"></div>`;
+    c.appendChild(div);
+  });
+}
+
+function updateDeco(d){ const v=S.deco+d; if(v>=0&&v<=5){S.deco=v;document.getElementById('cntDeco').innerText=v;calcTotal();} }
+function updateMesh(d){ const v=S.mesh+d; if(v>=0&&v<=5){S.mesh=v;document.getElementById('cntMesh').innerText=v;calcTotal();} }
+
+function calcTotal(){
+  let t=0,n=0;
+  if(S.planId){const pr=getPrice(S.planId);if(pr){t+=pr.promo;n+=pr.normal;}}
+  t+=S.mesh*PRICES.mesh;n+=S.mesh*PRICES.mesh;
+  t+=S.deco*PRICES.deco;n+=S.deco*PRICES.deco;
+  S.total=t;S.totalNormal=n;
+  document.getElementById('ftTotal').innerText=t.toLocaleString('es-CL');
+  document.getElementById('ftNormal').innerText=n.toLocaleString('es-CL');
+}
+
+function actualizarComunas(){
+  const r=document.getElementById('regionSel').value;
+  const s=document.getElementById('comunaSel');
+  s.innerHTML='<option value="">Selecciona comuna</option>';
+  s.disabled=!r;
+  if(r&&COMUNAS[r]) COMUNAS[r].sort().forEach(c=>{ const o=document.createElement('option');o.value=c;o.innerText=c;s.appendChild(o); });
+}
+
+// VALIDACIONES
+function fmtRut(el){
+  let v=el.value.replace(/[^0-9kK]/g,'');
+  if(v.length>1) v=v.slice(0,-1)+'-'+v.slice(-1);
+  if(v.length>5) v=v.slice(0,-5)+'.'+v.slice(-5);
+  if(v.length>9) v=v.slice(0,-9)+'.'+v.slice(-9);
+  el.value=v;
+}
+function valRut(el){
+  let v=el.value.replace(/\./g,'').replace(/-/g,'');
+  const ico=document.getElementById('rutIco'),msg=document.getElementById('rutMsg');
+  if(v.length<8){ico.className='field-ico';ico.innerHTML='';hideMsg(msg);el.classList.remove('err','ok');return false;}
+  const body=v.slice(0,-1),dv=v.slice(-1).toUpperCase();
+  if(!/^\d+$/.test(body)){setField(el,ico,msg,false,'RUT inválido');return false;}
+  let sum=0,mul=2;
+  for(let i=body.length-1;i>=0;i--){sum+=parseInt(body[i])*mul;mul=(mul+1)%8||2;}
+  let c=11-(sum%11);if(c===11)c='0';else if(c===10)c='K';else c=c.toString();
+  const ok=dv===c;
+  setField(el,ico,msg,ok,ok?'RUT válido':'RUT inválido');
+  return ok;
+}
+function fmtPhone(el){
+  let v=el.value.replace(/\D/g,'').slice(0,9);
+  if(v.length>5) el.value=v[0]+' '+v.slice(1,5)+' '+v.slice(5);
+  else if(v.length>1) el.value=v.slice(0,4)+' '+v.slice(4);
+  else el.value=v;
+}
+function valPhone(el){
+  const ico=document.getElementById('phoneIco'),msg=document.getElementById('phoneMsg');
+  let v=el.value.replace(/\D/g,'');
+  if(v.startsWith('56'))v=v.slice(2);
+  if(!v.length){setField(el,ico,msg,null,'');return false;}
+  const ok=/^9\d{8}$/.test(v);
+  setField(el,ico,msg,ok,ok?'OK':'Ingresa 9 dígitos (9 XXXX XXXX)');
+  return ok;
+}
+function setField(el,ico,msg,ok,txt){
+  if(ok===null){el.classList.remove('err','ok');ico.className='field-ico';ico.innerHTML='';hideMsg(msg);return;}
+  if(ok){el.classList.remove('err');el.classList.add('ok');ico.className='field-ico ok';ico.innerHTML='<i class="fa-solid fa-check-circle"></i>';showMsg(msg,txt,'ok');}
+  else{el.classList.remove('ok');el.classList.add('err');ico.className='field-ico err';ico.innerHTML='<i class="fa-solid fa-times-circle"></i>';showMsg(msg,txt,'err');}
+}
+function showMsg(el,txt,cls){el.innerText=txt;el.className='field-msg show '+cls;}
+function hideMsg(el){el.className='field-msg';}
+
+// NAVEGACIÓN
+function goNext(){
+  if(S.step===1){
+    if(!S.planId){toast('Elige tu velocidad antes de continuar','err');return;}
+    S.step=2;updateUI();
+  } else if(S.step===2){ runFeasibility(); }
+}
+function goBack(){ if(S.step>1){S.step--;updateUI();} }
+
+function runFeasibility(){
+  const region=document.getElementById('regionSel').value;
+  const comuna=document.getElementById('comunaSel').value;
+  const calle=document.getElementById('calleInput').value.trim();
+  if(!region){toast('Selecciona tu región','err');return;}
+  if(!comuna){toast('Selecciona tu comuna','err');return;}
+  if(calle.length<4){toast('Ingresa tu calle y número','err');return;}
+  document.getElementById('btnFwd').disabled=true;
+  document.getElementById('checkBox').style.display='block';
+  document.getElementById('coverageOk').style.display='none';
+  ['cs1','cs2','cs3'].forEach(id=>{ const el=document.getElementById(id);el.classList.remove('active','done'); });
+  let cur=1;
+  const iv=setInterval(()=>{
+    if(cur<=3){
+      document.getElementById('cs'+cur).classList.add('active');
+      if(cur>1){const p=document.getElementById('cs'+(cur-1));p.classList.remove('active');p.classList.add('done');}
+      cur++;
+    } else {
+      clearInterval(iv);
+      document.getElementById('cs3').classList.remove('active');document.getElementById('cs3').classList.add('done');
+      document.getElementById('coverageOk').style.display='flex';
+      setTimeout(()=>{ S.step=3;updateUI();document.getElementById('btnFwd').disabled=false; },1400);
+    }
+  },1400);
+}
+
+function updateUI(){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).className='wizard-card'+(S.step===i?' active':'');
+    const dot=document.getElementById('dot'+i);
+    dot.className='step-item';
+    if(i<S.step) dot.classList.add('done');
+    if(i===S.step) dot.classList.add('active');
+    dot.querySelector('.step-circle').innerHTML = i<S.step?'<i class="fa-solid fa-check" style="font-size:12px;"></i>':i;
+  });
+  document.getElementById('btnBack').style.display=S.step>1?'block':'none';
+  document.getElementById('btnFwd').style.display=S.step===3?'none':'flex';
+  if(S.step===3) renderSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderSummary(){
+  const plan=PLANS.find(p=>p.id===S.planId);
+  if(!plan) return;
+  const pr=getPrice(plan.id);
+  const tipoLabel=S.tipo==='net'?'Solo Internet':S.tipo==='tel'?'Internet + TV Full+ + Teléfono':`Internet + TV ${TV_OPT[S.tvIdx]?.name||''}`;
+  const region=document.getElementById('regionSel').value;
+  const comuna=document.getElementById('comunaSel').value;
+  const calle=document.getElementById('calleInput').value.trim();
+  const dept=document.getElementById('deptInput').value;
+  let html=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:14px;">Resumen de tu contratación</div>
+    <div class="summary-line"><span class="sl-label">${plan.name} — ${tipoLabel}</span><span class="sl-val">$${pr.promo.toLocaleString('es-CL')}</span></div>`;
+  if(S.deco>0) html+=`<div class="summary-line"><span class="sl-label">${S.deco}× Deco TV Adicional</span><span class="sl-val">$${(S.deco*PRICES.deco).toLocaleString('es-CL')}</span></div>`;
+  if(S.mesh>0) html+=`<div class="summary-line"><span class="sl-label">${S.mesh}× Extensor WiFi</span><span class="sl-val">$${(S.mesh*PRICES.mesh).toLocaleString('es-CL')}</span></div>`;
+  html+=`<div class="summary-line"><span class="sl-label"><i class="fa-solid fa-map-pin" style="margin-right:6px;"></i>Dirección</span><span class="sl-val" style="font-size:13px;text-align:right;max-width:60%;">${calle}${dept?' '+dept:''}, ${comuna}, ${region}</span></div>
+    <div class="summary-total-row"><div class="st-label">Tu mensualidad</div><div class="st-price"><sup>$</sup>${S.total.toLocaleString('es-CL')}</div></div>
+    <div class="summary-normal"><span>Precio normal: <del>$${S.totalNormal.toLocaleString('es-CL')}</del></span></div>`;
+  document.getElementById('summaryBox').innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════
+//  ENVÍO AL GS — usa los mismos campos de tu GS existente
+//  El campo "ejecutivo" se toma del código URL (?exec=)
+// ═══════════════════════════════════════════════════
+async function submitOrder(){
+  const nombre=document.getElementById('nombreInput').value.trim();
+  const rut=document.getElementById('rutInput').value.trim();
+  const telefono=document.getElementById('telefonoInput').value.trim();
+  const email=document.getElementById('emailInput').value.trim();
+  const terms=document.getElementById('termsCheck').checked;
+
+  if(nombre.length<3){toast('Ingresa tu nombre completo','err');return;}
+  if(!valRut(document.getElementById('rutInput'))){toast('Verifica tu RUT','err');return;}
+  if(!valPhone(document.getElementById('telefonoInput'))){toast('Teléfono inválido (9 XXXX XXXX)','err');return;}
+  if(!terms){toast('Acepta los términos para continuar','err');return;}
+
+  const plan=PLANS.find(p=>p.id===S.planId);
+  const pr=getPrice(plan.id);
+  const tipoLabel=S.tipo==='net'?'Solo Internet':S.tipo==='tel'?'Internet + TV Full+ + Teléfono':`Internet + TV ${TV_OPT[S.tvIdx]?.name||''}`;
+  const region=document.getElementById('regionSel').value;
+  const comuna=document.getElementById('comunaSel').value;
+  const calle=document.getElementById('calleInput').value.trim();
+  const dept=document.getElementById('deptInput').value.trim();
+  const dirFull=calle+(dept?' '+dept:'')+', '+comuna+', '+region;
+
+  // ─── Estructura exacta que espera tu handleFormSubmission ───
+  const payload = {
+    data: {
+      timestamp:      new Date().toLocaleString('es-CL'),
+      empresa:        'Entel',
+      serie:          'ENTEL-' + Date.now(),
+      nombre:         nombre,
+      rut:            rut,
+      "teléfono":     telefono,
+      correo:         email || '-',
+      "dirección":    dirFull,
+      comuna:         comuna,
+      "región":       region,
+      planContratado: plan.name + ' — ' + tipoLabel,
+      decos:          S.deco,
+      extensores:     S.mesh,
+      total:          S.total,
+      totalNormal:    S.totalNormal,
+      // ╔══════════════════════════════════════╗
+      // ║  EJECUTIVO → viene de la URL ?exec=  ║
+      // ║  Ej: ?exec=juan.perez               ║
+      // ╚══════════════════════════════════════╝
+      ejecutivo:      EXEC_CODE || 'sin-ejecutivo',
+      supervisor:     '-',
+      observaciones:  'Autocontratación web | Ext:' + S.mesh + ' Deco:' + S.deco,
+      obsback:        'Pendiente'
+    }
+  };
+
+  const btn=document.getElementById('btnSubmit');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+  // 1️⃣ Guardar en Google Sheets
+  try {
+    await fetch(GS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
+    });
+  } catch(e){ console.warn('GS error:',e); }
+
+  // 2️⃣ WhatsApp al ejecutivo
+  const waMsg=buildWAMessage(payload.data);
+  const waURL=`https://wa.me/${execWaPhone}?text=${encodeURIComponent(waMsg)}`;
+  setTimeout(()=>{ window.open(waURL,'_blank'); },600);
+
+  // 3️⃣ Modal éxito
+  document.getElementById('modalPhoneShow').innerText=telefono;
+  document.getElementById('modalSuccess').classList.add('open');
+}
+
+function buildWAMessage(d){
+  return `🔵 *NUEVA SOLICITUD ENTEL FIBRA*
+━━━━━━━━━━━━━━━━━━━━━━
+📋 *DATOS DEL CLIENTE*
+👤 Nombre:   ${d.nombre}
+🪪 RUT:      ${d.rut}
+📱 Teléfono: ${d['teléfono']}
+📧 Correo:   ${d.correo}
+━━━━━━━━━━━━━━━━━━━━━━
+📍 *DIRECCIÓN DE INSTALACIÓN*
+🏠 ${d['dirección']}
+━━━━━━━━━━━━━━━━━━━━━━
+📦 *SERVICIO CONTRATADO*
+⚡ Plan: ${d.planContratado}
+📡 Extensores WiFi: ${d.extensores}
+📺 Decos adicionales: ${d.decos}
+━━━━━━━━━━━━━━━━━━━━━━
+💰 *PRECIO*
+🏷️ Mensualidad oferta: $${Number(d.total).toLocaleString('es-CL')}
+💵 Precio normal:      $${Number(d.totalNormal).toLocaleString('es-CL')}
+━━━━━━━━━━━━━━━━━━━━━━
+🧑‍💼 Ejecutivo: *${d.ejecutivo}*
+📅 ${d.timestamp}
+🌐 Autocontratación Web ✅`;
+}
+
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  const ic=type==='err'?'fa-circle-xmark':type==='ok'?'fa-circle-check':'fa-circle-info';
+  el.className=`toast ${type==='err'?'err':type==='ok'?'ok':''}`;
+  el.innerHTML=`<i class="fa-solid ${ic}"></i><span>${msg}</span>`;
+  setTimeout(()=>el.classList.add('show'),50);
+  setTimeout(()=>el.classList.remove('show'),4000);
+}
+</script>
+</body>
+</html>
