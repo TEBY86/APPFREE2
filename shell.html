@@ -703,10 +703,9 @@ let usuarioIdGlobal = "";
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
 
-  <!-- React + ReactDOM UMD (producción) -->
+  <!-- React + ReactDOM UMD -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Babel standalone para transformar JSX en el navegador -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
@@ -719,7 +718,6 @@ let usuarioIdGlobal = "";
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
-    /* ── Animaciones globales ────────────────────────────── */
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
       to   { transform: translateY(0);    opacity: 1; }
@@ -746,7 +744,6 @@ let usuarioIdGlobal = "";
     }
     .dragging-active * { user-select: none !important; }
 
-    /* ── Utilidades Tailwind-like necesarias ─────────────── */
     .fixed    { position: fixed; }
     .absolute { position: absolute; }
     .relative { position: relative; }
@@ -787,8 +784,6 @@ let usuarioIdGlobal = "";
     .transition-all { transition: all 0.15s ease; }
     .transition-colors { transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease; }
     .transition-transform { transition: transform 0.15s ease; }
-    .translate-x-neg1 { transform: translateX(-1px); }
-    .translate-y-1    { transform: translateY(1px); }
     .border   { border-width: 1px; border-style: solid; }
     .border-t { border-top-width: 1px; border-top-style: solid; }
     .rounded-full { border-radius: 9999px; }
@@ -997,7 +992,6 @@ let usuarioIdGlobal = "";
     }
     #fw-modal-overlay.active { display: flex; opacity: 1; pointer-events: auto; }
 
-    /* Botón cerrar */
     #fw-close-btn {
       position: absolute; top: 25px; right: 25px;
       background: rgba(255,255,255,0.1); border: 1px solid var(--border);
@@ -1009,7 +1003,7 @@ let usuarioIdGlobal = "";
 
     .fw-app-container {
       position: relative; background: var(--surface);
-      width: 92%; max-width: 440px; max-height: 90vh;
+      width: 92%; max-width: 480px; max-height: 90vh;
       padding: 35px; border: 1px solid var(--border);
       border-radius: 28px; box-shadow: 0 32px 80px rgba(0,0,0,0.8);
       overflow-y: auto; color: var(--text); font-family: 'DM Sans', sans-serif;
@@ -1033,6 +1027,143 @@ let usuarioIdGlobal = "";
     .fw-tab-btn { flex: 1; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; color: var(--text-2); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .fw-tab-btn.active { background: var(--primary-gradient); color: #fff; border-color: transparent; box-shadow: 0 4px 15px rgba(209,47,211,0.2); }
     .fw-tab-btn:hover:not(.active) { border-color: var(--border-hover); color: #fff; background: rgba(255,255,255,0.05); }
+
+    /* ── CAMPOS SEPARADOS: estilos nuevos ────────────────── */
+    .fw-fields-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fw-fields-row {
+      display: flex;
+      gap: 10px;
+    }
+    .fw-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+    .fw-field-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-left: 4px;
+    }
+    .fw-field-required {
+      color: var(--primary);
+      margin-left: 2px;
+    }
+    .fw-field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .fw-field-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+    .fw-field-input {
+      width: 100%;
+      padding: 14px 14px 14px 40px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .fw-field-input::placeholder { color: var(--text-3); }
+    .fw-field-input:focus {
+      border-color: var(--primary);
+      background: #1d1930;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .fw-field-input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 2px rgba(255,75,129,0.15);
+    }
+    .fw-field-input.ok {
+      border-color: rgba(0,242,152,0.35);
+    }
+    /* Select igual al input */
+    .fw-field-select {
+      width: 100%;
+      padding: 14px 14px 14px 40px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      transition: all 0.3s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .fw-field-select:focus {
+      border-color: var(--primary);
+      background: #1d1930;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .fw-field-select option {
+      background: #1a1629;
+      color: white;
+    }
+    /* Chevron del select */
+    .fw-select-arrow {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--text-3);
+    }
+    /* Preview de dirección armada */
+    .fw-dir-preview {
+      background: rgba(209,47,211,0.06);
+      border: 1px solid rgba(209,47,211,0.2);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      transition: all 0.3s;
+    }
+    .fw-dir-preview .preview-label {
+      color: var(--text-3);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .fw-dir-preview .preview-value {
+      color: #d1a6ff;
+      font-weight: 500;
+    }
+    /* Tooltip de error */
+    .fw-field-error-msg {
+      font-size: 0.7rem;
+      color: var(--error);
+      padding-left: 4px;
+      animation: fwFadeIn 0.2s ease;
+    }
+
+    /* ── FIN campos separados ────────────────────────────── */
 
     .fw-input-row { display: flex; flex-direction: column; gap: 15px; }
     .fw-input-wrap { position: relative; }
@@ -1120,6 +1251,7 @@ let usuarioIdGlobal = "";
         border-radius: 0; border: none; padding: 25px;
       }
       #fw-close-btn { top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; }
+      .fw-fields-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -1132,6 +1264,27 @@ let usuarioIdGlobal = "";
     /* ── Configuración ─────────────────────────────────────── */
     const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbyFQrjcC_LLuDTzdvh_ERtODENeSiwv1N0ATBnq7Qenkb3SK8eHlMWkLcMaZligaluxIw/exec";
     const SERVER_BASE = "https://botintegrar-production.up.railway.app";
+
+    /* ── Regiones de Chile ─────────────────────────────────── */
+    const REGIONES_CHILE = [
+      { value: "", label: "Región" },
+      { value: "arica-parinacota",  label: "Arica y Parinacota" },
+      { value: "tarapaca",          label: "Tarapacá" },
+      { value: "antofagasta",       label: "Antofagasta" },
+      { value: "atacama",           label: "Atacama" },
+      { value: "coquimbo",          label: "Coquimbo" },
+      { value: "valparaiso",        label: "Valparaíso" },
+      { value: "metropolitana",     label: "Metropolitana" },
+      { value: "ohiggins",          label: "O'Higgins" },
+      { value: "maule",             label: "Maule" },
+      { value: "nuble",             label: "Ñuble" },
+      { value: "biobio",            label: "Biobío" },
+      { value: "araucania",         label: "Araucanía" },
+      { value: "rios",              label: "Los Ríos" },
+      { value: "lagos",             label: "Los Lagos" },
+      { value: "aysen",             label: "Aysén" },
+      { value: "magallanes",        label: "Magallanes" },
+    ];
 
     /* ── API helper ────────────────────────────────────────── */
     const api = {
@@ -1168,7 +1321,15 @@ let usuarioIdGlobal = "";
       /* ── Factibilidad ────────────────────────────────────── */
       const [showFactibilidadModal,  setShowFactibilidadModal]  = useState(false);
       const [factMode,               setFactMode]               = useState("direccion");
-      const [direccionInput,         setDireccionInput]         = useState("");
+
+      /* ── Campos separados para dirección ─────────────────── */
+      const [campoCalle,   setCampoCalle]   = useState("");
+      const [campoNumero,  setCampoNumero]  = useState("");
+      const [campoComuna,  setCampoComuna]  = useState("");
+      const [campoRegion,  setCampoRegion]  = useState("");
+      const [campoDepto,   setCampoDepto]   = useState("");
+      const [campoErrors,  setCampoErrors]  = useState({});
+
       const [rutInput,               setRutInput]               = useState("");
       const [isLoadingFact,          setIsLoadingFact]          = useState(false);
       const [factLogs,               setFactLogs]               = useState([]);
@@ -1177,16 +1338,32 @@ let usuarioIdGlobal = "";
       const [rutBtnDisabled,         setRutBtnDisabled]         = useState(false);
       const [showCustomPrompt,       setShowCustomPrompt]       = useState(false);
 
-
-        const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem("freework_user_id") || "No definido");
-  const [editandoId, setEditandoId] = useState(false);
-  const [nuevoIdTemp, setNuevoIdTemp] = useState("");
-
-
+      const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem("freework_user_id") || "No definido");
+      const [editandoId, setEditandoId] = useState(false);
+      const [nuevoIdTemp, setNuevoIdTemp] = useState("");
 
       const [customPromptInput,      setCustomPromptInput]      = useState("");
       const pendingActionRef = useRef(null);
       const logStreamRef     = useRef(null);
+
+      /* ── Dirección preview ───────────────────────────────── */
+      const dirPreview = useMemo(() => {
+        const parts = [];
+        if (campoCalle)  parts.push(campoCalle.trim());
+        if (campoNumero) parts.push(campoNumero.trim());
+        if (campoDepto)  parts.push(`Depto ${campoDepto.trim()}`);
+        if (campoComuna) parts.push(campoComuna.trim());
+        if (campoRegion) {
+          const reg = REGIONES_CHILE.find(r => r.value === campoRegion);
+          if (reg && reg.value) parts.push(reg.label);
+        }
+        return parts.join(", ");
+      }, [campoCalle, campoNumero, campoDepto, campoComuna, campoRegion]);
+
+      /* Auto-scroll logs */
+      useEffect(() => {
+        if (logStreamRef.current) logStreamRef.current.scrollTop = logStreamRef.current.scrollHeight;
+      }, [factLogs]);
 
       /* ── Arrastre ────────────────────────────────────────── */
       const [pos,        setPos]        = useState(null);
@@ -1194,12 +1371,6 @@ let usuarioIdGlobal = "";
       const widgetRef = useRef(null);
       const dragRef   = useRef({ startX:0, startY:0, initialRight:0, initialBottom:0, isDragMove:false });
 
-      /* Auto-scroll logs */
-      useEffect(() => {
-        if (logStreamRef.current) logStreamRef.current.scrollTop = logStreamRef.current.scrollHeight;
-      }, [factLogs]);
-
-      /* ── Arrastre: inicio ────────────────────────────────── */
       const handleDragStart = (e) => {
         if (e.type.includes("mouse") && e.button !== 0) return;
         if (e.target.closest("button") && !e.target.closest(".drag-handle")) return;
@@ -1245,7 +1416,6 @@ let usuarioIdGlobal = "";
         };
       }, [isDragging]);
 
-      /* ── Toggle abrir/cerrar ─────────────────────────────── */
       const toggleOpen = (e) => {
         if (dragRef.current?.isDragMove) { e.preventDefault(); e.stopPropagation(); return; }
         if (!isOpen && !showMenu) {
@@ -1256,7 +1426,6 @@ let usuarioIdGlobal = "";
         }
       };
 
-      /* ── Reajuste de posición ────────────────────────────── */
       useEffect(() => {
         if (isOpen || showMenu) {
           const adjustPos = () => {
@@ -1290,7 +1459,6 @@ let usuarioIdGlobal = "";
         }
       }, [isOpen, showMenu]);
 
-      /* ── Detección usuario logueado ──────────────────────── */
       const getEliteUser = () => {
         try {
           const params = new URLSearchParams(window.location.search);
@@ -1349,7 +1517,6 @@ let usuarioIdGlobal = "";
       useEffect(() => { if (isOpen || showMenu) setHasUnread(false); }, [isOpen, showMenu]);
       useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior:"smooth" }); }, [myMessages, isOpen]);
 
-      /* ── Registro + Onboarding ───────────────────────────── */
       const handleRegister = () => {
         if (!clientName.trim()) return;
         setIsRegistered(true);
@@ -1366,7 +1533,6 @@ let usuarioIdGlobal = "";
         }
       };
 
-      /* ── Envío de mensajes + bot keywords ───────────────── */
       const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !clientName) return;
@@ -1405,7 +1571,9 @@ let usuarioIdGlobal = "";
       };
 
       const limpiarPantallaFact = () => {
-        setDireccionInput(""); setRutInput("");
+        setCampoCalle(""); setCampoNumero(""); setCampoComuna("");
+        setCampoRegion(""); setCampoDepto(""); setCampoErrors({});
+        setRutInput("");
         setFactLogs([]); setFactResult(null);
       };
 
@@ -1432,12 +1600,7 @@ let usuarioIdGlobal = "";
       };
 
       const finalizarLoadingDireccion = () => { setSearchBtnDisabled(false); setIsLoadingFact(false); };
-
-
-
-
-
-            const finalizarLoadingRut       = () => { setRutBtnDisabled(false);    setIsLoadingFact(false); };
+      const finalizarLoadingRut       = () => { setRutBtnDisabled(false);    setIsLoadingFact(false); };
 
       const guardarNuevoId = () => {
         if (!nuevoIdTemp.trim()) return;
@@ -1456,12 +1619,30 @@ let usuarioIdGlobal = "";
         }
       };
 
-
+      /* ── Validación de campos de dirección ───────────────── */
+      const validarCamposDireccion = () => {
+        const errors = {};
+        if (!campoCalle.trim())  errors.calle  = "La calle es requerida";
+        if (!campoNumero.trim()) errors.numero = "El número es requerido";
+        if (!campoComuna.trim()) errors.comuna = "La comuna es requerida";
+        setCampoErrors(errors);
+        return Object.keys(errors).length === 0;
+      };
 
       /* ── Factibilidad: consulta dirección (SSE) ──────────── */
       const iniciarConsultaDireccion = () => {
-        const dir = direccionInput.trim();
-        if (!dir) return;
+        if (!validarCamposDireccion()) return;
+
+        // Construir string de dirección para el backend (mismo formato que antes)
+        const partes = [campoCalle.trim(), campoNumero.trim()];
+        if (campoDepto.trim()) partes.push(`Depto ${campoDepto.trim()}`);
+        partes.push(campoComuna.trim());
+        if (campoRegion) {
+          const reg = REGIONES_CHILE.find(r => r.value === campoRegion);
+          if (reg && reg.value) partes.push(reg.label);
+        }
+        const dir = partes.join(", ");
+
         obtenerUserIdFact((userId) => {
           setSearchBtnDisabled(true); setIsLoadingFact(true);
           setFactLogs([]); setFactResult(null);
@@ -1623,10 +1804,6 @@ let usuarioIdGlobal = "";
                 <div style={{ width:48, height:48, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, position:"relative", zIndex:10, pointerEvents:"none" }}>
                   <i className="fa-solid fa-location-dot" style={{ fontSize:20 }}></i>
                 </div>
-                <div style={{ maxWidth:0, overflow:"hidden", opacity:0, transition:"all 0.5s ease-in-out", display:"flex", alignItems:"center", whiteSpace:"nowrap", position:"relative", zIndex:10, pointerEvents:"none" }}
-                  className="btn-label">
-                  <span style={{ fontWeight:900, fontSize:11, textTransform:"uppercase", letterSpacing:"0.2em", paddingRight:"0.5rem" }}>Opciones</span>
-                </div>
               </button>
             )}
 
@@ -1649,7 +1826,6 @@ let usuarioIdGlobal = "";
                   </button>
                 </div>
                 <div style={{ padding:24, display:"flex", flexDirection:"column", gap:16 }}>
-                  {/* Soporte */}
                   <button
                     className="menu-option"
                     onClick={(e) => { e.preventDefault(); setShowMenu(false); setIsOpen(true); }}
@@ -1667,7 +1843,6 @@ let usuarioIdGlobal = "";
                     </div>
                     <i className="fa-solid fa-chevron-right menu-option-chevron"></i>
                   </button>
-                  {/* Factibilidad */}
                   <button
                     className="menu-option"
                     onClick={(e) => { e.preventDefault(); setShowMenu(false); setShowFactibilidadModal(true); }}
@@ -1692,7 +1867,6 @@ let usuarioIdGlobal = "";
             {/* Ventana del chat */}
             {isOpen && (
               <div className="chat-window animate-slide-up">
-                {/* Cabecera */}
                 <div
                   className="drag-handle drag-header"
                   onMouseDown={handleDragStart}
@@ -1712,7 +1886,6 @@ let usuarioIdGlobal = "";
                   </button>
                 </div>
 
-                {/* Pantalla de registro */}
                 {!isRegistered ? (
                   <div className="register-screen">
                     <div style={{ width:80, height:80, background:"rgba(255,255,255,0.8)", border:"1px solid white", boxShadow:"0 15px 35px -5px rgba(178,51,255,0.15)", color:"#b233ff", borderRadius:40, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:24, flexShrink:0 }}>
@@ -1731,10 +1904,8 @@ let usuarioIdGlobal = "";
                   </div>
                 ) : (
                   <>
-                    {/* Mensajes */}
                     <div className="chat-messages">
                       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom,rgba(233,213,255,0.2),transparent)", pointerEvents:"none" }}></div>
-                      {/* Bienvenida */}
                       <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start", position:"relative", zIndex:10 }}>
                         <div className="msg-bot">
                           <p style={{ fontWeight:900, fontSize:10, background:"linear-gradient(to right,#b233ff,#ff4df8)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", textTransform:"uppercase", letterSpacing:"0.2em", borderBottom:"1px solid #f1f5f9", paddingBottom:8, marginBottom:12 }}>CONEXIÓN ESTABLECIDA</p>
@@ -1764,12 +1935,7 @@ let usuarioIdGlobal = "";
                       <div ref={messagesEndRef} style={{ height:8 }}></div>
                     </div>
 
-                    {/* Input */}
-                    <form
-                      onSubmit={handleSendMessage}
-                      className="chat-input-area"
-                      style={{ display:"flex" }}
-                    >
+                    <form onSubmit={handleSendMessage} className="chat-input-area" style={{ display:"flex" }}>
                       <div className="chat-input-wrap" style={{ position:"relative" }}>
                         <button
                           type="button"
@@ -1792,11 +1958,7 @@ let usuarioIdGlobal = "";
                           </div>
                         )}
                       </div>
-                      <button
-                        type="submit"
-                        disabled={!newMessage.trim()}
-                        className="send-btn"
-                      >
+                      <button type="submit" disabled={!newMessage.trim()} className="send-btn">
                         <i className="fa-solid fa-paper-plane" style={{ fontSize:14, transform:"translateX(-1px) translateY(1px)" }}></i>
                       </button>
                     </form>
@@ -1823,37 +1985,32 @@ let usuarioIdGlobal = "";
                 <div className="fw-logo">Free<em>work</em>Bot</div>
                 <div className="fw-badge"><span className="fw-badge-dot"></span>Conectado</div>
               </header>
-               
-              
-  {/* AQUÍ PEGAS EL PANEL DE ID */}
-  <div style={{ background:"rgba(255,255,255,0.03)", borderRadius:"12px", padding:"10px 12px", marginBottom:"20px", border:"1px solid var(--border)" }}>
-    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:"8px" }}>
-      <div style={{ fontSize:"11px", color:"var(--text-2)" }}>
-        <i className="fa-regular fa-id-card"></i> ID: <strong style={{ color: currentUserId !== "No definido" ? "#00f298" : "#ffb800" }}>{currentUserId}</strong>
-      </div>
-      
-      <div style={{ display:"flex", gap:"6px" }}>
-        {!editandoId ? (
-          <>
-            <button onClick={() => { setNuevoIdTemp(currentUserId !== "No definido" ? currentUserId : ""); setEditandoId(true); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✏️ Cambiar</button>
-            {currentUserId !== "No definido" && (
-              <button onClick={eliminarId} style={{ background:"none", border:"1px solid rgba(255,75,129,0.3)", borderRadius:"8px", padding:"4px 8px", color:"#ff4b81", fontSize:"10px", cursor:"pointer" }}>🗑️ Eliminar</button>
-            )}
-          </>
-        ) : (
-          <>
-            <input type="text" value={nuevoIdTemp} onChange={e => setNuevoIdTemp(e.target.value)} onKeyDown={e => e.key === "Enter" && guardarNuevoId()} placeholder="Nuevo ID" autoFocus style={{ background:"rgba(255,255,255,0.1)", border:"1px solid var(--primary)", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", width:"120px", outline:"none" }} />
-            <button onClick={guardarNuevoId} style={{ background:"linear-gradient(135deg,#b233ff,#ff4df8)", border:"none", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", cursor:"pointer" }}>✓</button>
-            <button onClick={() => { setEditandoId(false); setNuevoIdTemp(""); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✕</button>
-          </>
-        )}
-      </div>
-    </div>
-  </div>
 
+              {/* Panel ID */}
+              <div style={{ background:"rgba(255,255,255,0.03)", borderRadius:"12px", padding:"10px 12px", marginBottom:"20px", border:"1px solid var(--border)" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:"8px" }}>
+                  <div style={{ fontSize:"11px", color:"var(--text-2)" }}>
+                    <i className="fa-regular fa-id-card"></i> ID: <strong style={{ color: currentUserId !== "No definido" ? "#00f298" : "#ffb800" }}>{currentUserId}</strong>
+                  </div>
+                  <div style={{ display:"flex", gap:"6px" }}>
+                    {!editandoId ? (
+                      <>
+                        <button onClick={() => { setNuevoIdTemp(currentUserId !== "No definido" ? currentUserId : ""); setEditandoId(true); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✏️ Cambiar</button>
+                        {currentUserId !== "No definido" && (
+                          <button onClick={eliminarId} style={{ background:"none", border:"1px solid rgba(255,75,129,0.3)", borderRadius:"8px", padding:"4px 8px", color:"#ff4b81", fontSize:"10px", cursor:"pointer" }}>🗑️ Eliminar</button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <input type="text" value={nuevoIdTemp} onChange={e => setNuevoIdTemp(e.target.value)} onKeyDown={e => e.key === "Enter" && guardarNuevoId()} placeholder="Nuevo ID" autoFocus style={{ background:"rgba(255,255,255,0.1)", border:"1px solid var(--primary)", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", width:"120px", outline:"none" }} />
+                        <button onClick={guardarNuevoId} style={{ background:"linear-gradient(135deg,#b233ff,#ff4df8)", border:"none", borderRadius:"8px", padding:"4px 8px", color:"white", fontSize:"10px", cursor:"pointer" }}>✓</button>
+                        <button onClick={() => { setEditandoId(false); setNuevoIdTemp(""); }} style={{ background:"none", border:"1px solid var(--border)", borderRadius:"8px", padding:"4px 8px", color:"var(--text-2)", fontSize:"10px", cursor:"pointer" }}>✕</button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-
- 
               <h1>Validación</h1>
               <p className="fw-subtitle">Consulta factibilidad técnica o evaluación de RUT de forma automatizada.</p>
 
@@ -1863,34 +2020,160 @@ let usuarioIdGlobal = "";
                 <button className={"fw-tab-btn" + (factMode === "rut"       ? " active" : "")} onClick={() => cambiarModoFact("rut")}>🪪 RUT</button>
               </div>
 
-              {/* Panel Dirección */}
+              {/* ══ PANEL DIRECCIÓN — CAMPOS SEPARADOS ══ */}
               {factMode === "direccion" && (
-                <div className="fw-input-row animate-slide-up">
-                  <div className="fw-input-wrap">
-                    <input
-                      type="text"
-                      value={direccionInput}
-                      onChange={e => setDireccionInput(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
-                      placeholder="Calle, Número, Comuna"
-                      autoComplete="off"
-                      spellCheck="false"
-                    />
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
+                <div className="fw-fields-grid animate-slide-up">
+
+                  {/* Fila 1: Calle + Número */}
+                  <div className="fw-fields-row">
+                    {/* Calle */}
+                    <div className="fw-field-group" style={{ flex: 2 }}>
+                      <label className="fw-field-label">
+                        Calle / Av. / Pasaje
+                        <span className="fw-field-required">*</span>
+                      </label>
+                      <div className="fw-field-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                          <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <input
+                          className={"fw-field-input" + (campoErrors.calle ? " error" : campoCalle ? " ok" : "")}
+                          type="text"
+                          value={campoCalle}
+                          onChange={e => { setCampoCalle(e.target.value); if(campoErrors.calle) setCampoErrors(p=>({...p,calle:null})); }}
+                          onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
+                          placeholder="Av. Providencia"
+                          autoComplete="off"
+                          spellCheck="false"
+                        />
+                      </div>
+                      {campoErrors.calle && <span className="fw-field-error-msg">⚠ {campoErrors.calle}</span>}
+                    </div>
+
+                    {/* Número */}
+                    <div className="fw-field-group" style={{ flex: 1 }}>
+                      <label className="fw-field-label">
+                        Número
+                        <span className="fw-field-required">*</span>
+                      </label>
+                      <div className="fw-field-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 7h1l2 10h1"/><path d="M4 17h16"/>
+                          <circle cx="9" cy="7" r="0.5" fill="currentColor"/>
+                        </svg>
+                        <input
+                          className={"fw-field-input" + (campoErrors.numero ? " error" : campoNumero ? " ok" : "")}
+                          type="text"
+                          value={campoNumero}
+                          onChange={e => { setCampoNumero(e.target.value); if(campoErrors.numero) setCampoErrors(p=>({...p,numero:null})); }}
+                          onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
+                          placeholder="1234"
+                          autoComplete="off"
+                        />
+                      </div>
+                      {campoErrors.numero && <span className="fw-field-error-msg">⚠ {campoErrors.numero}</span>}
+                    </div>
                   </div>
-                  <button className="fw-main-btn" onClick={iniciarConsultaDireccion} disabled={searchBtnDisabled || isLoadingFact}>
+
+                  {/* Fila 2: Depto (opcional) */}
+                  <div className="fw-field-group">
+                    <label className="fw-field-label">
+                      Depto / Oficina / Casa
+                      <span style={{ color:"var(--text-3)", marginLeft:4, fontWeight:400 }}>(opcional)</span>
+                    </label>
+                    <div className="fw-field-wrap">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                      </svg>
+                      <input
+                        className={"fw-field-input" + (campoDepto ? " ok" : "")}
+                        type="text"
+                        value={campoDepto}
+                        onChange={e => setCampoDepto(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
+                        placeholder="302, Of. 5, Casa B..."
+                        autoComplete="off"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Fila 3: Región + Comuna */}
+                  <div className="fw-fields-row">
+                    {/* Región */}
+                    <div className="fw-field-group" style={{ flex: 1 }}>
+                      <label className="fw-field-label">Región</label>
+                      <div className="fw-field-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="2" y1="12" x2="22" y2="12"/>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        <select
+                          className="fw-field-select"
+                          value={campoRegion}
+                          onChange={e => setCampoRegion(e.target.value)}
+                        >
+                          {REGIONES_CHILE.map(r => (
+                            <option key={r.value} value={r.value}>{r.label}</option>
+                          ))}
+                        </select>
+                        <svg className="fw-select-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Comuna */}
+                    <div className="fw-field-group" style={{ flex: 1 }}>
+                      <label className="fw-field-label">
+                        Comuna
+                        <span className="fw-field-required">*</span>
+                      </label>
+                      <div className="fw-field-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <input
+                          className={"fw-field-input" + (campoErrors.comuna ? " error" : campoComuna ? " ok" : "")}
+                          type="text"
+                          value={campoComuna}
+                          onChange={e => { setCampoComuna(e.target.value); if(campoErrors.comuna) setCampoErrors(p=>({...p,comuna:null})); }}
+                          onKeyDown={e => e.key === "Enter" && iniciarConsultaDireccion()}
+                          placeholder="Providencia"
+                          autoComplete="off"
+                        />
+                      </div>
+                      {campoErrors.comuna && <span className="fw-field-error-msg">⚠ {campoErrors.comuna}</span>}
+                    </div>
+                  </div>
+
+                  {/* Preview de dirección armada */}
+                  {dirPreview && (
+                    <div className="fw-dir-preview animate-slide-up">
+                      <span className="preview-label">📋 Consulta:</span>
+                      <span className="preview-value">{dirPreview}</span>
+                    </div>
+                  )}
+
+                  {/* Botón verificar */}
+                  <button
+                    className="fw-main-btn"
+                    onClick={iniciarConsultaDireccion}
+                    disabled={searchBtnDisabled || isLoadingFact}
+                    style={{ marginTop: 4 }}
+                  >
                     {isLoadingFact && factMode === "direccion"
-                      ? <div className="fw-spinner"></div>
-                      : <span>Verificar Cobertura</span>
+                      ? <><div className="fw-spinner"></div><span>Verificando...</span></>
+                      : <><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Verificar Cobertura</span></>
                     }
                   </button>
                 </div>
               )}
 
-              {/* Panel RUT */}
+              {/* Panel RUT (sin cambios) */}
               {factMode === "rut" && (
                 <div className="fw-input-row animate-slide-up">
                   <div className="fw-input-wrap">
@@ -1910,7 +2193,7 @@ let usuarioIdGlobal = "";
                   </div>
                   <button className="fw-main-btn" onClick={consultarRut} disabled={rutBtnDisabled || isLoadingFact}>
                     {isLoadingFact && factMode === "rut"
-                      ? <div className="fw-spinner"></div>
+                      ? <><div className="fw-spinner"></div><span>Verificando...</span></>
                       : <span>Verificar RUT</span>
                     }
                   </button>
