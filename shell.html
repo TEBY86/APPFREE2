@@ -1580,10 +1580,27 @@ let usuarioIdGlobal = "";
       const cambiarModoFact = (modo) => { setFactMode(modo); limpiarPantallaFact(); };
 
       const obtenerUserIdFact = (callback) => {
-        const userId = localStorage.getItem("freework_user_id");
-        if (userId) { callback(userId); }
-        else { pendingActionRef.current = callback; setShowCustomPrompt(true); }
-      };
+    // Leer usuario desde localStorage
+    const user = getCurrentUser();
+    
+    // Usar el CORREO como identificador (como hace el Wizard)
+    if (user && user.email) {
+        console.log('✅ Usuario identificado por email:', user.email);
+        callback(user.email);
+        return;
+    }
+    
+    // Fallback: ID manual
+    const userId = localStorage.getItem("freework_user_id");
+    if (userId) {
+        callback(userId);
+        return;
+    }
+    
+    // Si no hay nada, pedir ID
+    pendingActionRef.current = callback;
+    setShowCustomPrompt(true);
+};
 
       const guardarCustomId = () => {
         const val = customPromptInput.trim();
