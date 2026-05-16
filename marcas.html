@@ -304,7 +304,46 @@
                             </div>
                         </div>
                     </div>
-                `;
+
+                  <!-- DESPLEGABLE (NO es clickeable para el modal) -->
+        <div class="relative z-10 mt-3 pt-2 border-t border-white/10" onclick="event.stopPropagation()">
+            <button onclick="AppController.toggleComunas(this)" class="w-full flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-white/50"></i>
+                    <span class="text-[10px] font-medium text-white/60">Comunas con promoción</span>
+                </div>
+                <i class="comunas-arrow w-3 h-3 text-white/50 transition-transform duration-200" data-lucide="chevron-down"></i>
+            </button>
+            <div class="comunas-list hidden mt-2 text-[10px] text-white/50 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-1">
+    <span>• Iquique</span>
+    <span>• Antofagasta</span>
+    <span>• Calama</span>
+    <span>• La Serena</span>
+    <span>• Coquimbo</span>
+    <span>• Concón</span>
+    <span>• Papudo</span>
+    <span>• Zapallar</span>
+    <span>• Viña del Mar</span>
+    <span>• Santo Domingo</span>
+    <span>• Colina</span>
+    <span>• Huechuraba</span>
+    <span>• Lo Barnechea</span>
+    <span>• Las Condes</span>
+    <span>• La Reina</span>
+    <span>• Vitacura</span>
+    <span>• Providencia</span>
+    <span>• Ñuñoa</span>
+    <span>• Macul</span>
+    <span>• San Miguel</span>
+    <span>• Pirque</span>
+    <span>• Machalí</span>
+    <span>• Coltauco</span>
+    <span>• Doñihue</span>
+    <span>• Concepción</span>
+    <span>• Temuco</span>
+    <span>• Puerto Varas</span>
+</div>
+`;
             },
 
             renderBrandCards() {
@@ -384,6 +423,19 @@
                 }, 300);
             },
 
+
+            toggleComunas(btn) {
+    const comunasList = btn.closest('.relative.z-10').querySelector('.comunas-list');
+    const arrow = btn.querySelector('.comunas-arrow');
+    if (comunasList.classList.contains('hidden')) {
+        comunasList.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        comunasList.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+},
+
             setupRipples() {
                 document.addEventListener('click', function(e) {
                     const target = e.target.closest('.group');
@@ -403,6 +455,11 @@
             }
         };
 
+
+
+
+
+        
         window.addEventListener('DOMContentLoaded', () => { AppController.init(); });
     </script>
 </body>
